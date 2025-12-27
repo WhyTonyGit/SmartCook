@@ -81,8 +81,13 @@ CORS_ORIGINS=http://localhost:8080,http://127.0.0.1:8080
 
 3. Запустите приложение:
 ```bash
-docker-compose up --build
+# Для чистого старта (удалит все данные, если нужно начать заново):
+# docker-compose down -v
+
+docker-compose up --build --force-recreate
 ```
+
+**Примечание:** Если нужно полностью пересоздать базу данных с нуля, используйте `docker-compose down -v` перед запуском (это удалит все данные).
 
 4. Загрузите начальные данные:
 ```bash
@@ -135,6 +140,26 @@ python run.py
 - `JWT_SECRET_KEY` - Секретный ключ для JWT токенов
 - `CORS_ORIGINS` - Разрешённые источники для CORS (через запятую)
 - `FLASK_ENV` - Окружение Flask (development/production)
+
+## Проверка подключения к базе данных
+
+После запуска `docker-compose up` можно проверить подключение к базе данных:
+
+```bash
+# Проверка через psql
+docker-compose exec db psql -U smartcook -d smartcook_db -c "SELECT 1"
+
+# Проверка healthcheck
+docker-compose ps db
+
+# Просмотр логов базы данных
+docker-compose logs db
+```
+
+Если в логах появляются ошибки `FATAL: database "smartcook" does not exist`, убедитесь, что:
+1. Используется `docker-compose up --build --force-recreate` для пересоздания контейнеров
+2. Healthcheck в `docker-compose.yml` содержит `-d smartcook_db`
+3. Переменная `POSTGRES_DB=smartcook_db` установлена в окружении контейнера db
 
 ## API Endpoints
 

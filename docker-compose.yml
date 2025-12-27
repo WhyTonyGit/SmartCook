@@ -7,12 +7,13 @@ services:
       POSTGRES_USER: smartcook
       POSTGRES_PASSWORD: smartcook_pass
       POSTGRES_DB: smartcook_db
+      PGDATABASE: smartcook_db
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U smartcook"]
+      test: ["CMD-SHELL", "pg_isready -U smartcook -d smartcook_db"]
       interval: 5s
       timeout: 5s
       retries: 5

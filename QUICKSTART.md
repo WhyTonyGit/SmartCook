@@ -6,8 +6,13 @@
 
 2. Запустите приложение:
 ```bash
-docker-compose up --build
+# Для чистого старта (удалит все данные):
+# docker-compose down -v
+
+docker-compose up --build --force-recreate
 ```
+
+**Примечание:** Если нужно полностью пересоздать базу данных, используйте `docker-compose down -v` перед запуском.
 
 3. В другом терминале загрузите данные:
 ```bash
