@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Избранное - Recipe Finder</title>
+    <link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="index.html" class="logo">🍳 Recipe Finder</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="favourites.html">Избранное</a></li>
+                <li><a href="history.html">История</a></li>
+                <li><a href="profile.html">Профиль</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1 style="margin-bottom: 2rem;">Избранное</h1>
+        <div id="favorites" class="recipe-grid"></div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        async function loadFavorites() {
+            const token = api.getToken();
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const recipes = await api.getFavorites();
+                displayRecipes(recipes);
+            } catch (error) {
+                document.getElementById('favorites').innerHTML = 
+                    `<div class="alert alert-error">${error.message}</div>`;
+            }
+        }
+
+        function displayRecipes(recipes) {
+            const container = document.getElementById('favorites');
+            if (!recipes || recipes.length === 0) {
+                container.innerHTML = '<p class="loading">В избранном пока ничего нет</p>';
+                return;
+            }
+
+            container.innerHTML = recipes.map(recipe => `
+                <div class="recipe-card" onclick="window.location.href='recipe.html?id=${recipe.id}'">
+                    ${recipe.image_url ? `<img src="${recipe.image_url}" alt="${recipe.title}">` : '<div style="height:200px;background:#ecf0f1;display:flex;align-items:center;justify-content:center;color:#7f8c8d;">Нет изображения</div>'}
+                    <div class="recipe-card-content">
+                        <h3 class="recipe-card-title">${recipe.title}</h3>
+                        <div class="recipe-card-meta">
+                            <span>⏱ ${recipe.cooking_time} мин</span>
+                            <span>${recipe.difficulty}</span>
+                            ${recipe.avg_rating ? `<span>⭐ ${recipe.avg_rating.toFixed(1)}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        loadFavorites();
+    </script>
+</body>
+</html>
+

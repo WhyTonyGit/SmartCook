@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рецепт - Recipe Finder</title>
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        .recipe-detail {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .recipe-header {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .recipe-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .recipe-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .recipe-section {
+            margin-bottom: 2rem;
+        }
+
+        .recipe-section h3 {
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .ingredients-list, .steps-list {
+            list-style: none;
+        }
+
+        .ingredients-list li, .steps-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .steps-list li {
+            margin-bottom: 1.5rem;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 1rem;
+            font-weight: bold;
+        }
+
+        .comments-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .comment {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 1rem;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .comment-date {
+            color: #7f8c8d;
+            font-size: 0.875rem;
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .rating-input button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #ddd;
+        }
+
+        .rating-input button.active {
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="index.html" class="logo">🍳 Recipe Finder</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="find-recipe.html">Найти рецепт</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div id="recipe-content"></div>
+
+        <div class="comments-section">
+            <h2>Комментарии</h2>
+            <div id="comments-list"></div>
+            <div id="comment-form" style="display: none;">
+                <div class="form-group">
+                    <textarea id="comment-text" placeholder="Оставьте комментарий..."></textarea>
+                </div>
+                <button class="btn" onclick="submitComment()">Отправить</button>
+            </div>
+            <p id="login-prompt">Войдите, чтобы оставить комментарий</p>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        const recipeId = new URLSearchParams(window.location.search).get('id');
+        let isFavorite = false;
+
+        async function loadRecipe() {
+            if (!recipeId) {
+                document.getElementById('recipe-content').innerHTML = 
+                    '<div class="alert alert-error">Рецепт не найден</div>';
+                return;
+            }
+
+            try {
+                const recipe = await api.getRecipe(recipeId);
+                displayRecipe(recipe);
+
+                // Добавляем в историю, если авторизован
+                const token = api.getToken();
+                if (token) {
+                    try {
+                        await api.addToHistory(recipeId);
+                    } catch (e) {
+                        console.error('Failed to add to history:', e);
+                    }
+                }
+
+                // Загружаем комментарии
+                loadComments();
+
+                // Проверяем избранное
+                if (token) {
+                    checkFavorite();
+                }
+            } catch (error) {
+                document.getElementById('recipe-content').innerHTML = 
+                    `<div class="alert alert-error">${error.message}</div>`;
+            }
+        }
+
+        function displayRecipe(recipe) {
+            const container = document.getElementById('recipe-content');
+            container.innerHTML = `
+                <div class="recipe-detail">
+                    <div class="recipe-header">
+                        <div>
+                            <h1>${recipe.title}</h1>
+                            <div class="recipe-card-meta" style="margin: 1rem 0;">
+                                <span>⏱ ${recipe.cooking_time} мин</span>
+                                <span>${recipe.difficulty}</span>
+                                ${recipe.avg_rating ? `<span>⭐ ${recipe.avg_rating.toFixed(1)}</span>` : ''}
+                                ${recipe.comments_count ? `<span>💬 ${recipe.comments_count}</span>` : ''}
+                            </div>
+                            ${recipe.match_percent !== null ? 
+                                `<span class="recipe-card-match">${Math.round(recipe.match_percent * 100)}% совпадение</span>` : ''}
+                            ${recipe.missing_ingredients && recipe.missing_ingredients.length > 0 ? 
+                                `<div style="margin-top:1rem;">
+                                    <strong>Отсутствующие ингредиенты:</strong>
+                                    <div class="tags">${recipe.missing_ingredients.map(ing => `<span class="tag">${ing.name}</span>`).join('')}</div>
+                                </div>` : ''}
+                            <div class="recipe-actions">
+                                <button class="btn" id="favorite-btn" onclick="toggleFavorite()" style="display:none;">
+                                    <span id="favorite-text">Добавить в избранное</span>
+                                </button>
+                                <div class="rating-input" id="rating-input" style="display:none;">
+                                    <span>Оцените:</span>
+                                    ${[1,2,3,4,5].map(i => 
+                                        `<button onclick="setRating(${i})" id="star-${i}">⭐</button>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        ${recipe.image_url ? 
+                            `<img src="${recipe.image_url}" alt="${recipe.title}" class="recipe-image">` : 
+                            '<div style="width:300px;height:300px;background:#ecf0f1;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#7f8c8d;">Нет изображения</div>'}
+                    </div>
+
+                    ${recipe.description ? `<p style="margin-bottom:2rem;">${recipe.description}</p>` : ''}
+
+                    <div class="recipe-section">
+                        <h3>Ингредиенты</h3>
+                        <ul class="ingredients-list">
+                            ${recipe.ingredients.map(ing => `<li>${ing.name}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    ${recipe.steps && recipe.steps.length > 0 ? `
+                        <div class="recipe-section">
+                            <h3>Шаги приготовления</h3>
+                            <ol class="steps-list">
+                                ${recipe.steps.map(step => `
+                                    <li>
+                                        <span class="step-number">${step.number}</span>
+                                        <strong>${step.title}</strong>
+                                        <p>${step.description}</p>
+                                        ${step.image_url ? `<img src="${step.image_url}" style="max-width:300px;margin-top:0.5rem;border-radius:4px;">` : ''}
+                                    </li>
+                                `).join('')}
+                            </ol>
+                        </div>
+                    ` : ''}
+
+                    ${recipe.categories && recipe.categories.length > 0 ? `
+                        <div class="recipe-section">
+                            <h3>Категории</h3>
+                            <div class="tags">
+                                ${recipe.categories.map(cat => `<span class="tag">${cat.name}</span>`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            // Показываем кнопки, если авторизован
+            const token = api.getToken();
+            if (token) {
+                document.getElementById('favorite-btn').style.display = 'inline-block';
+                document.getElementById('rating-input').style.display = 'flex';
+                document.getElementById('comment-form').style.display = 'block';
+                document.getElementById('login-prompt').style.display = 'none';
+            }
+        }
+
+        async function checkFavorite() {
+            try {
+                const favorites = await api.getFavorites();
+                isFavorite = favorites.some(r => r.id === parseInt(recipeId));
+                updateFavoriteButton();
+            } catch (e) {
+                console.error('Failed to check favorite:', e);
+            }
+        }
+
+        function updateFavoriteButton() {
+            const btn = document.getElementById('favorite-btn');
+            const text = document.getElementById('favorite-text');
+            if (isFavorite) {
+                btn.classList.add('btn-secondary');
+                text.textContent = 'Удалить из избранного';
+            } else {
+                btn.classList.remove('btn-secondary');
+                text.textContent = 'Добавить в избранное';
+            }
+        }
+
+        async function toggleFavorite() {
+            try {
+                if (isFavorite) {
+                    await api.removeFavorite(recipeId);
+                    isFavorite = false;
+                } else {
+                    await api.addFavorite(recipeId);
+                    isFavorite = true;
+                }
+                updateFavoriteButton();
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        async function setRating(value) {
+            try {
+                await api.upsertMark(recipeId, value);
+                // Обновляем звёзды
+                for (let i = 1; i <= 5; i++) {
+                    const star = document.getElementById(`star-${i}`);
+                    if (i <= value) {
+                        star.classList.add('active');
+                    } else {
+                        star.classList.remove('active');
+                    }
+                }
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        async function loadComments() {
+            try {
+                const comments = await api.getComments(recipeId);
+                displayComments(comments);
+            } catch (error) {
+                console.error('Failed to load comments:', error);
+            }
+        }
+
+        function displayComments(comments) {
+            const container = document.getElementById('comments-list');
+            if (!comments || comments.length === 0) {
+                container.innerHTML = '<p>Комментариев пока нет</p>';
+                return;
+            }
+
+            container.innerHTML = comments.map(comment => `
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">${comment.consumer_username}</span>
+                        <span class="comment-date">${new Date(comment.created_at).toLocaleString('ru')}</span>
+                    </div>
+                    <p>${comment.text}</p>
+                </div>
+            `).join('');
+        }
+
+        async function submitComment() {
+            const text = document.getElementById('comment-text').value.trim();
+            if (!text) {
+                alert('Введите текст комментария');
+                return;
+            }
+
+            try {
+                await api.createComment(recipeId, text);
+                document.getElementById('comment-text').value = '';
+                loadComments();
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        loadRecipe();
+    </script>
+</body>
+</html>
+

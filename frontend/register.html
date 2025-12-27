@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - Recipe Finder</title>
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: 4rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .auth-container h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+        }
+
+        .auth-container button {
+            width: 100%;
+        }
+
+        .auth-container p {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .auth-container a {
+            color: #3498db;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="index.html" class="logo">🍳 Recipe Finder</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="login.html">Войти</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="auth-container">
+        <h1>Регистрация</h1>
+        <div id="alert"></div>
+        <form id="register-form" onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label>Имя пользователя</label>
+                <input type="text" id="username" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label>Телефон (необязательно)</label>
+                <input type="tel" id="phone">
+            </div>
+            <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="btn">Зарегистрироваться</button>
+        </form>
+        <p>Уже есть аккаунт? <a href="login.html">Войти</a></p>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        function showAlert(message, type = 'error') {
+            const alert = document.getElementById('alert');
+            alert.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                await api.register(username, email, phone || null, password);
+                showAlert('Регистрация успешна! Перенаправление...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+            } catch (error) {
+                showAlert(error.message || 'Ошибка регистрации');
+            }
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль - Recipe Finder</title>
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+
+        .profile-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .profile-section h2 {
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+        }
+
+        .ingredient-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="index.html" class="logo">🍳 Recipe Finder</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="profile.html">Профиль</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container profile-container">
+        <div class="profile-section">
+            <h2>Профиль</h2>
+            <div id="profile-info"></div>
+            <form id="profile-form" onsubmit="updateProfile(event)">
+                <div class="form-group">
+                    <label>Имя пользователя</label>
+                    <input type="text" id="username">
+                </div>
+                <div class="form-group">
+                    <label>Avatar URL</label>
+                    <input type="url" id="avatar_url">
+                </div>
+                <button type="submit" class="btn">Сохранить</button>
+            </form>
+        </div>
+
+        <div class="profile-section">
+            <h2>Запрещённые ингредиенты</h2>
+            <p>Выберите ингредиенты, которые вы не едите (аллергии, диетические ограничения)</p>
+            <div id="ingredients-list"></div>
+            <button class="btn" onclick="saveForbiddenIngredients()">Сохранить</button>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        let allIngredients = [];
+        let forbiddenIngredientIds = [];
+
+        async function loadProfile() {
+            const token = api.getToken();
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const profile = await api.getProfile();
+                document.getElementById('username').value = profile.username;
+                document.getElementById('avatar_url').value = profile.avatar_url || '';
+
+                const forbidden = await api.getForbiddenIngredients();
+                forbiddenIngredientIds = forbidden.map(ing => ing.id);
+
+                await loadIngredients();
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        async function loadIngredients() {
+            try {
+                allIngredients = await api.getIngredients();
+                displayIngredients();
+            } catch (error) {
+                console.error('Failed to load ingredients:', error);
+            }
+        }
+
+        function displayIngredients() {
+            const container = document.getElementById('ingredients-list');
+            container.innerHTML = allIngredients.map(ing => `
+                <div class="ingredient-checkbox">
+                    <input type="checkbox" 
+                           id="ing-${ing.id}" 
+                           ${forbiddenIngredientIds.includes(ing.id) ? 'checked' : ''}
+                           onchange="toggleForbidden(${ing.id})">
+                    <label for="ing-${ing.id}">${ing.name}</label>
+                </div>
+            `).join('');
+        }
+
+        function toggleForbidden(ingredientId) {
+            const checkbox = document.getElementById(`ing-${ingredientId}`);
+            if (checkbox.checked) {
+                if (!forbiddenIngredientIds.includes(ingredientId)) {
+                    forbiddenIngredientIds.push(ingredientId);
+                }
+            } else {
+                forbiddenIngredientIds = forbiddenIngredientIds.filter(id => id !== ingredientId);
+            }
+        }
+
+        async function saveForbiddenIngredients() {
+            try {
+                await api.updateForbiddenIngredients(forbiddenIngredientIds);
+                alert('Сохранено!');
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        async function updateProfile(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const avatar_url = document.getElementById('avatar_url').value;
+
+            try {
+                await api.updateProfile({ username, avatar_url });
+                alert('Профиль обновлён!');
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>
+

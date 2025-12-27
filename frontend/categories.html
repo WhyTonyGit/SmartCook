@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Категории - Recipe Finder</title>
+    <link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="index.html" class="logo">🍳 Recipe Finder</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="categories.html">Категории</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1 style="margin-bottom: 2rem;">Категории</h1>
+        <div id="categories" class="recipe-grid"></div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        async function loadCategories() {
+            try {
+                const categories = await api.getCategories();
+                displayCategories(categories);
+            } catch (error) {
+                document.getElementById('categories').innerHTML = 
+                    `<div class="alert alert-error">${error.message}</div>`;
+            }
+        }
+
+        function displayCategories(categories) {
+            const container = document.getElementById('categories');
+            container.innerHTML = categories.map(cat => `
+                <div class="recipe-card" onclick="window.location.href='find-recipe.html?categoryId=${cat.id}'">
+                    <div class="recipe-card-content" style="text-align:center;padding:3rem 1rem;">
+                        <h3 class="recipe-card-title">${cat.name}</h3>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        loadCategories();
+    </script>
+</body>
+</html>
+

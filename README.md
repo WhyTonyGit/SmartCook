@@ -1,1 +1,266 @@
-# SmartCook
+# Recipe Finder
+
+Полнофункциональное веб-приложение для поиска рецептов по ингредиентам с поддержкой авторизации, избранного, истории просмотров, комментариев и оценок.
+
+## Технологический стек
+
+### Backend
+- Python 3.11+
+- Flask
+- SQLAlchemy ORM
+- Alembic (миграции)
+- PostgreSQL
+- JWT (авторизация)
+- Werkzeug (хеширование паролей)
+
+### Frontend
+- HTML/CSS/Vanilla JavaScript
+- Адаптивная верстка (mobile-first)
+
+### Инфраструктура
+- Docker & Docker Compose
+- PostgreSQL
+
+## Структура проекта
+
+```
+SmartCook/
+├── backend/
+│   ├── api/              # REST API endpoints
+│   │   ├── auth_routes.py
+│   │   ├── recipe_routes.py
+│   │   ├── ingredient_routes.py
+│   │   ├── category_routes.py
+│   │   ├── comment_routes.py
+│   │   ├── mark_routes.py
+│   │   ├── admin_routes.py
+│   │   └── middleware.py
+│   ├── models/           # SQLAlchemy модели
+│   ├── repository/       # Слой доступа к данным
+│   ├── service/          # Бизнес-логика
+│   ├── exception/        # Обработка ошибок
+│   ├── tests/            # Тесты
+│   ├── config.py
+│   ├── extensions.py
+│   ├── run.py
+│   ├── seed.py           # Скрипт загрузки данных
+│   ├── requirements.txt
+│   └── Dockerfile
+├── frontend/
+│   ├── js/
+│   │   └── api.js        # API клиент
+│   ├── css/
+│   │   └── common.css   # Общие стили
+│   └── *.html           # Страницы приложения
+├── docker-compose.yml
+└── README.md
+```
+
+## Установка и запуск
+
+### Требования
+- Docker и Docker Compose
+- Или Python 3.11+ и PostgreSQL (для локальной разработки)
+
+### Запуск с Docker
+
+1. Клонируйте репозиторий:
+```bash
+git clone <repository-url>
+cd SmartCook
+```
+
+2. Создайте файл `.env` в директории `backend/`:
+```env
+FLASK_APP=run.py
+FLASK_ENV=development
+DATABASE_URL=postgresql://smartcook:smartcook_pass@db:5432/smartcook_db
+JWT_SECRET_KEY=your-secret-key-change-in-production
+CORS_ORIGINS=http://localhost:8080,http://127.0.0.1:8080
+```
+
+3. Запустите приложение:
+```bash
+docker-compose up --build
+```
+
+4. Загрузите начальные данные:
+```bash
+docker-compose exec backend python seed.py
+```
+
+5. Откройте в браузере:
+- Backend API: http://localhost:5000
+- Frontend: откройте `frontend/index.html` в браузере или используйте простой HTTP сервер:
+```bash
+cd frontend
+python -m http.server 8080
+```
+
+### Локальная разработка
+
+1. Установите зависимости:
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+2. Настройте PostgreSQL и создайте базу данных:
+```sql
+CREATE DATABASE smartcook_db;
+CREATE USER smartcook WITH PASSWORD 'smartcook_pass';
+GRANT ALL PRIVILEGES ON DATABASE smartcook_db TO smartcook;
+```
+
+3. Создайте `.env` файл (см. выше, но используйте `localhost` вместо `db`)
+
+4. Запустите миграции:
+```bash
+flask db upgrade
+```
+
+5. Загрузите данные:
+```bash
+python seed.py
+```
+
+6. Запустите сервер:
+```bash
+python run.py
+```
+
+## Переменные окружения
+
+- `DATABASE_URL` - URL подключения к PostgreSQL
+- `JWT_SECRET_KEY` - Секретный ключ для JWT токенов
+- `CORS_ORIGINS` - Разрешённые источники для CORS (через запятую)
+- `FLASK_ENV` - Окружение Flask (development/production)
+
+## API Endpoints
+
+### Авторизация
+- `POST /api/auth/register` - Регистрация
+- `POST /api/auth/login` - Вход
+- `GET /api/me` - Профиль пользователя
+- `PUT /api/me` - Обновление профиля
+- `GET /api/me/forbidden-ingredients` - Запрещённые ингредиенты
+- `PUT /api/me/forbidden-ingredients` - Обновление запрещённых ингредиентов
+
+### Рецепты
+- `GET /api/recipes` - Поиск рецептов (query params: q, ingredients, minMatch, maxTime, difficulty, categoryId, sort)
+- `GET /api/recipes/{id}` - Детали рецепта
+- `GET /api/recipes/{id}/missing` - Отсутствующие ингредиенты
+- `GET /api/recommendations` - Рекомендации (требует авторизации)
+
+### Избранное
+- `GET /api/favourites` - Список избранного
+- `POST /api/favourites` - Добавить в избранное
+- `DELETE /api/favourites/{recipe_id}` - Удалить из избранного
+
+### История
+- `GET /api/history` - История просмотров
+- `POST /api/history` - Добавить в историю
+
+### Ингредиенты и категории
+- `GET /api/ingredients` - Список ингредиентов (query: q)
+- `GET /api/categories` - Список категорий
+
+### Комментарии
+- `GET /api/recipes/{id}/comments` - Комментарии к рецепту
+- `POST /api/recipes/{id}/comments` - Создать комментарий
+- `DELETE /api/comments/{id}` - Удалить комментарий
+
+### Оценки
+- `POST /api/recipes/{id}/mark` - Поставить оценку (1-5)
+- `GET /api/me/marks` - Мои оценки
+
+### Админ-панель (требует роль admin)
+- `GET /api/admin/recipes` - Список всех рецептов
+- `POST /api/admin/recipes` - Создать рецепт
+- `PUT /api/admin/recipes/{id}` - Обновить рецепт
+- `DELETE /api/admin/recipes/{id}` - Удалить рецепт
+- `DELETE /api/admin/comments/{id}` - Удалить комментарий
+- `POST /api/admin/categories` - Создать категорию
+- `POST /api/admin/ingredients` - Создать ингредиент
+
+## Алгоритм поиска рецептов
+
+1. Исключаются рецепты с запрещёнными ингредиентами пользователя
+2. Для каждого рецепта вычисляется:
+   - `match_percent` = (совпадающие ингредиенты / всего ингредиентов)
+   - `missing_ingredients` = ингредиенты рецепта, которых нет у пользователя
+3. Фильтрация по минимальному `match_percent` (по умолчанию > 0)
+4. Сортировка: по `match_percent` (desc), затем по рейтингу (desc), затем по времени (asc)
+5. Применяются дополнительные фильтры: время, сложность, категория
+
+## Тестирование
+
+Запуск тестов:
+```bash
+cd backend
+pytest
+```
+
+Тесты покрывают:
+- Авторизацию (регистрация, вход, JWT)
+- API endpoints (smoke тесты)
+- Базовую функциональность поиска
+
+## Данные по умолчанию
+
+После выполнения `seed.py` создаётся:
+- Администратор: `admin@example.com` / `Admin123!`
+- Базовые ингредиенты (30 штук)
+- Категории (10 штук)
+- Демо-рецепты (3 штуки)
+
+## Особенности реализации
+
+### Безопасность
+- Пароли хешируются с использованием Werkzeug
+- JWT токены с истечением срока действия
+- Защита admin endpoints по роли
+- CORS настроен для фронтенда
+
+### Производительность
+- Избегание N+1 запросов через join и агрегацию
+- Индексы на ключевых полях
+- Оптимизированные запросы для поиска
+
+### Архитектура
+- Слоистая архитектура: API → Service → Repository → Model
+- Разделение ответственности
+- Обработка ошибок через единый формат
+
+## Примеры запросов
+
+### Регистрация
+```bash
+curl -X POST http://localhost:5000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"user","email":"user@example.com","password":"password123"}'
+```
+
+### Вход
+```bash
+curl -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"emailOrPhone":"user@example.com","password":"password123"}'
+```
+
+### Поиск рецептов
+```bash
+curl "http://localhost:5000/api/recipes?ingredients=курица,картофель&minMatch=0.3&sort=match"
+```
+
+### Создание комментария (требует токен)
+```bash
+curl -X POST http://localhost:5000/api/recipes/1/comments \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Отличный рецепт!"}'
+```
+
+## Лицензия
+
+MIT

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Finder - Главная</title>
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .search-box button {
+            padding: 1rem 2rem;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="index.html" class="logo">🍳 Recipe Finder</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="find-recipe.html">Найти рецепт</a></li>
+                <li><a href="categories.html">Категории</a></li>
+                <li id="auth-links">
+                    <a href="login.html">Войти</a>
+                    <a href="register.html">Регистрация</a>
+                </li>
+                <li id="user-links" style="display: none;">
+                    <a href="favourites.html">Избранное</a>
+                    <a href="history.html">История</a>
+                    <a href="profile.html">Профиль</a>
+                    <a href="#" onclick="api.logout(); return false;">Выйти</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <div class="container">
+            <h1>Найдите идеальный рецепт</h1>
+            <p>Введите ингредиенты, которые у вас есть, и мы найдём подходящие рецепты</p>
+            <div class="search-box">
+                <input type="text" id="quick-search" placeholder="Например: курица, картофель, лук...">
+                <button class="btn" onclick="quickSearch()">Найти</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <section class="section">
+            <h2 class="section-title">Рекомендации</h2>
+            <div id="recommendations" class="recipe-grid"></div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Популярные рецепты</h2>
+            <div id="popular" class="recipe-grid"></div>
+        </section>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        // Проверка авторизации
+        async function checkAuth() {
+            const token = api.getToken();
+            if (token) {
+                try {
+                    await api.getProfile();
+                    document.getElementById('auth-links').style.display = 'none';
+                    document.getElementById('user-links').style.display = 'flex';
+                    loadRecommendations();
+                } catch (e) {
+                    api.setToken(null);
+                }
+            }
+            loadPopular();
+        }
+
+        // Быстрый поиск
+        function quickSearch() {
+            const query = document.getElementById('quick-search').value;
+            if (query) {
+                window.location.href = `find-recipe.html?ingredients=${encodeURIComponent(query)}`;
+            }
+        }
+
+        document.getElementById('quick-search').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') quickSearch();
+        });
+
+        // Загрузка рекомендаций
+        async function loadRecommendations() {
+            try {
+                const recipes = await api.getRecommendations();
+                displayRecipes(recipes, 'recommendations');
+            } catch (e) {
+                console.error('Failed to load recommendations:', e);
+            }
+        }
+
+        // Загрузка популярных
+        async function loadPopular() {
+            try {
+                const recipes = await api.searchRecipes({ sort: 'popular' });
+                displayRecipes(recipes.slice(0, 6), 'popular');
+            } catch (e) {
+                console.error('Failed to load popular:', e);
+            }
+        }
+
+        // Отображение рецептов
+        function displayRecipes(recipes, containerId) {
+            const container = document.getElementById(containerId);
+            if (!recipes || recipes.length === 0) {
+                container.innerHTML = '<p class="loading">Рецепты не найдены</p>';
+                return;
+            }
+
+            container.innerHTML = recipes.map(recipe => `
+                <div class="recipe-card" onclick="window.location.href='recipe.html?id=${recipe.id}'">
+                    ${recipe.image_url ? `<img src="${recipe.image_url}" alt="${recipe.title}">` : '<div style="height:200px;background:#ecf0f1;display:flex;align-items:center;justify-content:center;color:#7f8c8d;">Нет изображения</div>'}
+                    <div class="recipe-card-content">
+                        <h3 class="recipe-card-title">${recipe.title}</h3>
+                        <div class="recipe-card-meta">
+                            <span>⏱ ${recipe.cooking_time} мин</span>
+                            <span>${recipe.difficulty}</span>
+                            ${recipe.avg_rating ? `<span>⭐ ${recipe.avg_rating.toFixed(1)}</span>` : ''}
+                        </div>
+                        ${recipe.match_percent !== null ? `<span class="recipe-card-match">${Math.round(recipe.match_percent * 100)}% совпадение</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        checkAuth();
+    </script>
+</body>
+</html>
+
