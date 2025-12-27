@@ -6,8 +6,7 @@ import csv
 import os
 from run import create_app
 from extensions import db
-from models import Consumer, Role, Ingredient, Category, Recipe, Learning, StepLearning
-from models.recipe import Difficulty
+from models import Consumer, Role, Ingredient, Category, Recipe, Difficulty, Learning, StepLearning
 from werkzeug.security import generate_password_hash
 
 def seed_roles():

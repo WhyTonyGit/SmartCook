@@ -1,6 +1,6 @@
 from .consumer import Consumer, Role
 from .ingredient import Ingredient
-from .recipe import Recipe
+from .recipe import Recipe, Difficulty
 from .category import Category
 from .comment import Comment
 from .mark import Mark
@@ -18,6 +18,7 @@ __all__ = [
     'Role',
     'Ingredient',
     'Recipe',
+    'Difficulty',
     'Category',
     'Comment',
     'Mark',
