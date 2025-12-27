@@ -12,5 +12,7 @@ class Config:
     JWT_ALGORITHM = 'HS256'
     JWT_EXPIRATION_HOURS = 24
     
-    CORS_ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:8080').split(',')
+    # Парсим CORS_ORIGINS: split, strip, фильтруем пустые
+    cors_origins_str = os.getenv('CORS_ORIGINS', 'http://localhost:8080')
+    CORS_ORIGINS = [origin.strip() for origin in cors_origins_str.split(',') if origin.strip()]
 

@@ -10,7 +10,17 @@ def create_app():
     
     db.init_app(app)
     migrate.init_app(app, db)
-    cors.init_app(app, origins=app.config['CORS_ORIGINS'])
+    
+    # Инициализируем CORS с полной конфигурацией для всех /api/* маршрутов
+    cors.init_app(
+        app,
+        resources={r"/api/*": {
+            "origins": app.config['CORS_ORIGINS'],
+            "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "supports_credentials": False
+        }}
+    )
     
     register_routes(app)
     register_error_handlers(app)

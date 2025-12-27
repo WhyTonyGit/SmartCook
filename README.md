@@ -269,6 +269,35 @@ pytest
 - Разделение ответственности
 - Обработка ошибок через единый формат
 
+## Проверка CORS
+
+После запуска приложения можно проверить, что CORS настроен корректно:
+
+### A) Preflight запрос (OPTIONS)
+```bash
+curl -i -X OPTIONS http://localhost:5000/api/auth/register \
+  -H "Origin: http://localhost:8080" \
+  -H "Access-Control-Request-Method: POST" \
+  -H "Access-Control-Request-Headers: content-type"
+```
+
+**Ожидаемый результат:** В ответе должны быть заголовки:
+- `Access-Control-Allow-Origin: http://localhost:8080`
+- `Access-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,OPTIONS`
+- `Access-Control-Allow-Headers: Content-Type,Authorization`
+- HTTP статус: `200` или `204`
+
+### B) POST запрос с CORS заголовками
+```bash
+curl -i -X POST http://localhost:5000/api/auth/register \
+  -H "Origin: http://localhost:8080" \
+  -H "Content-Type: application/json" \
+  -d '{"username":"u","email":"u+1@gmail.com","password":"12345"}'
+```
+
+**Ожидаемый результат:** В ответе должен быть заголовок:
+- `Access-Control-Allow-Origin: http://localhost:8080`
+
 ## Примеры запросов
 
 ### Регистрация
