@@ -6,8 +6,11 @@ from exception import ValidationError
 
 bp = Blueprint('auth', __name__)
 
-@bp.route('/auth/register', methods=['POST'])
+@bp.route('/auth/register', methods=['POST', 'OPTIONS'])
 def register():
+    # OPTIONS запрос обрабатывается автоматически Flask-CORS
+    if request.method == 'OPTIONS':
+        return '', 200
     data = request.get_json()
     if not data:
         raise ValidationError("Request body is required")
@@ -25,8 +28,11 @@ def register():
         'consumer': consumer.to_dict()
     }), 201
 
-@bp.route('/auth/login', methods=['POST'])
+@bp.route('/auth/login', methods=['POST', 'OPTIONS'])
 def login():
+    # OPTIONS запрос обрабатывается автоматически Flask-CORS
+    if request.method == 'OPTIONS':
+        return '', 200
     data = request.get_json()
     if not data:
         raise ValidationError("Request body is required")

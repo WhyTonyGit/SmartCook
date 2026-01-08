@@ -1,5 +1,5 @@
 // API модуль для работы с backend
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5001/api';
 
 class API {
     constructor() {
@@ -37,16 +37,46 @@ class API {
                 headers
             });
 
-            const data = await response.json();
+            // Проверяем, является ли это CORS ошибкой
+            if (!response.ok && response.status === 0) {
+                throw new Error('CORS error: Request blocked by browser. Check server CORS configuration.');
+            }
+
+            // Пытаемся получить JSON, но обрабатываем случаи, когда ответ не JSON
+            let data;
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                data = await response.json();
+            } else {
+                const text = await response.text();
+                throw new Error(`Server returned non-JSON: ${text.substring(0, 100)}`);
+            }
 
             if (!response.ok) {
-                throw new Error(data.error?.message || `HTTP error! status: ${response.status}`);
+                // Извлекаем сообщение об ошибке из ответа
+                const errorMessage = data.error?.message || 
+                                   data.message || 
+                                   data.error || 
+                                   `HTTP error! status: ${response.status}`;
+                const error = new Error(errorMessage);
+                error.status = response.status;
+                error.data = data;
+                throw error;
             }
 
             return data;
         } catch (error) {
-            console.error('API request failed:', error);
-            throw error;
+            // Различаем network/CORS ошибки и обычные HTTP ошибки
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                console.error('Network/CORS error:', error.message);
+                throw new Error('Network error: Unable to connect to server. Check if server is running and CORS is configured.');
+            } else if (error.message.includes('CORS')) {
+                console.error('CORS error:', error.message);
+                throw error;
+            } else {
+                console.error('API request failed:', error);
+                throw error;
+            }
         }
     }
 

@@ -273,7 +273,7 @@ pytest
 
 После запуска приложения можно проверить, что CORS настроен корректно:
 
-### A) Preflight запрос (OPTIONS)
+### A) Preflight запрос (OPTIONS) - проверка регистрации
 ```bash
 curl -i -X OPTIONS http://localhost:5000/api/auth/register \
   -H "Origin: http://localhost:8080" \
@@ -287,16 +287,43 @@ curl -i -X OPTIONS http://localhost:5000/api/auth/register \
 - `Access-Control-Allow-Headers: Content-Type,Authorization`
 - HTTP статус: `200` или `204`
 
-### B) POST запрос с CORS заголовками
+**Если получаете 403:** Проверьте:
+1. Что `CORS_ORIGINS` в docker-compose.yml включает ваш origin
+2. Что Flask-CORS правильно инициализирован в `run.py`
+3. Логи backend: `docker-compose logs backend | grep OPTIONS`
+
+### B) POST запрос регистрации с CORS заголовками
 ```bash
 curl -i -X POST http://localhost:5000/api/auth/register \
   -H "Origin: http://localhost:8080" \
   -H "Content-Type: application/json" \
-  -d '{"username":"u","email":"u+1@gmail.com","password":"12345"}'
+  -d '{"username":"testuser","email":"test@example.com","password":"password123"}'
 ```
 
 **Ожидаемый результат:** В ответе должен быть заголовок:
 - `Access-Control-Allow-Origin: http://localhost:8080`
+- HTTP статус: `201 CREATED`
+- JSON с `access_token` и `consumer`
+
+### Отладка CORS проблем
+
+Если в браузере видите "Preflight response is not successful. Status code: 403":
+
+1. **Проверьте логи backend:**
+   ```bash
+   docker-compose logs backend | tail -20
+   ```
+   Должны видеть логи вида: `OPTIONS /api/auth/register - Origin: http://localhost:8080`
+
+2. **Проверьте переменную окружения:**
+   ```bash
+   docker-compose exec backend env | grep CORS_ORIGINS
+   ```
+
+3. **Проверьте, что origin в списке разрешённых:**
+   - Откройте DevTools → Network → выберите failed request
+   - Проверьте заголовок `Origin` в запросе
+   - Убедитесь, что он точно совпадает с одним из значений в `CORS_ORIGINS`
 
 ## Примеры запросов
 
