@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои отзывы - SmartCook</title>
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        .page-header {
+            padding: var(--spacing-lg) 0;
+            background: var(--color-bg);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .page-back {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--color-bg-secondary);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .comment-item {
+            background: var(--color-bg);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .comment-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            border: none;
+            background: var(--color-bg-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .comment-text-editable {
+            width: 100%;
+            min-height: 100px;
+            padding: var(--spacing-md);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .comment-save-btn {
+            margin-top: var(--spacing-sm);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-content">
+        <div class="container">
+            <div class="page-header">
+                <button class="page-back" onclick="window.history.back()">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                </button>
+                <h1 class="page-title">Мои отзывы</h1>
+            </div>
+
+            <div id="comments-list"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { api } from './js/api.js';
+        import { requireAuth } from './js/auth.js';
+        import { renderRecipeCard, renderComment } from './js/components.js';
+        import { showLoading, showEmptyState, showToast } from './js/utils.js';
+
+        if (!requireAuth()) {
+            window.location.href = 'login.html';
+        }
+
+        let currentUser = null;
+        let editingCommentId = null;
+
+        async function init() {
+            try {
+                currentUser = await api.getProfile();
+                await loadComments();
+            } catch (e) {
+                console.error('Failed to init:', e);
+            }
+        }
+
+        async function loadComments() {
+            showLoading(document.getElementById('comments-list'));
+
+            try {
+                // Получаем все рецепты, чтобы найти комментарии пользователя
+                // В реальном API должен быть эндпоинт /me/comments
+                const marks = await api.getMarks();
+                const recipeIds = marks.map(m => m.recipe_id);
+                
+                // Загружаем комментарии для каждого рецепта
+                const allComments = [];
+                for (const recipeId of recipeIds) {
+                    try {
+                        const comments = await api.getComments(recipeId);
+                        const userComments = comments.filter(c => c.consumer_id === currentUser.id);
+                        allComments.push(...userComments.map(c => ({ ...c, recipe_id: recipeId })));
+                    } catch (e) {
+                        // Пропускаем рецепты без комментариев
+                    }
+                }
+
+                displayComments(allComments);
+            } catch (error) {
+                showEmptyState(document.getElementById('comments-list'), 'Не удалось загрузить отзывы', '');
+            }
+        }
+
+        async function displayComments(comments) {
+            const container = document.getElementById('comments-list');
+            if (!comments || comments.length === 0) {
+                showEmptyState(container, 'Вы еще не оставили ни одного отзыва', '');
+                return;
+            }
+
+            // Загружаем данные рецептов
+            const recipes = await Promise.all(comments.map(c => api.getRecipe(c.recipe_id)));
+            
+            container.innerHTML = comments.map((comment, index) => {
+                const recipe = recipes[index];
+                const isEditing = editingCommentId === comment.id;
+                
+                return `
+                    <div class="comment-item">
+                        ${renderRecipeCard(recipe, {
+                            showFavorite: false,
+                            showStatus: false,
+                            onClick: `window.location.href='recipe.html?id=${recipe.id}'`
+                        })}
+                        <div class="comment-header">
+                            <div class="comment-author">
+                                <div class="comment-avatar">${(currentUser.username || 'U')[0].toUpperCase()}</div>
+                                <div>
+                                    <div class="comment-username">${currentUser.username}</div>
+                                    <div class="comment-date">${new Date(comment.created_at).toLocaleDateString('ru-RU')}</div>
+                                </div>
+                            </div>
+                            <div class="comment-actions">
+                                ${isEditing ? `
+                                    <button class="comment-action-btn" onclick="saveComment(${comment.id})" style="background: var(--color-success); color: white;">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </button>
+                                ` : `
+                                    <button class="comment-action-btn" onclick="editComment(${comment.id})">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                        </svg>
+                                    </button>
+                                    <button class="comment-action-btn" onclick="deleteComment(${comment.id})" style="background: var(--color-error); color: white;">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                        </svg>
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                        ${isEditing ? `
+                            <textarea class="comment-text-editable" id="comment-text-${comment.id}">${comment.text}</textarea>
+                            <button class="btn btn-primary comment-save-btn" onclick="saveComment(${comment.id})">Опубликовать</button>
+                        ` : `
+                            <div class="comment-text">${comment.text}</div>
+                        `}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function editComment(commentId) {
+            editingCommentId = commentId;
+            loadComments();
+        }
+
+        async function saveComment(commentId) {
+            const text = document.getElementById(`comment-text-${commentId}`).value.trim();
+            if (!text) {
+                showToast('Введите текст комментария', 'info');
+                return;
+            }
+
+            try {
+                // Находим рецепт для этого комментария
+                const marks = await api.getMarks();
+                // В реальном API должен быть способ получить recipe_id по comment_id
+                // Пока используем упрощенный подход
+                showToast('Обновление комментариев через API пока не реализовано', 'info');
+                editingCommentId = null;
+                loadComments();
+            } catch (e) {
+                showToast('Ошибка сохранения комментария', 'error');
+            }
+        }
+
+        async function deleteComment(commentId) {
+            if (!confirm('Удалить отзыв?')) return;
+
+            try {
+                await api.deleteComment(commentId);
+                showToast('Отзыв удален', 'success');
+                loadComments();
+            } catch (e) {
+                showToast('Ошибка удаления отзыва', 'error');
+            }
+        }
+
+        window.editComment = editComment;
+        window.saveComment = saveComment;
+        window.deleteComment = deleteComment;
+
+        init();
+    </script>
+
+    <script type="module">
+        import { renderBottomNav } from './js/components.js';
+        document.body.insertAdjacentHTML('beforeend', renderBottomNav('profile'));
+    </script>
+</body>
+</html>

@@ -223,3 +223,5 @@ class API {
 
 const api = new API();
 
+// Экспорт для использования в модулях
+export { api };

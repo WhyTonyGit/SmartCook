@@ -3,69 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Избранное - Recipe Finder</title>
+    <title>Избранное - SmartCook</title>
     <link rel="stylesheet" href="css/common.css">
+    <style>
+        .page-header {
+            padding: var(--spacing-lg) 0;
+            background: var(--color-bg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .page-title {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: var(--spacing-md);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="container">
-            <a href="index.html" class="logo">🍳 Recipe Finder</a>
-            <ul class="nav-links">
-                <li><a href="index.html">Главная</a></li>
-                <li><a href="favourites.html">Избранное</a></li>
-                <li><a href="history.html">История</a></li>
-                <li><a href="profile.html">Профиль</a></li>
-            </ul>
-        </nav>
-    </header>
+    <div class="page-content">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Избранное</h1>
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Поиск..." oninput="searchFavorites()">
+                    <button class="btn btn-icon" onclick="searchFavorites()">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
 
-    <div class="container">
-        <h1 style="margin-bottom: 2rem;">Избранное</h1>
-        <div id="favorites" class="recipe-grid"></div>
+            <div id="favorites" class="recipe-grid"></div>
+        </div>
     </div>
 
-    <script src="js/api.js"></script>
-    <script>
+    <script type="module">
+        import { api } from './js/api.js';
+        import { requireAuth } from './js/auth.js';
+        import { renderRecipeCard } from './js/components.js';
+        import { showLoading, showEmptyState, debounce } from './js/utils.js';
+
+        if (!requireAuth()) {
+            window.location.href = 'login.html';
+        }
+
+        let allFavorites = [];
+
         async function loadFavorites() {
-            const token = api.getToken();
-            if (!token) {
-                window.location.href = 'login.html';
-                return;
-            }
+            showLoading(document.getElementById('favorites'));
 
             try {
                 const recipes = await api.getFavorites();
+                allFavorites = recipes;
                 displayRecipes(recipes);
             } catch (error) {
-                document.getElementById('favorites').innerHTML = 
-                    `<div class="alert alert-error">${error.message}</div>`;
+                showEmptyState(document.getElementById('favorites'), 'Не удалось загрузить избранное', '');
             }
         }
 
         function displayRecipes(recipes) {
             const container = document.getElementById('favorites');
             if (!recipes || recipes.length === 0) {
-                container.innerHTML = '<p class="loading">В избранном пока ничего нет</p>';
+                showEmptyState(container, 'В избранном пока ничего нет', 'Добавьте рецепты в избранное, чтобы они отображались здесь');
                 return;
             }
 
-            container.innerHTML = recipes.map(recipe => `
-                <div class="recipe-card" onclick="window.location.href='recipe.html?id=${recipe.id}'">
-                    ${recipe.image_url ? `<img src="${recipe.image_url}" alt="${recipe.title}">` : '<div style="height:200px;background:#ecf0f1;display:flex;align-items:center;justify-content:center;color:#7f8c8d;">Нет изображения</div>'}
-                    <div class="recipe-card-content">
-                        <h3 class="recipe-card-title">${recipe.title}</h3>
-                        <div class="recipe-card-meta">
-                            <span>⏱ ${recipe.cooking_time} мин</span>
-                            <span>${recipe.difficulty}</span>
-                            ${recipe.avg_rating ? `<span>⭐ ${recipe.avg_rating.toFixed(1)}</span>` : ''}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+            container.innerHTML = recipes.map(recipe => {
+                recipe.is_favorite = true; // Все здесь - избранные
+                return renderRecipeCard(recipe, {
+                    showFavorite: true,
+                    showStatus: true,
+                    onClick: `window.location.href='recipe.html?id=${recipe.id}'`,
+                    favoriteCallback: `removeFavorite(${recipe.id}, event)`
+                });
+            }).join('');
         }
+
+        async function removeFavorite(recipeId, event) {
+            event.stopPropagation();
+            
+            if (!confirm('Удалить из избранного?')) return;
+
+            try {
+                await api.removeFavorite(recipeId);
+                allFavorites = allFavorites.filter(r => r.id !== recipeId);
+                displayRecipes(allFavorites);
+            } catch (e) {
+                console.error('Failed to remove favorite:', e);
+                alert('Ошибка удаления из избранного');
+            }
+        }
+
+        const searchDebounced = debounce(function(query) {
+            if (!query) {
+                displayRecipes(allFavorites);
+                return;
+            }
+
+            const filtered = allFavorites.filter(recipe => 
+                recipe.title.toLowerCase().includes(query.toLowerCase())
+            );
+            displayRecipes(filtered);
+        }, 300);
+
+        function searchFavorites() {
+            const query = document.getElementById('search-input').value;
+            searchDebounced(query);
+        }
+
+        window.removeFavorite = removeFavorite;
+        window.searchFavorites = searchFavorites;
 
         loadFavorites();
     </script>
+
+    <script type="module">
+        import { renderBottomNav } from './js/components.js';
+        document.body.insertAdjacentHTML('beforeend', renderBottomNav('favorites'));
+    </script>
 </body>
 </html>
-

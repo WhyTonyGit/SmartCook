@@ -3,342 +3,496 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Найти рецепт - Recipe Finder</title>
+    <title>Создать рецепт - SmartCook</title>
     <link rel="stylesheet" href="css/common.css">
     <style>
-        .filters {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .page-header {
+            padding: var(--spacing-lg) 0;
+            background: var(--color-bg);
+            margin-bottom: var(--spacing-md);
         }
 
-        .filters-grid {
+        .page-title {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .page-subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .search-section {
+            background: var(--color-bg);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: var(--spacing-md);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+        }
+
+        .popular-ingredients {
+            margin-top: var(--spacing-lg);
+        }
+
+        .popular-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .ingredient-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: var(--spacing-md);
         }
 
-        .ingredient-input {
-            position: relative;
+        .ingredient-card {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .ingredient-card:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .ingredient-card.selected {
+            border-color: var(--color-primary);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .ingredient-card-image {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-md);
+            object-fit: cover;
+            margin: 0 auto var(--spacing-sm);
+            background: var(--color-bg-tertiary);
+        }
+
+        .ingredient-card-name {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .selected-ingredients {
+            margin-top: var(--spacing-lg);
+        }
+
+        .selected-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-sm);
+        }
+
+        .recipe-section {
+            margin-top: var(--spacing-xl);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .section-icon {
+            font-size: var(--font-size-xl);
+        }
+
+        .section-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
         }
 
         .ingredient-suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-top: none;
-            border-radius: 0 0 4px 4px;
-            max-height: 200px;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            max-height: 300px;
             overflow-y: auto;
-            z-index: 10;
+            margin-top: var(--spacing-sm);
             display: none;
         }
 
-        .suggestion-item {
-            padding: 0.5rem;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-        }
-
-        .suggestion-item:hover {
-            background: #f5f5f5;
-        }
-
-        .ingredient-tags {
+        .ingredient-suggestion {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .ingredient-tag {
-            display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 0.75rem;
-            background: #3498db;
-            color: white;
-            border-radius: 20px;
-            font-size: 0.875rem;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+            border-bottom: 1px solid var(--color-border-light);
         }
 
-        .ingredient-tag button {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 1rem;
-            padding: 0;
-            width: 20px;
-            height: 20px;
+        .ingredient-suggestion:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .ingredient-suggestion-image {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            background: var(--color-bg-tertiary);
+        }
+
+        .ingredient-suggestion-name {
+            flex: 1;
+            font-size: var(--font-size-sm);
         }
     </style>
 </head>
 <body>
-    <header>
-        <nav class="container">
-            <a href="index.html" class="logo">🍳 Recipe Finder</a>
-            <ul class="nav-links">
-                <li><a href="index.html">Главная</a></li>
-                <li><a href="find-recipe.html">Найти рецепт</a></li>
-                <li><a href="categories.html">Категории</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="container">
-        <h1 style="margin-bottom: 2rem;">Найти рецепт</h1>
-
-        <div class="filters">
-            <div class="form-group">
-                <label>Ингредиенты (через запятую или выберите из списка)</label>
-                <div class="ingredient-input">
-                    <input type="text" id="ingredients-input" placeholder="Например: курица, картофель, лук">
-                    <div class="ingredient-suggestions" id="suggestions"></div>
-                </div>
-                <div class="ingredient-tags" id="ingredient-tags"></div>
+    <div class="page-content">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Создать рецепт</h1>
+                <p class="page-subtitle">Найдите ингредиенты или выберите из предложенного списка</p>
             </div>
 
-            <div class="filters-grid">
-                <div class="form-group">
-                    <label>Название</label>
-                    <input type="text" id="query" placeholder="Поиск по названию">
+            <div class="search-section">
+                <div class="search-bar">
+                    <input type="text" id="ingredient-search" placeholder="Поиск..." autocomplete="off">
+                    <button class="btn btn-icon" onclick="searchIngredients()">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label>Макс. время (мин)</label>
-                    <input type="number" id="maxTime" min="0">
+
+                <div class="ingredient-suggestions" id="suggestions"></div>
+
+                <div class="popular-ingredients">
+                    <h3 class="popular-title">Популярные ингредиенты</h3>
+                    <div class="ingredient-grid" id="popular-ingredients"></div>
                 </div>
-                <div class="form-group">
-                    <label>Сложность</label>
-                    <select id="difficulty">
-                        <option value="">Любая</option>
-                        <option value="easy">Легкая</option>
-                        <option value="medium">Средняя</option>
-                        <option value="hard">Сложная</option>
-                    </select>
+
+                <div class="selected-ingredients">
+                    <h3 class="popular-title">Выбранные ингредиенты</h3>
+                    <div class="selected-tags" id="selected-tags"></div>
                 </div>
-                <div class="form-group">
-                    <label>Категория</label>
-                    <select id="categoryId">
-                        <option value="">Все</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Мин. совпадение</label>
-                    <input type="number" id="minMatch" min="0" max="1" step="0.1" value="0">
-                </div>
-                <div class="form-group">
-                    <label>Сортировка</label>
-                    <select id="sort">
-                        <option value="match">По совпадению</option>
-                        <option value="rating">По рейтингу</option>
-                        <option value="time">По времени</option>
-                        <option value="popular">По популярности</option>
-                    </select>
-                </div>
+
+                <button class="btn btn-primary" onclick="searchRecipes()" style="width: 100%; margin-top: var(--spacing-lg);" id="search-btn">
+                    Готово
+                </button>
             </div>
 
-            <button class="btn" onclick="searchRecipes()">Найти рецепты</button>
+            <!-- Рецепты: Готово сейчас -->
+            <div class="recipe-section" id="available-section" style="display: none;">
+                <div class="section-header">
+                    <span class="section-icon">✓</span>
+                    <h2 class="section-title">Готово сейчас</h2>
+                </div>
+                <div class="recipe-grid" id="available-recipes"></div>
+            </div>
+
+            <!-- Рецепты: Немного докупить -->
+            <div class="recipe-section" id="missing-section" style="display: none;">
+                <div class="section-header">
+                    <span class="section-icon">!</span>
+                    <h2 class="section-title">Немного докупить</h2>
+                </div>
+                <div class="recipe-grid" id="missing-recipes"></div>
+            </div>
         </div>
-
-        <div id="results" class="recipe-grid"></div>
     </div>
 
-    <script src="js/api.js"></script>
-    <script>
+    <script type="module">
+        import { api } from './js/api.js';
+        import { renderRecipeCard } from './js/components.js';
+        import { debounce, showLoading, showEmptyState, showToast } from './js/utils.js';
+
         let selectedIngredients = [];
         let allIngredients = [];
-        let categories = [];
+        let popularIngredients = [];
+        let favorites = new Set();
 
-        // Загрузка категорий
-        async function loadCategories() {
+        // Загрузка популярных ингредиентов
+        async function loadPopularIngredients() {
             try {
-                categories = await api.getCategories();
-                const select = document.getElementById('categoryId');
-                categories.forEach(cat => {
-                    const option = document.createElement('option');
-                    option.value = cat.id;
-                    option.textContent = cat.name;
-                    select.appendChild(option);
-                });
+                const ingredients = await api.getIngredients();
+                popularIngredients = ingredients.slice(0, 12); // Первые 12 как популярные
+                renderPopularIngredients();
             } catch (e) {
-                console.error('Failed to load categories:', e);
+                console.error('Failed to load popular ingredients:', e);
             }
         }
 
-        // Автокомплит ингредиентов
-        let suggestionTimeout;
-        document.getElementById('ingredients-input').addEventListener('input', (e) => {
-            clearTimeout(suggestionTimeout);
-            const query = e.target.value.trim();
-            
-            if (query.length < 2) {
-                document.getElementById('suggestions').style.display = 'none';
+        function renderPopularIngredients() {
+            const container = document.getElementById('popular-ingredients');
+            container.innerHTML = popularIngredients.map(ing => {
+                const imageUrl = ing.image_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="60" height="60"%3E%3Crect fill="%23F3F4F6" width="60" height="60"/%3E%3C/svg%3E';
+                const isSelected = selectedIngredients.includes(ing.id);
+                return `
+                    <div class="ingredient-card ${isSelected ? 'selected' : ''}" onclick="toggleIngredient(${ing.id}, '${ing.name.replace(/'/g, "\\'")}')">
+                        <img src="${imageUrl}" alt="${ing.name}" class="ingredient-card-image">
+                        <div class="ingredient-card-name">${ing.name}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderSelectedTags() {
+            const container = document.getElementById('selected-tags');
+            if (selectedIngredients.length === 0) {
+                container.innerHTML = '<span style="color: var(--color-text-light);">Выберите ингредиенты</span>';
                 return;
             }
 
-            suggestionTimeout = setTimeout(async () => {
-                try {
-                    const ingredients = await api.getIngredients(query);
-                    showSuggestions(ingredients);
-                } catch (e) {
-                    console.error('Failed to load suggestions:', e);
-                }
-            }, 300);
-        });
-
-        function showSuggestions(ingredients) {
-            const container = document.getElementById('suggestions');
-            if (ingredients.length === 0) {
-                container.style.display = 'none';
-                return;
-            }
-
-            container.innerHTML = ingredients.map(ing => `
-                <div class="suggestion-item" onclick="addIngredient(${ing.id}, '${ing.name}')">
+            // Получаем имена выбранных ингредиентов
+            const selected = allIngredients.filter(ing => selectedIngredients.includes(ing.id));
+            container.innerHTML = selected.map(ing => `
+                <span class="tag">
                     ${ing.name}
-                </div>
-            `).join('');
-            container.style.display = 'block';
-        }
-
-        function addIngredient(id, name) {
-            if (!selectedIngredients.find(ing => ing.id === id)) {
-                selectedIngredients.push({ id, name });
-                updateIngredientTags();
-            }
-            document.getElementById('ingredients-input').value = '';
-            document.getElementById('suggestions').style.display = 'none';
-        }
-
-        function removeIngredient(id) {
-            selectedIngredients = selectedIngredients.filter(ing => ing.id !== id);
-            updateIngredientTags();
-        }
-
-        function updateIngredientTags() {
-            const container = document.getElementById('ingredient-tags');
-            container.innerHTML = selectedIngredients.map(ing => `
-                <span class="ingredient-tag">
-                    ${ing.name}
-                    <button onclick="removeIngredient(${ing.id})">×</button>
+                    <span class="tag-remove" onclick="removeIngredient(${ing.id})">×</span>
                 </span>
             `).join('');
         }
 
-        // Обработка ввода через запятую
-        document.getElementById('ingredients-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' || e.key === ',') {
-                e.preventDefault();
-                const value = e.target.value.trim();
-                if (value) {
-                    // Пытаемся найти ингредиент
-                    const found = allIngredients.find(ing => 
-                        ing.name.toLowerCase() === value.toLowerCase()
-                    );
-                    if (found) {
-                        addIngredient(found.id, found.name);
-                    } else {
-                        // Добавляем как текст (будет разрешён на сервере)
-                        if (!selectedIngredients.find(ing => ing.name === value)) {
-                            selectedIngredients.push({ id: null, name: value });
-                            updateIngredientTags();
-                        }
-                    }
-                    e.target.value = '';
-                }
+        function toggleIngredient(id, name) {
+            const index = selectedIngredients.indexOf(id);
+            if (index > -1) {
+                selectedIngredients.splice(index, 1);
+            } else {
+                selectedIngredients.push(id);
             }
-        });
-
-        // Поиск рецептов
-        async function searchRecipes() {
-            const params = {
-                query: document.getElementById('query').value || undefined,
-                ingredients: selectedIngredients.map(ing => ing.name).join(','),
-                minMatch: parseFloat(document.getElementById('minMatch').value) || 0,
-                maxTime: document.getElementById('maxTime').value || undefined,
-                difficulty: document.getElementById('difficulty').value || undefined,
-                categoryId: document.getElementById('categoryId').value || undefined,
-                sort: document.getElementById('sort').value || 'match'
-            };
-
-            try {
-                const recipes = await api.searchRecipes(params);
-                displayRecipes(recipes);
-            } catch (error) {
-                document.getElementById('results').innerHTML = 
-                    `<div class="alert alert-error">${error.message}</div>`;
-            }
+            renderSelectedTags();
+            renderPopularIngredients();
         }
 
-        function displayRecipes(recipes) {
-            const container = document.getElementById('results');
-            if (!recipes || recipes.length === 0) {
-                container.innerHTML = '<p class="loading">Рецепты не найдены</p>';
+        function removeIngredient(id) {
+            selectedIngredients = selectedIngredients.filter(ingId => ingId !== id);
+            renderSelectedTags();
+            renderPopularIngredients();
+        }
+
+        // Поиск ингредиентов
+        const searchDebounced = debounce(async function(query) {
+            if (!query || query.length < 2) {
+                document.getElementById('suggestions').style.display = 'none';
                 return;
             }
 
-            container.innerHTML = recipes.map(recipe => `
-                <div class="recipe-card" onclick="window.location.href='recipe.html?id=${recipe.id}'">
-                    ${recipe.image_url ? `<img src="${recipe.image_url}" alt="${recipe.title}">` : '<div style="height:200px;background:#ecf0f1;display:flex;align-items:center;justify-content:center;color:#7f8c8d;">Нет изображения</div>'}
-                    <div class="recipe-card-content">
-                        <h3 class="recipe-card-title">${recipe.title}</h3>
-                        <div class="recipe-card-meta">
-                            <span>⏱ ${recipe.cooking_time} мин</span>
-                            <span>${recipe.difficulty}</span>
-                            ${recipe.avg_rating ? `<span>⭐ ${recipe.avg_rating.toFixed(1)}</span>` : ''}
-                        </div>
-                        ${recipe.match_percent !== null ? `<span class="recipe-card-match">${Math.round(recipe.match_percent * 100)}% совпадение</span>` : ''}
-                        ${recipe.missing_ingredients && recipe.missing_ingredients.length > 0 ? 
-                            `<div class="tags" style="margin-top:0.5rem;">
-                                <small>Отсутствует: ${recipe.missing_ingredients.map(ing => ing.name).join(', ')}</small>
-                            </div>` : ''}
+            try {
+                const ingredients = await api.getIngredients(query);
+                showSuggestions(ingredients);
+            } catch (e) {
+                console.error('Failed to search ingredients:', e);
+            }
+        }, 300);
+
+        document.getElementById('ingredient-search').addEventListener('input', (e) => {
+            searchDebounced(e.target.value);
+        });
+
+        function showSuggestions(ingredients) {
+            const container = document.getElementById('suggestions');
+            const filtered = ingredients.filter(ing => !selectedIngredients.includes(ing.id));
+            
+            if (filtered.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.innerHTML = filtered.map(ing => {
+                const imageUrl = ing.image_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="40" height="40"%3E%3Crect fill="%23F3F4F6" width="40" height="40"/%3E%3C/svg%3E';
+                return `
+                    <div class="ingredient-suggestion" onclick="addIngredient(${ing.id}, '${ing.name.replace(/'/g, "\\'")}')">
+                        <img src="${imageUrl}" alt="${ing.name}" class="ingredient-suggestion-image">
+                        <span class="ingredient-suggestion-name">${ing.name}</span>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
+            container.style.display = 'block';
         }
 
-        // Загрузка при инициализации
-        async function init() {
-            await loadCategories();
+        function addIngredient(id, name) {
+            if (!selectedIngredients.includes(id)) {
+                selectedIngredients.push(id);
+                renderSelectedTags();
+                renderPopularIngredients();
+            }
+            document.getElementById('ingredient-search').value = '';
+            document.getElementById('suggestions').style.display = 'none';
+        }
+
+        async function searchRecipes() {
+            if (selectedIngredients.length === 0) {
+                showToast('Выберите хотя бы один ингредиент', 'info');
+                return;
+            }
+
+            const searchBtn = document.getElementById('search-btn');
+            searchBtn.disabled = true;
+            searchBtn.textContent = 'Поиск...';
+
+            try {
+                // Получаем имена ингредиентов для поиска
+                const ingredients = await api.getIngredients();
+                const selected = ingredients.filter(ing => selectedIngredients.includes(ing.id));
+                const ingredientNames = selected.map(ing => ing.name).join(',');
+
+                const recipes = await api.searchRecipes({
+                    ingredients: ingredientNames,
+                    minMatch: 0.3,
+                    sort: 'match'
+                });
+
+                // Разделяем на "готово" и "нужно докупить"
+                const available = recipes.filter(r => r.match_percent >= 1.0 || (!r.missing_ingredients || r.missing_ingredients.length === 0));
+                const missing = recipes.filter(r => r.match_percent < 1.0 && r.missing_ingredients && r.missing_ingredients.length > 0);
+
+                displayRecipes(available, 'available-recipes', available.length > 0);
+                displayRecipes(missing, 'missing-recipes', missing.length > 0);
+
+                document.getElementById('available-section').style.display = available.length > 0 ? 'block' : 'none';
+                document.getElementById('missing-section').style.display = missing.length > 0 ? 'block' : 'none';
+
+                // Прокрутка к результатам
+                if (available.length > 0 || missing.length > 0) {
+                    document.getElementById('available-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            } catch (e) {
+                console.error('Failed to search recipes:', e);
+                showToast('Ошибка поиска рецептов', 'error');
+            } finally {
+                searchBtn.disabled = false;
+                searchBtn.textContent = 'Готово';
+            }
+        }
+
+        async function loadFavorites() {
+            try {
+                const token = api.getToken();
+                if (token) {
+                    const favs = await api.getFavorites();
+                    favorites = new Set(favs.map(r => r.id));
+                }
+            } catch (e) {
+                // Не критично
+            }
+        }
+
+        function displayRecipes(recipes, containerId, showSection) {
+            const container = document.getElementById(containerId);
             
-            // Загружаем все ингредиенты для автокомплита
+            if (!recipes || recipes.length === 0) {
+                showEmptyState(container, 'Рецепты не найдены', 'Попробуйте выбрать другие ингредиенты');
+                return;
+            }
+
+            container.innerHTML = recipes.map(recipe => {
+                recipe.is_favorite = favorites.has(recipe.id);
+                return renderRecipeCard(recipe, {
+                    showFavorite: true,
+                    showStatus: true,
+                    onClick: `window.location.href='recipe.html?id=${recipe.id}'`,
+                    favoriteCallback: `toggleFavorite(${recipe.id}, event)`
+                });
+            }).join('');
+        }
+
+        async function toggleFavorite(recipeId, event) {
+            event.stopPropagation();
+            const card = event.target.closest('.recipe-card');
+            const favoriteBtn = card.querySelector('.recipe-card-favorite');
+            
+            try {
+                if (favorites.has(recipeId)) {
+                    await api.removeFavorite(recipeId);
+                    favorites.delete(recipeId);
+                    favoriteBtn.classList.remove('active');
+                    favoriteBtn.querySelector('svg path').setAttribute('d', 'M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z');
+                } else {
+                    await api.addFavorite(recipeId);
+                    favorites.add(recipeId);
+                    favoriteBtn.classList.add('active');
+                    favoriteBtn.querySelector('svg path').setAttribute('d', 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+                }
+            } catch (e) {
+                console.error('Failed to toggle favorite:', e);
+                showToast('Не удалось обновить избранное', 'error');
+            }
+        }
+
+        function searchIngredients() {
+            const query = document.getElementById('ingredient-search').value;
+            if (query) {
+                searchDebounced(query);
+            }
+        }
+
+        // Загрузка ингредиентов из URL параметров
+        function loadFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const ingredientsParam = params.get('ingredients');
+            if (ingredientsParam) {
+                const names = ingredientsParam.split(',').map(n => n.trim());
+                // Найдем ID ингредиентов по именам
+                api.getIngredients().then(ingredients => {
+                    allIngredients = ingredients;
+                    const found = ingredients.filter(ing => names.includes(ing.name));
+                    selectedIngredients = found.map(ing => ing.id);
+                    renderSelectedTags();
+                    renderPopularIngredients();
+                    if (selectedIngredients.length > 0) {
+                        searchRecipes();
+                    }
+                });
+            }
+        }
+
+        window.toggleIngredient = toggleIngredient;
+        window.removeIngredient = removeIngredient;
+        window.addIngredient = addIngredient;
+        window.searchRecipes = searchRecipes;
+        window.searchIngredients = searchIngredients;
+        window.toggleFavorite = toggleFavorite;
+
+        // Инициализация
+        async function init() {
+            await loadAllIngredients();
+            await loadPopularIngredients();
+            await loadFavorites();
+            loadFromURL();
+        }
+
+        async function loadAllIngredients() {
             try {
                 allIngredients = await api.getIngredients();
             } catch (e) {
                 console.error('Failed to load ingredients:', e);
             }
-
-            // Проверяем параметры URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const ingredientsParam = urlParams.get('ingredients');
-            if (ingredientsParam) {
-                const names = ingredientsParam.split(',').map(n => n.trim());
-                document.getElementById('ingredients-input').value = ingredientsParam;
-                // Пытаемся найти ингредиенты
-                names.forEach(name => {
-                    const found = allIngredients.find(ing => 
-                        ing.name.toLowerCase() === name.toLowerCase()
-                    );
-                    if (found) {
-                        addIngredient(found.id, found.name);
-                    } else {
-                        selectedIngredients.push({ id: null, name });
-                    }
-                });
-                updateIngredientTags();
-                searchRecipes();
-            }
         }
 
         init();
     </script>
+
+    <script type="module">
+        import { renderBottomNav } from './js/components.js';
+        document.body.insertAdjacentHTML('beforeend', renderBottomNav('search'));
+    </script>
 </body>
 </html>
-

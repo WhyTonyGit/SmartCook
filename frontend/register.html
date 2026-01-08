@@ -3,81 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация - Recipe Finder</title>
+    <title>Рады приветствовать! - SmartCook</title>
     <link rel="stylesheet" href="css/common.css">
     <style>
+        body {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md);
+        }
+
         .auth-container {
-            max-width: 400px;
-            margin: 4rem auto;
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .auth-container h1 {
-            text-align: center;
-            margin-bottom: 2rem;
-            color: #2c3e50;
-        }
-
-        .auth-container button {
             width: 100%;
+            max-width: 400px;
+            background: var(--color-bg);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
-        .auth-container p {
+        .auth-header {
             text-align: center;
-            margin-top: 1rem;
+            margin-bottom: var(--spacing-xl);
         }
 
-        .auth-container a {
-            color: #3498db;
+        .auth-title {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-text);
+        }
+
+        .auth-subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            background: var(--color-bg);
+            min-height: 48px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: var(--spacing-md);
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            margin-top: var(--spacing-md);
+            min-height: 48px;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-dark);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .social-login {
+            margin-top: var(--spacing-xl);
+            text-align: center;
+        }
+
+        .social-login-title {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+        }
+
+        .social-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            background: var(--color-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .social-btn:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: var(--spacing-xl);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .auth-footer a {
+            color: var(--color-primary);
             text-decoration: none;
+            font-weight: var(--font-weight-medium);
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        #alert {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .password-match {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+            margin-top: var(--spacing-xs);
+        }
+
+        .password-match.error {
+            color: var(--color-error);
+        }
+
+        .password-match.success {
+            color: var(--color-success);
         }
     </style>
 </head>
 <body>
-    <header>
-        <nav class="container">
-            <a href="index.html" class="logo">🍳 Recipe Finder</a>
-            <ul class="nav-links">
-                <li><a href="index.html">Главная</a></li>
-                <li><a href="login.html">Войти</a></li>
-            </ul>
-        </nav>
-    </header>
-
     <div class="auth-container">
-        <h1>Регистрация</h1>
+        <div class="auth-header">
+            <h1 class="auth-title">Рады приветствовать!</h1>
+            <p class="auth-subtitle">Укажите ваши данные для регистрации и настройте свои предпочтения</p>
+        </div>
+
         <div id="alert"></div>
+
         <form id="register-form" onsubmit="handleRegister(event)">
             <div class="form-group">
-                <label>Имя пользователя</label>
-                <input type="text" id="username" required>
+                <input type="email" id="email" placeholder="Введите email или номер телефона" required>
             </div>
             <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="email" required>
+                <input type="text" id="username" placeholder="Как к вам обращаться?" required>
             </div>
             <div class="form-group">
-                <label>Телефон (необязательно)</label>
-                <input type="tel" id="phone">
+                <input type="tel" id="phone" placeholder="Телефон (необязательно)">
             </div>
             <div class="form-group">
-                <label>Пароль</label>
-                <input type="password" id="password" required>
+                <input type="password" id="password" placeholder="Введите пароль" required minlength="6">
             </div>
-            <button type="submit" class="btn">Зарегистрироваться</button>
+            <div class="form-group">
+                <input type="password" id="confirmPassword" placeholder="Подтвердите пароль" required>
+                <div id="password-match" class="password-match"></div>
+            </div>
+            <button type="submit" class="btn-primary" id="submit-btn">Продолжить</button>
         </form>
-        <p>Уже есть аккаунт? <a href="login.html">Войти</a></p>
+
+        <div class="social-login">
+            <p class="social-login-title">Войти с помощью</p>
+            <div class="social-buttons">
+                <button class="social-btn" onclick="socialLogin('google')" title="Google">
+                    <span style="font-size: 24px; font-weight: bold; color: #4285F4;">G</span>
+                </button>
+                <button class="social-btn" onclick="socialLogin('yandex')" title="Yandex">
+                    <span style="font-size: 24px; font-weight: bold; color: #FC3F1D;">Я</span>
+                </button>
+                <button class="social-btn" onclick="socialLogin('vk')" title="VKontakte">
+                    <span style="font-size: 20px; font-weight: bold; color: #0077FF;">VK</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="auth-footer">
+            <p>Уже есть аккаунт? <a href="login.html">Войти</a></p>
+        </div>
     </div>
 
-    <script src="js/api.js"></script>
-    <script>
+    <script type="module">
+        import { api } from './js/api.js';
+        import { showToast } from './js/utils.js';
+
         function showAlert(message, type = 'error') {
             const alert = document.getElementById('alert');
+            if (!message) {
+                alert.innerHTML = '';
+                return;
+            }
             alert.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
         }
+
+        // Проверка совпадения паролей
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirm = this.value;
+            const matchEl = document.getElementById('password-match');
+            
+            if (confirm.length === 0) {
+                matchEl.textContent = '';
+                matchEl.className = 'password-match';
+                return;
+            }
+            
+            if (password === confirm) {
+                matchEl.textContent = '✓ Пароли совпадают';
+                matchEl.className = 'password-match success';
+            } else {
+                matchEl.textContent = '✗ Пароли не совпадают';
+                matchEl.className = 'password-match error';
+            }
+        });
 
         async function handleRegister(event) {
             event.preventDefault();
@@ -85,17 +248,45 @@
             const email = document.getElementById('email').value;
             const phone = document.getElementById('phone').value;
             const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const submitBtn = document.getElementById('submit-btn');
+
+            // Валидация
+            if (password !== confirmPassword) {
+                showAlert('Пароли не совпадают');
+                return;
+            }
+
+            if (password.length < 6) {
+                showAlert('Пароль должен содержать минимум 6 символов');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Регистрация...';
+            showAlert('');
 
             try {
-                await api.register(username, email, phone || null, password);
-                showAlert('Регистрация успешна! Перенаправление...', 'success');
+                const result = await api.register(username, email, phone || null, password);
+                showToast('Регистрация успешна!', 'success');
+                // После регистрации переходим на страницу выбора исключенных ингредиентов
                 setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 1500);
+                    window.location.href = 'preferences.html';
+                }, 1000);
             } catch (error) {
-                showAlert(error.message || 'Ошибка регистрации');
+                showAlert(error.message || 'Ошибка регистрации. Проверьте данные и попробуйте снова.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Продолжить';
             }
         }
+
+        function socialLogin(provider) {
+            showToast('Социальный вход пока не реализован', 'info');
+            // TODO: Реализовать OAuth интеграцию
+        }
+
+        window.handleRegister = handleRegister;
+        window.socialLogin = socialLogin;
     </script>
 </body>
 </html>

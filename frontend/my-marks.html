@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои оценки - SmartCook</title>
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        .page-header {
+            padding: var(--spacing-lg) 0;
+            background: var(--color-bg);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .page-back {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--color-bg-secondary);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .mark-item {
+            background: var(--color-bg);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .mark-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .mark-user {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .mark-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            background: var(--color-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-sm);
+        }
+
+        .mark-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .mark-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            border: none;
+            background: var(--color-bg-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mark-rating {
+            display: flex;
+            gap: 2px;
+            margin-top: var(--spacing-sm);
+        }
+
+        .mark-rating.editing {
+            cursor: pointer;
+        }
+
+        .mark-star {
+            font-size: var(--font-size-xl);
+            color: var(--color-warning);
+            cursor: pointer;
+        }
+
+        .mark-star.empty {
+            color: var(--color-border);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-content">
+        <div class="container">
+            <div class="page-header">
+                <button class="page-back" onclick="window.history.back()">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                </button>
+                <h1 class="page-title">Мои оценки</h1>
+            </div>
+
+            <div id="marks-list"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { api } from './js/api.js';
+        import { requireAuth } from './js/auth.js';
+        import { renderRecipeCard } from './js/components.js';
+        import { showLoading, showEmptyState } from './js/utils.js';
+
+        if (!requireAuth()) {
+            window.location.href = 'login.html';
+        }
+
+        let currentUser = null;
+        let editingMarkId = null;
+
+        async function init() {
+            try {
+                currentUser = await api.getProfile();
+                await loadMarks();
+            } catch (e) {
+                console.error('Failed to init:', e);
+            }
+        }
+
+        async function loadMarks() {
+            showLoading(document.getElementById('marks-list'));
+
+            try {
+                const marks = await api.getMarks();
+                displayMarks(marks);
+            } catch (error) {
+                showEmptyState(document.getElementById('marks-list'), 'Не удалось загрузить оценки', '');
+            }
+        }
+
+        async function displayMarks(marks) {
+            const container = document.getElementById('marks-list');
+            if (!marks || marks.length === 0) {
+                showEmptyState(container, 'Вы еще не оценили ни одного рецепта', '');
+                return;
+            }
+
+            // Загружаем данные рецептов
+            const recipes = await Promise.all(marks.map(mark => api.getRecipe(mark.recipe_id)));
+            
+            container.innerHTML = recipes.map((recipe, index) => {
+                const mark = marks[index];
+                return `
+                    <div class="mark-item">
+                        ${renderRecipeCard(recipe, {
+                            showFavorite: false,
+                            showStatus: false,
+                            onClick: `window.location.href='recipe.html?id=${recipe.id}'`
+                        })}
+                        <div class="mark-header">
+                            <div class="mark-user">
+                                <div class="mark-avatar">${(currentUser.username || 'U')[0].toUpperCase()}</div>
+                                <div>
+                                    <div style="font-weight: var(--font-weight-semibold);">${currentUser.username}</div>
+                                </div>
+                            </div>
+                            <div class="mark-actions">
+                                ${editingMarkId === mark.id ? `
+                                    <button class="mark-action-btn" onclick="saveMark(${mark.id}, ${mark.value})" style="background: var(--color-success); color: white;">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    </button>
+                                ` : `
+                                    <button class="mark-action-btn" onclick="editMark(${mark.id})">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                        </svg>
+                                    </button>
+                                    <button class="mark-action-btn" onclick="deleteMark(${mark.id})" style="background: var(--color-error); color: white;">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                        </svg>
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                        <div class="mark-rating ${editingMarkId === mark.id ? 'editing' : ''}" id="rating-${mark.id}">
+                            ${Array(5).fill(0).map((_, i) => `
+                                <span class="mark-star ${i < mark.value ? '' : 'empty'}" 
+                                      onclick="${editingMarkId === mark.id ? `setMarkValue(${mark.id}, ${i + 1})` : ''}">⭐</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function editMark(markId) {
+            editingMarkId = markId;
+            loadMarks();
+        }
+
+        async function setMarkValue(markId, value) {
+            try {
+                const mark = (await api.getMarks()).find(m => m.id === markId);
+                if (mark) {
+                    await api.upsertMark(mark.recipe_id, value);
+                    editingMarkId = null;
+                    loadMarks();
+                }
+            } catch (e) {
+                console.error('Failed to update mark:', e);
+            }
+        }
+
+        async function saveMark(markId, currentValue) {
+            editingMarkId = null;
+            loadMarks();
+        }
+
+        async function deleteMark(markId) {
+            if (!confirm('Удалить оценку?')) return;
+
+            try {
+                const mark = (await api.getMarks()).find(m => m.id === markId);
+                if (mark) {
+                    // API может не поддерживать удаление, тогда просто обновим на 0 или пропустим
+                    await api.upsertMark(mark.recipe_id, 0);
+                    loadMarks();
+                }
+            } catch (e) {
+                console.error('Failed to delete mark:', e);
+            }
+        }
+
+        window.editMark = editMark;
+        window.setMarkValue = setMarkValue;
+        window.saveMark = saveMark;
+        window.deleteMark = deleteMark;
+
+        init();
+    </script>
+
+    <script type="module">
+        import { renderBottomNav } from './js/components.js';
+        document.body.insertAdjacentHTML('beforeend', renderBottomNav('profile'));
+    </script>
+</body>
+</html>

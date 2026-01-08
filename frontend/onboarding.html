@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добро пожаловать - SmartCook</title>
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        .onboarding {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .onboarding-slide {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: var(--spacing-xl);
+            text-align: center;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .onboarding-slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            position: relative;
+        }
+
+        .onboarding-icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .onboarding-title {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .onboarding-description {
+            font-size: var(--font-size-lg);
+            opacity: 0.9;
+            max-width: 300px;
+            line-height: 1.6;
+        }
+
+        .onboarding-nav {
+            position: fixed;
+            bottom: var(--spacing-xl);
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--spacing-xl);
+            z-index: 10;
+        }
+
+        .onboarding-dots {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .onboarding-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.4);
+            transition: all var(--transition-base);
+        }
+
+        .onboarding-dot.active {
+            background: white;
+            width: 24px;
+        }
+
+        .onboarding-arrow {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            font-size: var(--font-size-xl);
+        }
+
+        .onboarding-arrow:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .onboarding-arrow:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .onboarding-skip {
+            position: fixed;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            z-index: 10;
+        }
+
+        .onboarding-skip:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="onboarding">
+        <button class="onboarding-skip" onclick="skipOnboarding()">Пропустить</button>
+
+        <!-- Слайд 1 -->
+        <div class="onboarding-slide active">
+            <div class="onboarding-icon">👤</div>
+            <h1 class="onboarding-title">Расскажи о себе</h1>
+            <p class="onboarding-description">Настрой профиль под себя. Укажи свои предпочтения и аллергии</p>
+        </div>
+
+        <!-- Слайд 2 -->
+        <div class="onboarding-slide">
+            <div class="onboarding-icon">🥘</div>
+            <h1 class="onboarding-title">Выберите продукты</h1>
+            <p class="onboarding-description">Покопайтесь в холодильнике и выберите продукты, из которых хотите сегодня приготовить блюдо</p>
+        </div>
+
+        <!-- Слайд 3 -->
+        <div class="onboarding-slide">
+            <div class="onboarding-icon">🔍</div>
+            <h1 class="onboarding-title">Смотрите найденные рецепты</h1>
+            <p class="onboarding-description">Мы нашли что-то подходящее вам! Изучите предложенные варианты, выберите лучший и наслаждайтесь вкусом</p>
+        </div>
+
+        <!-- Слайд 4 -->
+        <div class="onboarding-slide">
+            <div class="onboarding-icon">⭐</div>
+            <h1 class="onboarding-title">Изучайте популярные и любимые всеми рецепты</h1>
+            <p class="onboarding-description">Мы собрали лучшие блюда и способы их приготовления для вас в отдельной подборке. Анализируйте и добавляйте в избранное!</p>
+        </div>
+
+        <div class="onboarding-nav">
+            <button class="onboarding-arrow" id="prev-btn" onclick="prevSlide()" disabled>‹</button>
+            <div class="onboarding-dots" id="dots"></div>
+            <button class="onboarding-arrow" id="next-btn" onclick="nextSlide()">›</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.onboarding-slide');
+        const totalSlides = slides.length;
+
+        function initDots() {
+            const dotsContainer = document.getElementById('dots');
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = `onboarding-dot ${i === 0 ? 'active' : ''}`;
+                dot.onclick = () => goToSlide(i);
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentSlide);
+            });
+
+            const dots = document.querySelectorAll('.onboarding-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlides();
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlides();
+            } else {
+                completeOnboarding();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlides();
+            }
+        }
+
+        function skipOnboarding() {
+            completeOnboarding();
+        }
+
+        function completeOnboarding() {
+            localStorage.setItem('onboarding_done', 'true');
+            // Проверяем, авторизован ли пользователь
+            const token = localStorage.getItem('access_token');
+            if (token) {
+                window.location.href = 'index.html';
+            } else {
+                window.location.href = 'register.html';
+            }
+        }
+
+        // Обработка свайпов на мобильных устройствах
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                nextSlide();
+            }
+            if (touchEndX > touchStartX + 50) {
+                prevSlide();
+            }
+        }
+
+        // Инициализация
+        initDots();
+        updateSlides();
+
+        // Автопереход на последнем слайде через кнопку "Готово"
+        const lastSlide = slides[totalSlides - 1];
+        const lastNextBtn = document.getElementById('next-btn');
+        lastNextBtn.addEventListener('click', () => {
+            if (currentSlide === totalSlides - 1) {
+                completeOnboarding();
+            }
+        });
+    </script>
+</body>
+</html>

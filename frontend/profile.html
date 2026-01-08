@@ -3,155 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Профиль - Recipe Finder</title>
+    <title>Профиль - SmartCook</title>
     <link rel="stylesheet" href="css/common.css">
     <style>
-        .profile-container {
-            max-width: 800px;
-            margin: 2rem auto;
+        .profile-header {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            padding: var(--spacing-2xl) 0;
+            text-align: center;
+            color: white;
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 auto var(--spacing-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-3xl);
+            border: 4px solid white;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: var(--radius-full);
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .profile-email {
+            font-size: var(--font-size-sm);
+            opacity: 0.9;
+        }
+
+        .profile-actions {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .profile-action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+
+        .profile-action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .profile-section {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: var(--color-bg);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-lg);
         }
 
-        .profile-section h2 {
-            margin-bottom: 1.5rem;
-            color: #2c3e50;
+        .profile-section-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-md);
         }
 
-        .ingredient-checkbox {
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-md);
+        }
+
+        .stat-card {
+            background: var(--color-bg-secondary);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .stat-card:hover {
+            background: var(--color-bg-tertiary);
+            transform: translateY(-2px);
+        }
+
+        .stat-value {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-label {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .forbidden-ingredients {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        .forbidden-ingredient {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-md);
+            background: var(--color-bg-tertiary);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+        }
+
+        .profile-link {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem;
-            border-bottom: 1px solid #eee;
+            justify-content: space-between;
+            padding: var(--spacing-md);
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-sm);
+            text-decoration: none;
+            color: var(--color-text);
+            transition: all var(--transition-fast);
+        }
+
+        .profile-link:hover {
+            background: var(--color-bg-tertiary);
+            transform: translateX(4px);
+        }
+
+        .profile-link-text {
+            font-weight: var(--font-weight-medium);
+        }
+
+        .profile-link-arrow {
+            color: var(--color-primary);
         }
     </style>
 </head>
 <body>
-    <header>
-        <nav class="container">
-            <a href="index.html" class="logo">🍳 Recipe Finder</a>
-            <ul class="nav-links">
-                <li><a href="index.html">Главная</a></li>
-                <li><a href="profile.html">Профиль</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="container profile-container">
-        <div class="profile-section">
-            <h2>Профиль</h2>
-            <div id="profile-info"></div>
-            <form id="profile-form" onsubmit="updateProfile(event)">
-                <div class="form-group">
-                    <label>Имя пользователя</label>
-                    <input type="text" id="username">
-                </div>
-                <div class="form-group">
-                    <label>Avatar URL</label>
-                    <input type="url" id="avatar_url">
-                </div>
-                <button type="submit" class="btn">Сохранить</button>
-            </form>
+    <div class="page-content">
+        <div class="profile-header">
+            <div class="profile-actions">
+                <button class="profile-action-btn" onclick="window.location.href='edit-profile.html'" title="Редактировать">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                </button>
+                <button class="profile-action-btn" onclick="window.location.href='preferences.html'" title="Настройки">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 2.81c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="profile-avatar" id="avatar-container">
+                <span id="avatar-text">U</span>
+            </div>
+            <div class="profile-name" id="profile-name">Имя Фамилия</div>
+            <div class="profile-email" id="profile-email">email@service.domain</div>
         </div>
 
-        <div class="profile-section">
-            <h2>Запрещённые ингредиенты</h2>
-            <p>Выберите ингредиенты, которые вы не едите (аллергии, диетические ограничения)</p>
-            <div id="ingredients-list"></div>
-            <button class="btn" onclick="saveForbiddenIngredients()">Сохранить</button>
+        <div class="container">
+            <div class="profile-section">
+                <h2 class="profile-section-title">Исключенные ингредиенты:</h2>
+                <div class="forbidden-ingredients" id="forbidden-ingredients">
+                    <span style="color: var(--color-text-secondary);">Загрузка...</span>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <div class="profile-stats">
+                    <a href="my-comments.html" class="stat-card">
+                        <div class="stat-value" id="comments-count">0</div>
+                        <div class="stat-label">Написано отзывов</div>
+                    </a>
+                    <a href="my-marks.html" class="stat-card">
+                        <div class="stat-value" id="marks-count">0</div>
+                        <div class="stat-label">Оценено рецептов</div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <a href="my-comments.html" class="profile-link">
+                    <span class="profile-link-text">Мои отзывы</span>
+                    <span class="profile-link-arrow">›</span>
+                </a>
+                <a href="my-marks.html" class="profile-link">
+                    <span class="profile-link-text">Мои оценки</span>
+                    <span class="profile-link-arrow">›</span>
+                </a>
+                <a href="history.html" class="profile-link">
+                    <span class="profile-link-text">История</span>
+                    <span class="profile-link-arrow">›</span>
+                </a>
+                <a href="favourites.html" class="profile-link">
+                    <span class="profile-link-text">Избранное</span>
+                    <span class="profile-link-arrow">›</span>
+                </a>
+            </div>
+
+            <div class="profile-section">
+                <button class="btn btn-danger" onclick="logout()" style="width: 100%;">
+                    Выйти
+                </button>
+            </div>
         </div>
     </div>
 
-    <script src="js/api.js"></script>
-    <script>
-        let allIngredients = [];
-        let forbiddenIngredientIds = [];
+    <script type="module">
+        import { api } from './js/api.js';
+        import { requireAuth } from './js/auth.js';
+        import { showToast } from './js/utils.js';
+
+        if (!requireAuth()) {
+            window.location.href = 'login.html';
+        }
 
         async function loadProfile() {
-            const token = api.getToken();
-            if (!token) {
-                window.location.href = 'login.html';
-                return;
-            }
-
             try {
                 const profile = await api.getProfile();
-                document.getElementById('username').value = profile.username;
-                document.getElementById('avatar_url').value = profile.avatar_url || '';
-
-                const forbidden = await api.getForbiddenIngredients();
-                forbiddenIngredientIds = forbidden.map(ing => ing.id);
-
-                await loadIngredients();
-            } catch (error) {
-                alert(error.message);
-            }
-        }
-
-        async function loadIngredients() {
-            try {
-                allIngredients = await api.getIngredients();
-                displayIngredients();
-            } catch (error) {
-                console.error('Failed to load ingredients:', error);
-            }
-        }
-
-        function displayIngredients() {
-            const container = document.getElementById('ingredients-list');
-            container.innerHTML = allIngredients.map(ing => `
-                <div class="ingredient-checkbox">
-                    <input type="checkbox" 
-                           id="ing-${ing.id}" 
-                           ${forbiddenIngredientIds.includes(ing.id) ? 'checked' : ''}
-                           onchange="toggleForbidden(${ing.id})">
-                    <label for="ing-${ing.id}">${ing.name}</label>
-                </div>
-            `).join('');
-        }
-
-        function toggleForbidden(ingredientId) {
-            const checkbox = document.getElementById(`ing-${ingredientId}`);
-            if (checkbox.checked) {
-                if (!forbiddenIngredientIds.includes(ingredientId)) {
-                    forbiddenIngredientIds.push(ingredientId);
+                
+                document.getElementById('profile-name').textContent = profile.username || 'Пользователь';
+                document.getElementById('profile-email').textContent = profile.email || '';
+                
+                const avatarContainer = document.getElementById('avatar-container');
+                if (profile.avatar_url) {
+                    avatarContainer.innerHTML = `<img src="${profile.avatar_url}" alt="${profile.username}">`;
+                } else {
+                    avatarContainer.innerHTML = `<span>${(profile.username || 'U')[0].toUpperCase()}</span>`;
                 }
-            } else {
-                forbiddenIngredientIds = forbiddenIngredientIds.filter(id => id !== ingredientId);
-            }
-        }
 
-        async function saveForbiddenIngredients() {
-            try {
-                await api.updateForbiddenIngredients(forbiddenIngredientIds);
-                alert('Сохранено!');
+                // Загружаем исключенные ингредиенты
+                const forbidden = await api.getForbiddenIngredients();
+                const forbiddenContainer = document.getElementById('forbidden-ingredients');
+                if (forbidden.length === 0) {
+                    forbiddenContainer.innerHTML = '<span style="color: var(--color-text-secondary);">Нет исключенных ингредиентов</span>';
+                } else {
+                    forbiddenContainer.innerHTML = forbidden.map(ing => `
+                        <span class="forbidden-ingredient">${ing.name}</span>
+                    `).join('');
+                }
+
+                // Загружаем статистику
+                try {
+                    const comments = await api.getComments ? [] : []; // TODO: получить все комментарии пользователя
+                    const marks = await api.getMarks();
+                    
+                    document.getElementById('comments-count').textContent = comments.length || 0;
+                    document.getElementById('marks-count').textContent = marks.length || 0;
+                } catch (e) {
+                    console.error('Failed to load stats:', e);
+                }
             } catch (error) {
-                alert(error.message);
+                showToast('Ошибка загрузки профиля', 'error');
             }
         }
 
-        async function updateProfile(event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const avatar_url = document.getElementById('avatar_url').value;
-
-            try {
-                await api.updateProfile({ username, avatar_url });
-                alert('Профиль обновлён!');
-            } catch (error) {
-                alert(error.message);
+        function logout() {
+            if (confirm('Выйти из аккаунта?')) {
+                api.logout();
             }
         }
+
+        window.logout = logout;
 
         loadProfile();
     </script>
+
+    <script type="module">
+        import { renderBottomNav } from './js/components.js';
+        document.body.insertAdjacentHTML('beforeend', renderBottomNav('profile'));
+    </script>
 </body>
 </html>
-
