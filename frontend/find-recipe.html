@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Создать рецепт - SmartCook</title>
     <link rel="stylesheet" href="css/common.css">
     <style>
@@ -165,58 +165,63 @@
     </style>
 </head>
 <body>
-    <div class="page-content">
-        <div class="container">
-            <div class="page-header">
-                <h1 class="page-title">Создать рецепт</h1>
-                <p class="page-subtitle">Найдите ингредиенты или выберите из предложенного списка</p>
+    <div class="app-shell">
+        <main class="app-main">
+            <div class="page-content">
+                <div class="container">
+                    <div class="page-header">
+                        <h1 class="page-title">Создать рецепт</h1>
+                        <p class="page-subtitle">Найдите ингредиенты или выберите из предложенного списка</p>
+                    </div>
+
+                    <div class="search-section">
+                        <div class="search-bar">
+                            <input type="text" id="ingredient-search" placeholder="Поиск..." autocomplete="off">
+                            <button class="btn btn-icon" onclick="searchIngredients()">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+                                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="ingredient-suggestions" id="suggestions"></div>
+
+                        <div class="popular-ingredients">
+                            <h3 class="popular-title">Популярные ингредиенты</h3>
+                            <div class="ingredient-grid" id="popular-ingredients"></div>
+                        </div>
+
+                        <div class="selected-ingredients">
+                            <h3 class="popular-title">Выбранные ингредиенты</h3>
+                            <div class="selected-tags" id="selected-tags"></div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="searchRecipes()" style="width: 100%; margin-top: var(--spacing-lg);" id="search-btn">
+                            Готово
+                        </button>
+                    </div>
+
+                    <!-- Рецепты: Готово сейчас -->
+                    <div class="recipe-section" id="available-section" style="display: none;">
+                        <div class="section-header">
+                            <span class="section-icon">✓</span>
+                            <h2 class="section-title">Готово сейчас</h2>
+                        </div>
+                        <div class="recipe-grid" id="available-recipes"></div>
+                    </div>
+
+                    <!-- Рецепты: Немного докупить -->
+                    <div class="recipe-section" id="missing-section" style="display: none;">
+                        <div class="section-header">
+                            <span class="section-icon">!</span>
+                            <h2 class="section-title">Немного докупить</h2>
+                        </div>
+                        <div class="recipe-grid" id="missing-recipes"></div>
+                    </div>
+                </div>
             </div>
-
-            <div class="search-section">
-                <div class="search-bar">
-                    <input type="text" id="ingredient-search" placeholder="Поиск..." autocomplete="off">
-                    <button class="btn btn-icon" onclick="searchIngredients()">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
-                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="ingredient-suggestions" id="suggestions"></div>
-
-                <div class="popular-ingredients">
-                    <h3 class="popular-title">Популярные ингредиенты</h3>
-                    <div class="ingredient-grid" id="popular-ingredients"></div>
-                </div>
-
-                <div class="selected-ingredients">
-                    <h3 class="popular-title">Выбранные ингредиенты</h3>
-                    <div class="selected-tags" id="selected-tags"></div>
-                </div>
-
-                <button class="btn btn-primary" onclick="searchRecipes()" style="width: 100%; margin-top: var(--spacing-lg);" id="search-btn">
-                    Готово
-                </button>
-            </div>
-
-            <!-- Рецепты: Готово сейчас -->
-            <div class="recipe-section" id="available-section" style="display: none;">
-                <div class="section-header">
-                    <span class="section-icon">✓</span>
-                    <h2 class="section-title">Готово сейчас</h2>
-                </div>
-                <div class="recipe-grid" id="available-recipes"></div>
-            </div>
-
-            <!-- Рецепты: Немного докупить -->
-            <div class="recipe-section" id="missing-section" style="display: none;">
-                <div class="section-header">
-                    <span class="section-icon">!</span>
-                    <h2 class="section-title">Немного докупить</h2>
-                </div>
-                <div class="recipe-grid" id="missing-recipes"></div>
-            </div>
-        </div>
+        </main>
+        <div id="bottom-nav"></div>
     </div>
 
     <script type="module">
@@ -492,7 +497,12 @@
 
     <script type="module">
         import { renderBottomNav } from './js/components.js';
-        document.body.insertAdjacentHTML('beforeend', renderBottomNav('search'));
+        const navContainer = document.getElementById('bottom-nav');
+        if (navContainer) {
+            navContainer.innerHTML = renderBottomNav('search');
+        } else {
+            document.body.insertAdjacentHTML('beforeend', renderBottomNav('search'));
+        }
     </script>
 </body>
 </html>

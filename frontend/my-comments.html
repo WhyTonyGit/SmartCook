@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Мои отзывы - SmartCook</title>
     <link rel="stylesheet" href="css/common.css">
     <style>
@@ -80,19 +80,24 @@
     </style>
 </head>
 <body>
-    <div class="page-content">
-        <div class="container">
-            <div class="page-header">
-                <button class="page-back" onclick="window.history.back()">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-                    </svg>
-                </button>
-                <h1 class="page-title">Мои отзывы</h1>
-            </div>
+    <div class="app-shell">
+        <main class="app-main">
+            <div class="page-content">
+                <div class="container">
+                    <div class="page-header">
+                        <button class="page-back" onclick="window.history.back()">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                            </svg>
+                        </button>
+                        <h1 class="page-title">Мои отзывы</h1>
+                    </div>
 
-            <div id="comments-list"></div>
-        </div>
+                    <div id="comments-list"></div>
+                </div>
+            </div>
+        </main>
+        <div id="bottom-nav"></div>
     </div>
 
     <script type="module">
@@ -251,7 +256,12 @@
 
     <script type="module">
         import { renderBottomNav } from './js/components.js';
-        document.body.insertAdjacentHTML('beforeend', renderBottomNav('profile'));
+        const navContainer = document.getElementById('bottom-nav');
+        if (navContainer) {
+            navContainer.innerHTML = renderBottomNav('profile');
+        } else {
+            document.body.insertAdjacentHTML('beforeend', renderBottomNav('profile'));
+        }
     </script>
 </body>
 </html>
