@@ -31,6 +31,14 @@
             border-radius: var(--radius-md);
             font-size: var(--font-size-base);
         }
+
+        .history-empty {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -81,10 +89,12 @@
         function displayRecipes(recipes) {
             const container = document.getElementById('history');
             if (!recipes || recipes.length === 0) {
+                container.classList.add('history-empty');
                 showEmptyState(container, 'История пуста', 'Просмотренные рецепты будут отображаться здесь');
                 return;
             }
 
+            container.classList.remove('history-empty');
             container.innerHTML = recipes.map(recipe => {
                 recipe.is_favorite = false; // Не показываем favorite в истории
                 return renderRecipeCard(recipe, {

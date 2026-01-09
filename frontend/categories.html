@@ -143,7 +143,7 @@
         import { requireAuth } from './js/auth.js';
         import { renderRecipeCard } from './js/components.js';
         import { applyImageFallbacks, PLACEHOLDER_IMAGE } from './js/image.js';
-        import { showLoading, showEmptyState, debounce } from './js/utils.js';
+        import { showLoading, showEmptyState, debounce, sortRecipes } from './js/utils.js';
 
         let currentCategoryId = null;
         let currentSort = 'popular';
@@ -167,7 +167,7 @@
                 const imageUrl = cat.image_url || '';
                 return `
                     <div class="category-card" onclick="selectCategory(${cat.id}, '${cat.name.replace(/'/g, "\\'")}')">
-                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" data-image-name="${cat.name}" data-image-type="category" alt="${cat.name}" class="category-card-image">
+                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" data-image-name="${cat.name}" data-image-type="category" alt="${cat.name}" class="category-card-image" loading="lazy">
                         <div class="category-card-title">${cat.name}</div>
                     </div>
                 `;
@@ -196,7 +196,7 @@
                 }
 
                 const recipes = await api.searchRecipes(params);
-                displayRecipes(recipes);
+                displayRecipes(sortRecipes(recipes, currentSort));
             } catch (error) {
                 showEmptyState(document.getElementById('recipes'), 'Не удалось загрузить рецепты', '');
             }
@@ -271,7 +271,7 @@
             document.getElementById('recipes-view').style.display = 'block';
             
             api.searchRecipes({ q: query, sort: currentSort }).then(recipes => {
-                displayRecipes(recipes);
+                displayRecipes(sortRecipes(recipes, currentSort));
             }).catch(e => {
                 console.error('Search failed:', e);
             });

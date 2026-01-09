@@ -228,7 +228,7 @@
         import { api } from './js/api.js';
         import { renderRecipeCard } from './js/components.js';
         import { applyImageFallbacks, PLACEHOLDER_IMAGE } from './js/image.js';
-        import { debounce, showLoading, showEmptyState, showToast } from './js/utils.js';
+        import { debounce, showLoading, showEmptyState, showToast, sortRecipes } from './js/utils.js';
 
         let selectedIngredients = [];
         let allIngredients = [];
@@ -253,7 +253,7 @@
                 const isSelected = selectedIngredients.includes(ing.id);
                 return `
                     <div class="ingredient-card ${isSelected ? 'selected' : ''}" onclick="toggleIngredient(${ing.id}, '${ing.name.replace(/'/g, "\\'")}')">
-                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" data-image-name="${ing.name}" data-image-type="ingredient" alt="${ing.name}" class="ingredient-card-image">
+                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" data-image-name="${ing.name}" data-image-type="ingredient" alt="${ing.name}" class="ingredient-card-image" loading="lazy">
                         <div class="ingredient-card-name">${ing.name}</div>
                     </div>
                 `;
@@ -327,7 +327,7 @@
                 const imageUrl = ing.image_url || '';
                 return `
                     <div class="ingredient-suggestion" onclick="addIngredient(${ing.id}, '${ing.name.replace(/'/g, "\\'")}')">
-                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" data-image-name="${ing.name}" data-image-type="ingredient" alt="${ing.name}" class="ingredient-suggestion-image">
+                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" data-image-name="${ing.name}" data-image-type="ingredient" alt="${ing.name}" class="ingredient-suggestion-image" loading="lazy">
                         <span class="ingredient-suggestion-name">${ing.name}</span>
                     </div>
                 `;
@@ -367,10 +367,11 @@
                     minMatch: 0.3,
                     sort: 'match'
                 });
+                const sortedRecipes = sortRecipes(recipes, 'match');
 
                 // Разделяем на "готово" и "нужно докупить"
-                const available = recipes.filter(r => r.match_percent >= 1.0 || (!r.missing_ingredients || r.missing_ingredients.length === 0));
-                const missing = recipes.filter(r => r.match_percent < 1.0 && r.missing_ingredients && r.missing_ingredients.length > 0);
+                const available = sortedRecipes.filter(r => r.match_percent >= 1.0 || (!r.missing_ingredients || r.missing_ingredients.length === 0));
+                const missing = sortedRecipes.filter(r => r.match_percent < 1.0 && r.missing_ingredients && r.missing_ingredients.length > 0);
 
                 displayRecipes(available, 'available-recipes', available.length > 0);
                 displayRecipes(missing, 'missing-recipes', missing.length > 0);

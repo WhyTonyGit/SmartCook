@@ -3,6 +3,12 @@ from models import Ingredient
 
 class IngredientRepository:
     @staticmethod
+    def _normalize_name(name):
+        if not name:
+            return ''
+        return name.strip().lower().replace('ё', 'е')
+
+    @staticmethod
     def get_by_id(ingredient_id):
         return Ingredient.query.get(ingredient_id)
     
@@ -23,7 +29,14 @@ class IngredientRepository:
     
     @staticmethod
     def get_by_names(names):
-        return Ingredient.query.filter(Ingredient.name.in_(names)).all()
+        normalized_names = {IngredientRepository._normalize_name(name) for name in names if name}
+        if not normalized_names:
+            return []
+        ingredients = Ingredient.query.all()
+        return [
+            ing for ing in ingredients
+            if IngredientRepository._normalize_name(ing.name) in normalized_names
+        ]
     
     @staticmethod
     def create(name, image_url=None):
@@ -35,4 +48,3 @@ class IngredientRepository:
     @staticmethod
     def get_all():
         return Ingredient.query.all()
-
