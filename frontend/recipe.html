@@ -375,20 +375,30 @@
             if (currentUser?.email) {
                 return `ratings:email:${currentUser.email}`;
             }
-            const token = api.getToken();
-            if (token) {
-                return `ratings:token:${token.slice(0, 12)}`;
-            }
-            return null;
+            return 'ratings:guest';
         }
 
-        function readStoredRatings() {
-            if (!userRatingStorageKey) return {};
+        function readStoredRatingsForKey(key) {
+            if (!key) return {};
             try {
-                return JSON.parse(localStorage.getItem(userRatingStorageKey)) || {};
+                return JSON.parse(localStorage.getItem(key)) || {};
             } catch (e) {
                 return {};
             }
+        }
+
+        function setUserRatingStorageKey(nextKey) {
+            if (!nextKey) return;
+            if (userRatingStorageKey && userRatingStorageKey !== nextKey) {
+                const currentRatings = readStoredRatingsForKey(userRatingStorageKey);
+                const nextRatings = readStoredRatingsForKey(nextKey);
+                localStorage.setItem(nextKey, JSON.stringify({ ...currentRatings, ...nextRatings }));
+            }
+            userRatingStorageKey = nextKey;
+        }
+
+        function readStoredRatings() {
+            return readStoredRatingsForKey(userRatingStorageKey);
         }
 
         function writeStoredRating(recipeIdValue, ratingValue) {
@@ -433,10 +443,10 @@
             // Проверка авторизации
             const token = api.getToken();
             if (token) {
-                userRatingStorageKey = getUserRatingKey();
+                setUserRatingStorageKey(getUserRatingKey());
                 try {
                     currentUser = await api.getProfile();
-                    userRatingStorageKey = getUserRatingKey();
+                    setUserRatingStorageKey(getUserRatingKey());
                     await loadUserRating();
                 } catch (e) {
                     console.error('Failed to load user data:', e);

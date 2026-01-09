@@ -1,13 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#FDE68A"/>
-      <stop offset="100%" stop-color="#FBBF24"/>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgb(147, 51, 234)" />
+      <stop offset="100%" stop-color="rgb(14, 116, 144)" />
     </linearGradient>
   </defs>
-  <rect width="320" height="240" rx="24" fill="url(#bg)"/>
-  <circle cx="118" cy="126" r="62" fill="#FFFBEB"/>
-  <path d="M82 128c20-18 48-18 72 0" stroke="#F59E0B" stroke-width="10" stroke-linecap="round"/>
-  <path d="M90 146c18-14 42-14 60 0" stroke="#F97316" stroke-width="8" stroke-linecap="round"/>
-  <text x="210" y="140" font-family="sans-serif" font-size="22" font-weight="700" fill="#92400E">Паста</text>
+  <rect width="960" height="640" fill="url(#grad)" />
+  <rect x="24" y="24" width="912" height="592" rx="28" fill="rgba(255,255,255,0.15)" />
+  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="600">Паста</text>
 </svg>

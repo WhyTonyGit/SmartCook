@@ -6,7 +6,7 @@ Seed script для загрузки начальных данных
 """
 import sys
 import re
-from urllib.parse import quote_plus
+import unicodedata
 from run import create_app
 from extensions import db
 from models import Consumer, Role, Ingredient, Category, Recipe, Difficulty, Learning, StepLearning
@@ -18,6 +18,32 @@ def normalize_name(name):
         return ''
     normalized = re.sub(r'\s+', ' ', name.strip().lower())
     return normalized
+
+def slugify(name):
+    if not name:
+        return ''
+    translit_map = {
+        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
+        'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'i', 'к': 'k', 'л': 'l', 'м': 'm',
+        'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+        'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+        'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+    }
+    normalized = unicodedata.normalize('NFKD', name).lower().replace('ё', 'е')
+    normalized = ''.join(
+        char for char in normalized if unicodedata.category(char) != 'Mn'
+    )
+    slug_chars = []
+    for char in normalized:
+        if char.isalnum():
+            slug_chars.append(translit_map.get(char, char))
+        else:
+            slug_chars.append('-')
+    slug = re.sub(r'-{2,}', '-', ''.join(slug_chars))
+    return slug.strip('-')
+
+def image_path(kind, name):
+    return f"/static/img/{kind}/{slugify(name)}.svg"
 
 def seed_roles(reset=False):
     """Создаёт роли"""
@@ -114,24 +140,22 @@ def seed_ingredients(reset=False):
     
     # Получаем существующие ингредиенты
     existing_names = {normalize_name(ing.name): ing for ing in Ingredient.query.all()}
-    def ingredient_image_url(index):
-        slot = (index % 24) + 1
-        return f"/static/img/ingredients/ingredient-{slot:02d}.svg"
+    def ingredient_image_url(name):
+        return image_path('ingredients', name)
     
     added = 0
     skipped = 0
     
-    for idx, name in enumerate(unique_ingredients):
+    for name in unique_ingredients:
         normalized = normalize_name(name)
         if normalized in existing_names:
             existing = existing_names[normalized]
-            if not existing.image_url:
-                existing.image_url = ingredient_image_url(idx)
+            existing.image_url = ingredient_image_url(name)
             skipped += 1
         else:
             ingredient = Ingredient(
                 name=name.strip(),
-                image_url=ingredient_image_url(idx)
+                image_url=ingredient_image_url(name)
             )
             db.session.add(ingredient)
             added += 1
@@ -178,13 +202,13 @@ def seed_categories(reset=False):
     added = 0
     skipped = 0
     
-    def category_image_url(query):
-        return f"https://source.unsplash.com/960x640/?{query}"
+    def category_image_url(name):
+        return image_path('categories', name)
 
     for item in unique_categories:
         name = item['name']
         normalized = normalize_name(name)
-        image_url = category_image_url(item['query'])
+        image_url = category_image_url(name)
         if normalized in existing_names:
             existing = existing_names[normalized]
             existing.image_url = image_url
@@ -231,8 +255,8 @@ def seed_recipes(reset=False):
                     return existing_cat
         return cat
 
-    def recipe_image_url(query):
-        return f"https://source.unsplash.com/960x640/?{quote_plus(query)}"
+    def recipe_image_url(title):
+        return image_path('recipes', title)
 
     recipes_data = [
         {
@@ -826,7 +850,7 @@ def seed_recipes(reset=False):
             recipe.description = data['description']
             recipe.cooking_time = data['cooking_time']
             recipe.difficulty = data['difficulty']
-            recipe.image_url = recipe_image_url(data['image_query'])
+            recipe.image_url = recipe_image_url(title)
             recipe.ingredients = ingredients
             recipe.categories = categories
 
@@ -854,7 +878,7 @@ def seed_recipes(reset=False):
                 description=data['description'],
                 cooking_time=data['cooking_time'],
                 difficulty=data['difficulty'],
-                image_url=recipe_image_url(data['image_query'])
+                image_url=recipe_image_url(title)
             )
             recipe.ingredients = ingredients
             recipe.categories = categories
