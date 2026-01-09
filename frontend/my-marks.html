@@ -128,6 +128,7 @@
         import { api } from './js/api.js';
         import { requireAuth } from './js/auth.js';
         import { renderRecipeCard } from './js/components.js';
+        import { applyImageFallbacks } from './js/image.js';
         import { showLoading, showEmptyState } from './js/utils.js';
 
         if (!requireAuth()) {
@@ -213,6 +214,7 @@
                     </div>
                 `;
             }).join('');
+            applyImageFallbacks(container);
         }
 
         function editMark(markId) {

@@ -227,6 +227,7 @@
     <script type="module">
         import { api } from './js/api.js';
         import { renderRecipeCard } from './js/components.js';
+        import { applyImageFallbacks, PLACEHOLDER_IMAGE } from './js/image.js';
         import { debounce, showLoading, showEmptyState, showToast } from './js/utils.js';
 
         let selectedIngredients = [];
@@ -248,15 +249,16 @@
         function renderPopularIngredients() {
             const container = document.getElementById('popular-ingredients');
             container.innerHTML = popularIngredients.map(ing => {
-                const imageUrl = ing.image_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="60" height="60"%3E%3Crect fill="%23F3F4F6" width="60" height="60"/%3E%3C/svg%3E';
+                const imageUrl = ing.image_url || '';
                 const isSelected = selectedIngredients.includes(ing.id);
                 return `
                     <div class="ingredient-card ${isSelected ? 'selected' : ''}" onclick="toggleIngredient(${ing.id}, '${ing.name.replace(/'/g, "\\'")}')">
-                        <img src="${imageUrl}" alt="${ing.name}" class="ingredient-card-image">
+                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${ing.name}" class="ingredient-card-image">
                         <div class="ingredient-card-name">${ing.name}</div>
                     </div>
                 `;
             }).join('');
+            applyImageFallbacks(container);
         }
 
         function renderSelectedTags() {
@@ -322,15 +324,16 @@
             }
 
             container.innerHTML = filtered.map(ing => {
-                const imageUrl = ing.image_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="40" height="40"%3E%3Crect fill="%23F3F4F6" width="40" height="40"/%3E%3C/svg%3E';
+                const imageUrl = ing.image_url || '';
                 return `
                     <div class="ingredient-suggestion" onclick="addIngredient(${ing.id}, '${ing.name.replace(/'/g, "\\'")}')">
-                        <img src="${imageUrl}" alt="${ing.name}" class="ingredient-suggestion-image">
+                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${ing.name}" class="ingredient-suggestion-image">
                         <span class="ingredient-suggestion-name">${ing.name}</span>
                     </div>
                 `;
             }).join('');
             container.style.display = 'block';
+            applyImageFallbacks(container);
         }
 
         function addIngredient(id, name) {
@@ -417,6 +420,7 @@
                     favoriteCallback: `toggleFavorite(${recipe.id}, event)`
                 });
             }).join('');
+            applyImageFallbacks(container);
         }
 
         async function toggleFavorite(recipeId, event) {

@@ -157,10 +157,10 @@ export function showLoading(container) {
 }
 
 // Показать empty state
-export function showEmptyState(container, message, submessage = '') {
+export function showEmptyState(container, message, submessage = '', icon = '📭') {
     container.innerHTML = `
         <div class="empty-state">
-            <div class="empty-state-icon">📭</div>
+            <div class="empty-state-icon">${icon}</div>
             <div class="empty-state-text">${message}</div>
             ${submessage ? `<div class="empty-state-subtext">${submessage}</div>` : ''}
         </div>

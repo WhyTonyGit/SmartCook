@@ -1,5 +1,6 @@
 // API модуль для работы с backend
-const API_BASE_URL = 'http://localhost:5001/api';
+const BASE_URL = 'http://localhost:5001';
+const API_BASE_URL = `${BASE_URL}/api`;
 
 class API {
     constructor() {
@@ -224,4 +225,4 @@ class API {
 const api = new API();
 
 // Экспорт для использования в модулях
-export { api };
+export { api, BASE_URL };

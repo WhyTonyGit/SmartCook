@@ -61,6 +61,7 @@
         import { api } from './js/api.js';
         import { requireAuth } from './js/auth.js';
         import { renderRecipeCard } from './js/components.js';
+        import { applyImageFallbacks } from './js/image.js';
         import { showLoading, showEmptyState, debounce } from './js/utils.js';
 
         if (!requireAuth()) {
@@ -84,7 +85,7 @@
         function displayRecipes(recipes) {
             const container = document.getElementById('favorites');
             if (!recipes || recipes.length === 0) {
-                showEmptyState(container, 'В избранном пока ничего нет', 'Добавьте рецепты в избранное, чтобы они отображались здесь');
+                showEmptyState(container, 'В избранном пока ничего нет', 'Добавьте рецепты в избранное, чтобы они отображались здесь', '💜');
                 return;
             }
 
@@ -97,6 +98,7 @@
                     favoriteCallback: `removeFavorite(${recipe.id}, event)`
                 });
             }).join('');
+            applyImageFallbacks(container);
         }
 
         async function removeFavorite(recipeId, event) {
