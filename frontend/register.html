@@ -2,17 +2,24 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Рады приветствовать! - SmartCook</title>
     <link rel="stylesheet" href="css/common.css">
     <style>
         body {
-            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: var(--spacing-md);
+        }
+
+        .app-shell.app-shell--auth {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .app-shell.app-shell--auth .app-main {
+            min-height: auto;
+            padding: var(--spacing-xl) 0;
         }
 
         .auth-container {
@@ -160,52 +167,56 @@
     </style>
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-header">
-            <h1 class="auth-title">Рады приветствовать!</h1>
-            <p class="auth-subtitle">Укажите ваши данные для регистрации и настройте свои предпочтения</p>
-        </div>
+    <div class="app-shell app-shell--auth">
+        <main class="app-main app-main--full">
+            <div class="auth-container">
+                <div class="auth-header">
+                    <h1 class="auth-title">Рады приветствовать!</h1>
+                    <p class="auth-subtitle">Укажите ваши данные для регистрации и настройте свои предпочтения</p>
+                </div>
 
-        <div id="alert"></div>
+                <div id="alert"></div>
 
-        <form id="register-form" onsubmit="handleRegister(event)">
-            <div class="form-group">
-                <input type="email" id="email" placeholder="Введите email или номер телефона" required>
-            </div>
-            <div class="form-group">
-                <input type="text" id="username" placeholder="Как к вам обращаться?" required>
-            </div>
-            <div class="form-group">
-                <input type="tel" id="phone" placeholder="Телефон (необязательно)">
-            </div>
-            <div class="form-group">
-                <input type="password" id="password" placeholder="Введите пароль" required minlength="6">
-            </div>
-            <div class="form-group">
-                <input type="password" id="confirmPassword" placeholder="Подтвердите пароль" required>
-                <div id="password-match" class="password-match"></div>
-            </div>
-            <button type="submit" class="btn-primary" id="submit-btn">Продолжить</button>
-        </form>
+                <form id="register-form" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <input type="email" id="email" placeholder="Введите email или номер телефона" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="username" placeholder="Как к вам обращаться?" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" id="phone" placeholder="Телефон (необязательно)">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="password" placeholder="Введите пароль" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="confirmPassword" placeholder="Подтвердите пароль" required>
+                        <div id="password-match" class="password-match"></div>
+                    </div>
+                    <button type="submit" class="btn-primary" id="submit-btn">Продолжить</button>
+                </form>
 
-        <div class="social-login">
-            <p class="social-login-title">Войти с помощью</p>
-            <div class="social-buttons">
-                <button class="social-btn" onclick="socialLogin('google')" title="Google">
-                    <span style="font-size: 24px; font-weight: bold; color: #4285F4;">G</span>
-                </button>
-                <button class="social-btn" onclick="socialLogin('yandex')" title="Yandex">
-                    <span style="font-size: 24px; font-weight: bold; color: #FC3F1D;">Я</span>
-                </button>
-                <button class="social-btn" onclick="socialLogin('vk')" title="VKontakte">
-                    <span style="font-size: 20px; font-weight: bold; color: #0077FF;">VK</span>
-                </button>
-            </div>
-        </div>
+                <div class="social-login">
+                    <p class="social-login-title">Войти с помощью</p>
+                    <div class="social-buttons">
+                        <button class="social-btn" onclick="socialLogin('google')" title="Google">
+                            <span style="font-size: 24px; font-weight: bold; color: #4285F4;">G</span>
+                        </button>
+                        <button class="social-btn" onclick="socialLogin('yandex')" title="Yandex">
+                            <span style="font-size: 24px; font-weight: bold; color: #FC3F1D;">Я</span>
+                        </button>
+                        <button class="social-btn" onclick="socialLogin('vk')" title="VKontakte">
+                            <span style="font-size: 20px; font-weight: bold; color: #0077FF;">VK</span>
+                        </button>
+                    </div>
+                </div>
 
-        <div class="auth-footer">
-            <p>Уже есть аккаунт? <a href="login.html">Войти</a></p>
-        </div>
+                <div class="auth-footer">
+                    <p>Уже есть аккаунт? <a href="login.html">Войти</a></p>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script type="module">
@@ -290,4 +301,3 @@
     </script>
 </body>
 </html>
-

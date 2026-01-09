@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Жаркое из говядины - SmartCook</title>
     <link rel="stylesheet" href="css/common.css">
     <style>
@@ -270,24 +270,29 @@
     </style>
 </head>
 <body>
-    <div class="page-content">
-        <div class="container">
-            <div id="recipe-content"></div>
+    <div class="app-shell">
+        <main class="app-main">
+            <div class="page-content">
+                <div class="container">
+                    <div id="recipe-content"></div>
 
-            <div class="recipe-section" id="comments-section">
-                <h2 class="recipe-section-title">Комментарии</h2>
-                <div id="comments-list"></div>
-                <div id="comment-form" style="display: none;">
-                    <div class="form-group">
-                        <textarea id="comment-text" placeholder="Оставьте комментарий..." rows="3"></textarea>
+                    <div class="recipe-section" id="comments-section">
+                        <h2 class="recipe-section-title">Комментарии</h2>
+                        <div id="comments-list"></div>
+                        <div id="comment-form" style="display: none;">
+                            <div class="form-group">
+                                <textarea id="comment-text" placeholder="Оставьте комментарий..." rows="3"></textarea>
+                            </div>
+                            <button class="btn btn-primary" onclick="submitComment()">Отправить</button>
+                        </div>
+                        <p id="login-prompt" style="text-align: center; color: var(--color-text-secondary); padding: var(--spacing-lg);">
+                            Войдите, чтобы оставить комментарий
+                        </p>
                     </div>
-                    <button class="btn btn-primary" onclick="submitComment()">Отправить</button>
                 </div>
-                <p id="login-prompt" style="text-align: center; color: var(--color-text-secondary); padding: var(--spacing-lg);">
-                    Войдите, чтобы оставить комментарий
-                </p>
             </div>
-        </div>
+        </main>
+        <div id="bottom-nav"></div>
     </div>
 
     <script type="module">
@@ -603,7 +608,12 @@
 
     <script type="module">
         import { renderBottomNav } from './js/components.js';
-        document.body.insertAdjacentHTML('beforeend', renderBottomNav(''));
+        const navContainer = document.getElementById('bottom-nav');
+        if (navContainer) {
+            navContainer.innerHTML = renderBottomNav('');
+        } else {
+            document.body.insertAdjacentHTML('beforeend', renderBottomNav(''));
+        }
     </script>
 </body>
 </html>
