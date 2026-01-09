@@ -21,9 +21,22 @@ class IngredientRepository:
     @staticmethod
     def search(query=None, limit=100):
         q = Ingredient.query
-        if query:
-            q = q.filter(Ingredient.name.ilike(f'%{query}%'))
-        return q.limit(limit).all()
+        if not query:
+            return q.limit(limit).all()
+
+        normalized_query = IngredientRepository._normalize_name(query)
+        if not normalized_query:
+            return []
+
+        ingredients = q.all()
+        matched = []
+        for ing in ingredients:
+            ing_name = IngredientRepository._normalize_name(ing.name)
+            if normalized_query in ing_name:
+                matched.append(ing)
+                if len(matched) >= limit:
+                    break
+        return matched
     
     @staticmethod
     def get_by_ids(ingredient_ids):

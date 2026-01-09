@@ -29,8 +29,12 @@ class RecipeService:
         
         # Если есть ингредиенты для поиска, вычисляем match_percent
         if user_ingredient_ids:
+            selected_ids = set(user_ingredient_ids)
             results = []
             for recipe in recipes:
+                recipe_ingredient_ids = {ing.id for ing in recipe.ingredients}
+                if not selected_ids.issubset(recipe_ingredient_ids):
+                    continue
                 match_info = RecipeRepository.calculate_match_info(recipe, user_ingredient_ids)
                 if match_info['match_percent'] >= min_match:
                     recipe_dict = recipe.to_dict()
@@ -145,4 +149,3 @@ class RecipeService:
             results.append(recipe_dict)
         
         return results
-
