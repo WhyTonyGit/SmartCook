@@ -61,6 +61,7 @@
         import { api } from './js/api.js';
         import { requireAuth } from './js/auth.js';
         import { renderRecipeCard } from './js/components.js';
+        import { applyImageFallbacks } from './js/image.js';
         import { showLoading, showEmptyState, debounce } from './js/utils.js';
 
         if (!requireAuth()) {
@@ -96,6 +97,7 @@
                     onClick: `window.location.href='recipe.html?id=${recipe.id}'`
                 });
             }).join('');
+            applyImageFallbacks(container);
         }
 
         const searchDebounced = debounce(function(query) {

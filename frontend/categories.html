@@ -141,6 +141,7 @@
     <script type="module">
         import { api } from './js/api.js';
         import { renderRecipeCard } from './js/components.js';
+        import { applyImageFallbacks, PLACEHOLDER_IMAGE } from './js/image.js';
         import { showLoading, showEmptyState, debounce } from './js/utils.js';
 
         let currentCategoryId = null;
@@ -162,27 +163,26 @@
         function displayCategories(categories) {
             const container = document.getElementById('categories');
             const categoryImages = {
-                'Завтраки': '🍳',
-                'Супы': '🍲',
-                'Салаты': '🥗',
-                'Мясо': '🥩',
-                'Десерты': '🍰',
-                'Паста': '🍝',
-                'Напитки': '🥤',
-                'Все блюда': '🍽️'
+                'Завтраки': '/static/img/categories/breakfasts.svg',
+                'Супы': '/static/img/categories/soups.svg',
+                'Салаты': '/static/img/categories/salads.svg',
+                'Мясо': '/static/img/categories/meat.svg',
+                'Десерты': '/static/img/categories/desserts.svg',
+                'Паста': '/static/img/categories/pasta.svg',
+                'Напитки': '/static/img/categories/drinks.svg',
+                'Все блюда': '/static/img/categories/all.svg'
             };
 
             container.innerHTML = categories.map(cat => {
-                const emoji = categoryImages[cat.name] || '🍴';
+                const imageUrl = categoryImages[cat.name] || PLACEHOLDER_IMAGE;
                 return `
                     <div class="category-card" onclick="selectCategory(${cat.id}, '${cat.name.replace(/'/g, "\\'")}')">
-                        <div class="category-card-image" style="display: flex; align-items: center; justify-content: center; font-size: 4rem;">
-                            ${emoji}
-                        </div>
+                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${cat.name}" class="category-card-image">
                         <div class="category-card-title">${cat.name}</div>
                     </div>
                 `;
             }).join('');
+            applyImageFallbacks(container);
         }
 
         function selectCategory(categoryId, categoryName) {
@@ -240,6 +240,7 @@
                     favoriteCallback: `toggleFavorite(${recipe.id}, event)`
                 });
             }).join('');
+            applyImageFallbacks(container);
         }
 
         async function toggleFavorite(recipeId, event) {

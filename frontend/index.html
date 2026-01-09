@@ -100,6 +100,7 @@
     <script type="module">
         import { api } from './js/api.js';
         import { renderRecipeCard } from './js/components.js';
+        import { applyImageFallbacks } from './js/image.js';
         import { showLoading, showEmptyState } from './js/utils.js';
 
         let currentSort = 'match';
@@ -174,6 +175,7 @@
                     favoriteCallback: `toggleFavorite(${recipe.id}, event)`
                 });
             }).join('');
+            applyImageFallbacks(container);
         }
 
         async function toggleFavorite(recipeId, event) {

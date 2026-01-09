@@ -1,5 +1,6 @@
 // API модуль для работы с backend
-const API_BASE_URL = 'http://localhost:5001/api';
+const BASE_URL = 'http://localhost:5001';
+const API_BASE_URL = `${BASE_URL}/api`;
 
 class API {
     constructor() {
@@ -23,9 +24,12 @@ class API {
         const token = this.getToken();
         
         const headers = {
-            'Content-Type': 'application/json',
             ...options.headers
         };
+        const isFormData = options.body instanceof FormData;
+        if (!isFormData) {
+            headers['Content-Type'] = 'application/json';
+        }
 
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
@@ -49,7 +53,7 @@ class API {
                 data = await response.json();
             } else {
                 const text = await response.text();
-                throw new Error(`Server returned non-JSON: ${text.substring(0, 100)}`);
+                data = { message: text };
             }
 
             if (!response.ok) {
@@ -112,6 +116,15 @@ class API {
         return this.request('/me', {
             method: 'PUT',
             body: JSON.stringify(data)
+        });
+    }
+
+    async uploadAvatar(file) {
+        const formData = new FormData();
+        formData.append('avatar', file);
+        return this.request('/me/avatar', {
+            method: 'POST',
+            body: formData
         });
     }
 
@@ -224,4 +237,4 @@ class API {
 const api = new API();
 
 // Экспорт для использования в модулях
-export { api };
+export { api, BASE_URL };

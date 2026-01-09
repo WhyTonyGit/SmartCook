@@ -94,6 +94,7 @@ a {
     margin: 0 auto;
     background: var(--color-surface);
     box-shadow: var(--shadow-md);
+    animation: page-enter 0.35s ease both;
 }
 
 .app-main {
@@ -159,6 +160,11 @@ nav {
 
 .btn:hover {
     background: var(--color-primary-strong);
+}
+
+.btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 6px 14px rgba(17, 24, 39, 0.12);
 }
 
 .btn-secondary {
@@ -232,6 +238,19 @@ nav {
     cursor: pointer;
 }
 
+.recipe-card:active {
+    transform: translateY(-2px) scale(0.99);
+    box-shadow: var(--shadow-sm);
+}
+
+.category-card:active,
+.ingredient-card:active,
+.stat-card:active,
+.profile-link:active {
+    transform: translateY(-2px) scale(0.99);
+    box-shadow: var(--shadow-sm);
+}
+
 .recipe-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -302,6 +321,7 @@ nav {
     align-items: center;
     justify-content: center;
     color: var(--color-text-secondary);
+    transition: color var(--transition-fast), background var(--transition-fast);
 }
 
 .recipe-card-favorite svg {
@@ -337,6 +357,35 @@ nav {
     text-align: center;
     padding: 2rem;
     color: #7f8c8d;
+}
+
+.empty-centered {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    color: var(--color-text-secondary);
+    display: grid;
+    gap: var(--spacing-sm);
+}
+
+.empty-state-icon {
+    font-size: 2rem;
+    opacity: 0.8;
+}
+
+.empty-state-text {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+}
+
+.empty-state-subtext {
+    font-size: var(--font-size-sm);
 }
 
 /* Tags */
@@ -400,6 +449,7 @@ nav {
     font-size: var(--font-size-xs);
     line-height: 1.2;
     min-width: 0;
+    transition: color var(--transition-base);
 }
 
 .bottom-nav-item-icon {
@@ -414,10 +464,34 @@ nav {
     width: 24px;
     height: 24px;
     fill: currentColor;
+    transition: color var(--transition-base);
 }
 
 .bottom-nav-item.active {
     color: var(--color-primary);
+}
+
+@keyframes page-enter {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .app-shell {
+        animation: none;
+    }
 }
 
 /* Mobile */

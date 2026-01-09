@@ -1,6 +1,7 @@
 // Компоненты для рендеринга UI элементов
 
 import { formatTime, formatRating, formatReviews, formatServings, getRecipeStatus, getRecipeStatusText, renderStars, truncate } from './utils.js';
+import { PLACEHOLDER_IMAGE } from './image.js';
 
 // Рендер карточки рецепта
 export function renderRecipeCard(recipe, options = {}) {
@@ -13,7 +14,7 @@ export function renderRecipeCard(recipe, options = {}) {
     
     const status = getRecipeStatus(recipe);
     const statusText = getRecipeStatusText(recipe);
-    const imageUrl = recipe.image_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23F3F4F6" width="200" height="200"/%3E%3Ctext fill="%239CA3AF" font-family="sans-serif" font-size="14" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EНет изображения%3C/text%3E%3C/svg%3E';
+    const imageUrl = recipe.image_url || '';
     
     const favoriteClass = recipe.is_favorite ? 'active' : '';
     const favoriteIcon = recipe.is_favorite 
@@ -23,7 +24,7 @@ export function renderRecipeCard(recipe, options = {}) {
     return `
         <div class="recipe-card" ${onClick ? `onclick="${onClick}"` : ''}>
             <div class="recipe-card-image">
-                <img src="${imageUrl}" alt="${recipe.title}" loading="lazy">
+                <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${recipe.title}" loading="lazy">
                 ${showFavorite ? `
                     <div class="recipe-card-favorite ${favoriteClass}" ${favoriteCallback ? `onclick="event.stopPropagation(); ${favoriteCallback}"` : ''}>
                         <svg viewBox="0 0 24 24">
@@ -68,11 +69,11 @@ export function renderIngredientItem(ingredient, options = {}) {
         onAdd = null
     } = options;
     
-    const imageUrl = ingredient.image_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="60" height="60"%3E%3Crect fill="%23F3F4F6" width="60" height="60"/%3E%3C/svg%3E';
+    const imageUrl = ingredient.image_url || '';
     
     return `
         <div class="ingredient-item">
-            <img src="${imageUrl}" alt="${ingredient.name}" class="ingredient-item-image">
+            <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${ingredient.name}" class="ingredient-item-image">
             <span class="ingredient-item-name">${ingredient.name}</span>
             ${showRemove && onRemove ? `
                 <button class="ingredient-item-remove" onclick="${onRemove}">
@@ -136,7 +137,7 @@ export function renderStep(step, stepNumber) {
                 <h4 class="recipe-step-title">${step.title}</h4>
                 <p class="recipe-step-description">${step.description}</p>
                 ${imageUrl ? `
-                    <img src="${imageUrl}" alt="${step.title}" class="recipe-step-image">
+                    <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${step.title}" class="recipe-step-image">
                 ` : ''}
             </div>
         </div>
@@ -147,7 +148,7 @@ export function renderStep(step, stepNumber) {
 export function renderBottomNav(currentPage = '') {
     const navItems = [
         { id: 'catalog', icon: 'M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z', label: 'Каталог', href: 'categories.html' },
-        { id: 'history', icon: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z', label: 'История', href: 'history.html' },
+        { id: 'history', icon: 'M12 4a8 8 0 1 0 8 8 8 8 0 0 0-8-8zm1 4h-2v5.2l3.6 2.1 1-1.7-2.6-1.5z', label: 'История', href: 'history.html' },
         { id: 'search', icon: 'M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z', label: 'Поиск', href: 'find-recipe.html' },
         { id: 'favorites', icon: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z', label: 'Избранное', href: 'favourites.html' },
         { id: 'profile', icon: 'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z', label: 'Профиль', href: 'profile.html' }
