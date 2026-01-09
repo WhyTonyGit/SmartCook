@@ -162,19 +162,8 @@
 
         function displayCategories(categories) {
             const container = document.getElementById('categories');
-            const categoryImages = {
-                'Завтраки': '/static/img/categories/breakfasts.svg',
-                'Супы': '/static/img/categories/soups.svg',
-                'Салаты': '/static/img/categories/salads.svg',
-                'Мясо': '/static/img/categories/meat.svg',
-                'Десерты': '/static/img/categories/desserts.svg',
-                'Паста': '/static/img/categories/pasta.svg',
-                'Напитки': '/static/img/categories/drinks.svg',
-                'Все блюда': '/static/img/categories/all.svg'
-            };
-
             container.innerHTML = categories.map(cat => {
-                const imageUrl = categoryImages[cat.name] || PLACEHOLDER_IMAGE;
+                const imageUrl = cat.image_url || '';
                 return `
                     <div class="category-card" onclick="selectCategory(${cat.id}, '${cat.name.replace(/'/g, "\\'")}')">
                         <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${cat.name}" class="category-card-image">

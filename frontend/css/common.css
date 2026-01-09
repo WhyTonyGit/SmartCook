@@ -22,6 +22,8 @@
     --color-surface: #ffffff;
     --color-shadow: rgba(17, 24, 39, 0.08);
     --color-border: #e5e7eb;
+    --star-fill: #f5b301;
+    --star-empty: #e5e7eb;
 
     --radius-sm: 8px;
     --radius-md: 12px;
@@ -406,26 +408,51 @@ nav {
 }
 
 /* Rating */
-.rating {
-    display: flex;
-    gap: 0.25rem;
+.star-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    --star-size: 18px;
 }
 
-.rating-star {
-    color: #f59e0b;
-    font-size: 1.1rem;
+.star-icon {
+    width: var(--star-size);
+    height: var(--star-size);
+    flex-shrink: 0;
 }
 
-.rating-star.empty {
-    color: #d1d5db;
+.star-rating-value {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+}
+
+.star-rating-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+}
+
+.star-rating-button:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+.recipe-card-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .bottom-nav {
-    position: fixed;
-    left: 50%;
+    position: sticky;
     bottom: 0;
-    transform: translateX(-50%);
-    width: min(100%, var(--app-shell-max));
+    left: auto;
+    transform: none;
+    width: 100%;
     height: var(--bottom-nav-height);
     background: var(--color-surface);
     border-top: 1px solid #e5e7eb;

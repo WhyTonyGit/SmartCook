@@ -12,3 +12,6 @@ class MarkService:
     def get_marks(consumer_id):
         return MarkRepository.get_by_consumer(consumer_id)
 
+    @staticmethod
+    def delete_mark(recipe_id, consumer_id):
+        return MarkRepository.delete_by_consumer_and_recipe(consumer_id, recipe_id)

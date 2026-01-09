@@ -28,3 +28,11 @@ class MarkRepository:
     def get_by_recipe(recipe_id):
         return Mark.query.filter_by(recipe_id=recipe_id).all()
 
+    @staticmethod
+    def delete_by_consumer_and_recipe(consumer_id, recipe_id):
+        mark = MarkRepository.get_by_consumer_and_recipe(consumer_id, recipe_id)
+        if not mark:
+            return False
+        db.session.delete(mark)
+        db.session.commit()
+        return True

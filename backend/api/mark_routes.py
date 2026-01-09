@@ -24,3 +24,9 @@ def get_marks():
     marks = MarkService.get_marks(consumer.id)
     return jsonify([m.to_dict() for m in marks]), 200
 
+@bp.route('/recipes/<int:recipe_id>/mark', methods=['DELETE'])
+@require_auth
+def delete_mark(recipe_id):
+    consumer = request.current_consumer
+    deleted = MarkService.delete_mark(recipe_id, consumer.id)
+    return jsonify({'deleted': deleted}), 200
