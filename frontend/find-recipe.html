@@ -364,7 +364,7 @@
 
                 const recipes = await api.searchRecipes({
                     ingredients: ingredientNames,
-                    minMatch: 0.3,
+                    minMatch: 0,
                     sort: 'match'
                 });
                 const sortedRecipes = sortRecipes(recipes, 'match');

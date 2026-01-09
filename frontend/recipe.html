@@ -315,6 +315,7 @@
         let isFavorite = false;
         let currentUser = null;
         let userRating = 0;
+        let hoverRating = null;
         let userRatingStorageKey = null;
         const STAR_PATH = 'M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z';
 
@@ -339,7 +340,7 @@
                 const fillPercent = value <= safeRating ? 100 : 0;
                 const gradientId = `${uid}-${index}`;
                 return `
-                    <button class="star-rating-button" data-value="${value}" aria-label="Оценка ${value}"
+                    <button class="star-rating-button" type="button" data-value="${value}" aria-label="Оценка ${value}"
                             onclick="setRating(${value})" onmouseenter="previewRating(${value})" onfocus="previewRating(${value})">
                         ${renderStarSvg(fillPercent, 28, gradientId)}
                     </button>
@@ -347,18 +348,24 @@
             }).join('');
         }
 
-        function updateRatingInput(value = 0) {
+        function getDisplayRating() {
+            return hoverRating !== null ? hoverRating : userRating;
+        }
+
+        function updateRatingInput() {
             const container = document.getElementById('rating-input');
             if (!container) return;
-            container.innerHTML = renderRatingButtons(value);
+            container.innerHTML = renderRatingButtons(getDisplayRating());
         }
 
         function previewRating(value) {
-            updateRatingInput(value);
+            hoverRating = value;
+            updateRatingInput();
         }
 
         function resetRatingPreview() {
-            updateRatingInput(userRating);
+            hoverRating = null;
+            updateRatingInput();
         }
 
         function updateDeleteButton() {
@@ -577,7 +584,7 @@
                 ` : ''}
             `;
             applyImageFallbacks(container);
-            updateRatingInput(userRating);
+            updateRatingInput();
             updateDeleteButton();
 
             // Показываем форму комментариев если авторизован
@@ -669,7 +676,8 @@
 
             userRating = value;
             writeStoredRating(recipeId, value);
-            updateRatingInput(userRating);
+            hoverRating = null;
+            updateRatingInput();
             updateDeleteButton();
 
             try {
@@ -693,14 +701,16 @@
                 await api.deleteMark(recipeId);
                 userRating = 0;
                 removeStoredRating(recipeId);
-                updateRatingInput(userRating);
+                hoverRating = null;
+                updateRatingInput();
                 updateDeleteButton();
                 await refreshRatingSummary();
                 showToast('Оценка удалена', 'success');
             } catch (error) {
                 userRating = 0;
                 removeStoredRating(recipeId);
-                updateRatingInput(userRating);
+                hoverRating = null;
+                updateRatingInput();
                 updateDeleteButton();
                 showToast('Оценка удалена локально', 'info');
             }
