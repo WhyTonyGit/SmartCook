@@ -195,8 +195,21 @@
             window.location.href = 'login.html';
         }
 
+        const params = new URLSearchParams(window.location.search);
+        const isSettingsMode = params.get('mode') === 'settings';
         let selectedIngredients = [];
         let allIngredients = [];
+
+        const pageTitle = document.querySelector('.page-title');
+        const pageSubtitle = document.querySelector('.page-subtitle');
+        const saveBtn = document.getElementById('save-btn');
+        if (isSettingsMode) {
+            pageTitle.textContent = 'Настройки';
+            pageSubtitle.textContent = 'Исключенные ингредиенты для вашего профиля';
+            saveBtn.textContent = 'Сохранить';
+        } else {
+            saveBtn.textContent = 'Продолжить';
+        }
 
         // Загрузка текущих исключенных ингредиентов
         async function loadForbiddenIngredients() {
@@ -265,11 +278,13 @@
             renderSelected();
             document.getElementById('ingredient-search').value = '';
             document.getElementById('suggestions').style.display = 'none';
+            syncForbiddenIngredients();
         }
 
         function removeIngredient(id) {
             selectedIngredients = selectedIngredients.filter(ingId => ingId !== id);
             renderSelected();
+            syncForbiddenIngredients();
         }
 
         async function renderSelected() {
@@ -306,7 +321,6 @@
         }
 
         async function savePreferences() {
-            const saveBtn = document.getElementById('save-btn');
             saveBtn.disabled = true;
             saveBtn.textContent = 'Сохранение...';
 
@@ -314,12 +328,12 @@
                 await api.updateForbiddenIngredients(selectedIngredients);
                 showToast('Предпочтения сохранены!', 'success');
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = isSettingsMode ? 'profile.html' : 'index.html';
                 }, 1000);
             } catch (e) {
                 showToast('Ошибка сохранения', 'error');
                 saveBtn.disabled = false;
-                saveBtn.textContent = 'Зарегистрироваться';
+                saveBtn.textContent = isSettingsMode ? 'Сохранить' : 'Продолжить';
             }
         }
 

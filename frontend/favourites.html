@@ -89,6 +89,7 @@
                 return;
             }
 
+            container.classList.remove('empty-centered');
             container.innerHTML = recipes.map(recipe => {
                 recipe.is_favorite = true; // Все здесь - избранные
                 return renderRecipeCard(recipe, {

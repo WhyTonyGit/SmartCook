@@ -24,9 +24,12 @@ class API {
         const token = this.getToken();
         
         const headers = {
-            'Content-Type': 'application/json',
             ...options.headers
         };
+        const isFormData = options.body instanceof FormData;
+        if (!isFormData) {
+            headers['Content-Type'] = 'application/json';
+        }
 
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
@@ -50,7 +53,7 @@ class API {
                 data = await response.json();
             } else {
                 const text = await response.text();
-                throw new Error(`Server returned non-JSON: ${text.substring(0, 100)}`);
+                data = { message: text };
             }
 
             if (!response.ok) {
@@ -113,6 +116,15 @@ class API {
         return this.request('/me', {
             method: 'PUT',
             body: JSON.stringify(data)
+        });
+    }
+
+    async uploadAvatar(file) {
+        const formData = new FormData();
+        formData.append('avatar', file);
+        return this.request('/me/avatar', {
+            method: 'POST',
+            body: formData
         });
     }
 

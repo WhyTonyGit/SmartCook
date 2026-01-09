@@ -79,11 +79,20 @@ def seed_ingredients(reset=False):
         print("✓ Ingredients cleared")
     
     ingredients_data = [
-        'курица', 'картофель', 'морковь', 'лук', 'чеснок', 'помидоры',
-        'огурцы', 'перец', 'баклажаны', 'кабачки', 'капуста', 'рис',
-        'макароны', 'мука', 'яйца', 'молоко', 'сливки', 'сыр',
-        'масло', 'соль', 'сахар', 'мускатный орех', 'базилик',
-        'петрушка', 'укроп', 'тимьян', 'розмарин', 'орегано', 'паприка'
+        'курица', 'индейка', 'говядина', 'свинина', 'рыба', 'лосось', 'тунец',
+        'креветки', 'кальмар', 'картофель', 'батат', 'морковь', 'лук', 'чеснок',
+        'помидоры', 'черри', 'огурцы', 'перец', 'баклажаны', 'кабачки',
+        'капуста', 'цветная капуста', 'брокколи', 'грибы', 'шампиньоны',
+        'рис', 'гречка', 'пшено', 'овсянка', 'макароны', 'паста', 'мука',
+        'яйца', 'молоко', 'сливки', 'сыр', 'творог', 'йогурт', 'масло',
+        'оливковое масло', 'соль', 'сахар', 'мёд', 'лимон', 'лайм', 'яблоко',
+        'банан', 'груша', 'клубника', 'черника', 'малина', 'изюм', 'орехи',
+        'миндаль', 'грецкие орехи', 'кунжут', 'зелень', 'петрушка', 'укроп',
+        'кинза', 'базилик', 'тимьян', 'розмарин', 'орегано', 'паприка',
+        'корица', 'ваниль', 'соевый соус', 'томатная паста', 'сметана',
+        'горчица', 'майонез', 'перловка', 'фасоль', 'нут', 'горох', 'кукуруза',
+        'горчица зернистая', 'авокадо', 'шпинат', 'листовой салат', 'руккола',
+        'болгарский перец', 'тыква', 'какао', 'шоколад'
     ]
     
     # Дедупликация по нормализованному имени
@@ -97,16 +106,25 @@ def seed_ingredients(reset=False):
     
     # Получаем существующие ингредиенты
     existing_names = {normalize_name(ing.name): ing for ing in Ingredient.query.all()}
+    def ingredient_image_url(index):
+        slot = (index % 24) + 1
+        return f"/static/img/ingredients/ingredient-{slot:02d}.svg"
     
     added = 0
     skipped = 0
     
-    for name in unique_ingredients:
+    for idx, name in enumerate(unique_ingredients):
         normalized = normalize_name(name)
         if normalized in existing_names:
+            existing = existing_names[normalized]
+            if not existing.image_url:
+                existing.image_url = ingredient_image_url(idx)
             skipped += 1
         else:
-            ingredient = Ingredient(name=name.strip())  # Сохраняем оригинальное имя
+            ingredient = Ingredient(
+                name=name.strip(),
+                image_url=ingredient_image_url(idx)
+            )
             db.session.add(ingredient)
             added += 1
     
@@ -122,7 +140,8 @@ def seed_categories(reset=False):
     
     categories_data = [
         'Завтраки', 'Обеды', 'Ужины', 'Десерты', 'Салаты',
-        'Супы', 'Выпечка', 'Напитки', 'Закуски', 'Вегетарианские'
+        'Супы', 'Выпечка', 'Напитки', 'Закуски', 'Вегетарианские',
+        'Мясо', 'Паста', 'Все блюда'
     ]
     
     # Дедупликация
@@ -186,112 +205,91 @@ def seed_recipes(reset=False):
                     return existing_cat
         return cat
     
-    chicken = get_ingredient('курица')
-    potato = get_ingredient('картофель')
-    carrot = get_ingredient('морковь')
-    onion = get_ingredient('лук')
-    garlic = get_ingredient('чеснок')
-    salt = get_ingredient('соль')
-    pepper = get_ingredient('перец')
-    oil = get_ingredient('масло')
-    
-    lunch_cat = get_category('Обеды')
-    dinner_cat = get_category('Ужины')
-    
+    ingredients_pool = Ingredient.query.all()
+    categories_pool = {normalize_name(cat.name): cat for cat in Category.query.all()}
+
+    def recipe_image_url(index):
+        slot = (index % 24) + 1
+        return f"/static/img/recipes/recipe-{slot:02d}.svg"
+
+    def pick_categories(title):
+        key = normalize_name(title)
+        picked = []
+        def add(name):
+            cat = categories_pool.get(normalize_name(name))
+            if cat and cat not in picked:
+                picked.append(cat)
+
+        if 'суп' in key:
+            add('Супы')
+        if 'салат' in key:
+            add('Салаты')
+        if 'паста' in key:
+            add('Паста')
+        if 'десерт' in key or 'сырник' in key or 'блины' in key:
+            add('Десерты')
+        if 'смус' in key or 'напит' in key:
+            add('Напитки')
+        if 'омлет' in key or 'каша' in key:
+            add('Завтраки')
+        if any(word in key for word in ['куриц', 'говядин', 'свин', 'котлет', 'гуляш', 'филе']):
+            add('Мясо')
+        if not picked:
+            add('Все блюда')
+        add('Обеды')
+        return picked
+
+    adjectives = ['Домашний', 'Нежный', 'Пряный', 'Сливочный', 'Лёгкий', 'Сытный', 'Запечённый', 'Тёплый', 'Хрустящий', 'Ароматный']
+    bases = [
+        'суп', 'салат', 'рагу', 'боул', 'плов', 'омлет', 'паста', 'запеканка',
+        'гуляш', 'тушёные овощи', 'рис', 'картофель', 'куриное филе', 'котлеты',
+        'десерт', 'блины', 'сырники', 'смузи', 'каша', 'бутерброд', 'овощное ассорти',
+        'рыбный стейк', 'гратен', 'овощной соте', 'тёплый салат'
+    ]
+
+    titles = []
+    for adj in adjectives:
+        for base in bases:
+            titles.append(f"{adj} {base}")
+    titles = titles[:70]
+
+    import hashlib
+    import random
+
     recipes_to_create = []
-    
-    # Рецепт 1: Жареная курица с картофелем
-    recipe1_title = 'Жареная курица с картофелем'
-    if normalize_name(recipe1_title) not in existing_recipes:
-        recipe1 = Recipe(
-            title=recipe1_title,
-            description='Простое и сытное блюдо из курицы и картофеля',
-            cooking_time=45,
-            difficulty=Difficulty.EASY
+    updated_existing = 0
+    for idx, title in enumerate(titles):
+        normalized_title = normalize_name(title)
+        if normalized_title in existing_recipes:
+            existing = existing_recipes[normalized_title]
+            if not existing.image_url:
+                existing.image_url = recipe_image_url(idx)
+                updated_existing += 1
+            continue
+
+        seed = int(hashlib.md5(normalized_title.encode('utf-8')).hexdigest(), 16)
+        rng = random.Random(seed)
+        count = 5 + (seed % 8)
+        picked_ingredients = rng.sample(ingredients_pool, min(count, len(ingredients_pool)))
+
+        recipe = Recipe(
+            title=title,
+            description=f"{title.capitalize()} с акцентом на свежие продукты.",
+            cooking_time=20 + (seed % 50),
+            difficulty=[Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD][seed % 3],
+            image_url=recipe_image_url(idx)
         )
-        recipe1.ingredients = [chicken, potato, onion, garlic, salt, pepper, oil]
-        recipe1.categories = [lunch_cat, dinner_cat]
-        
-        learning1 = Learning(title='Как приготовить жареную курицу с картофелем', recipe=recipe1)
-        step1 = StepLearning(
-            title='Подготовка ингредиентов',
-            description='Нарежьте курицу на кусочки, картофель на дольки, лук полукольцами',
-            number=1,
-            learning=learning1
-        )
-        step2 = StepLearning(
-            title='Обжарка',
-            description='Обжарьте курицу на масле до золотистой корочки, добавьте картофель и лук',
-            number=2,
-            learning=learning1
-        )
-        step3 = StepLearning(
-            title='Готовка',
-            description='Тушите под крышкой 30 минут на среднем огне',
-            number=3,
-            learning=learning1
-        )
-        learning1.steps = [step1, step2, step3]
-        recipe1.learning = learning1
-        recipes_to_create.append(recipe1)
-    
-    # Рецепт 2: Картофельное пюре
-    recipe2_title = 'Картофельное пюре'
-    if normalize_name(recipe2_title) not in existing_recipes:
-        recipe2 = Recipe(
-            title=recipe2_title,
-            description='Классическое картофельное пюре',
-            cooking_time=25,
-            difficulty=Difficulty.EASY
-        )
-        recipe2.ingredients = [potato, salt, oil]
-        recipe2.categories = [lunch_cat]
-        
-        learning2 = Learning(title='Как приготовить картофельное пюре', recipe=recipe2)
-        step1 = StepLearning(
-            title='Варка картофеля',
-            description='Отварите картофель в подсоленной воде до готовности',
-            number=1,
-            learning=learning2
-        )
-        step2 = StepLearning(
-            title='Приготовление пюре',
-            description='Разомните картофель, добавьте масло и соль по вкусу',
-            number=2,
-            learning=learning2
-        )
-        learning2.steps = [step1, step2]
-        recipe2.learning = learning2
-        recipes_to_create.append(recipe2)
-    
-    # Рецепт 3: Куриный суп
-    recipe3_title = 'Куриный суп'
-    if normalize_name(recipe3_title) not in existing_recipes:
-        recipe3 = Recipe(
-            title=recipe3_title,
-            description='Наваристый куриный суп с овощами',
-            cooking_time=60,
-            difficulty=Difficulty.MEDIUM
-        )
-        recipe3.ingredients = [chicken, carrot, onion, potato, salt, pepper]
-        recipe3.categories = [lunch_cat]
-        
-        learning3 = Learning(title='Как приготовить куриный суп', recipe=recipe3)
-        step1 = StepLearning(
-            title='Бульон',
-            description='Сварите курицу в подсоленной воде 40 минут',
-            number=1,
-            learning=learning3
-        )
-        step2 = StepLearning(
-            title='Овощи',
-            description='Добавьте нарезанные овощи и варите ещё 20 минут',
-            number=2,
-            learning=learning3
-        )
-        learning3.steps = [step1, step2]
-        recipe3.learning = learning3
-        recipes_to_create.append(recipe3)
+        recipe.ingredients = picked_ingredients
+        recipe.categories = pick_categories(title)
+
+        learning = Learning(title=f"Как приготовить {title.lower()}", recipe=recipe)
+        learning.steps = [
+            StepLearning(title='Подготовка', description='Подготовьте ингредиенты и посуду.', number=1, learning=learning),
+            StepLearning(title='Готовка', description='Готовьте на среднем огне до готовности.', number=2, learning=learning),
+            StepLearning(title='Подача', description='Подавайте блюдо тёплым.', number=3, learning=learning)
+        ]
+        recipe.learning = learning
+        recipes_to_create.append(recipe)
     
     if recipes_to_create:
         for recipe in recipes_to_create:
@@ -299,6 +297,8 @@ def seed_recipes(reset=False):
         db.session.commit()
         print(f"✓ Recipes: {len(recipes_to_create)} added, {len(existing_recipes)} already exist")
     else:
+        if updated_existing:
+            db.session.commit()
         print(f"✓ Recipes: 0 added, {len(existing_recipes)} already exist")
 
 def main():

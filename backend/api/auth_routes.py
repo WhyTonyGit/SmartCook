@@ -1,4 +1,6 @@
-from flask import Blueprint, request, jsonify
+import os
+from flask import Blueprint, request, jsonify, current_app
+from werkzeug.utils import secure_filename
 from service import AuthService
 from repository import ConsumerRepository
 from api.middleware import require_auth
@@ -64,6 +66,32 @@ def update_profile():
     updated = ConsumerRepository.update(consumer.id, **updates)
     return jsonify(updated.to_dict()), 200
 
+@bp.route('/me/avatar', methods=['POST'])
+@require_auth
+def upload_avatar():
+    if 'avatar' not in request.files:
+        raise ValidationError("avatar file is required")
+
+    file = request.files['avatar']
+    if not file or file.filename == '':
+        raise ValidationError("avatar file is required")
+
+    filename = secure_filename(file.filename)
+    ext = os.path.splitext(filename)[1].lower()
+    if ext not in {'.png', '.jpg', '.jpeg', '.webp'}:
+        raise ValidationError("unsupported avatar format")
+
+    consumer = request.current_consumer
+    upload_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'avatars')
+    os.makedirs(upload_dir, exist_ok=True)
+    avatar_filename = f"avatar_{consumer.id}{ext}"
+    file_path = os.path.join(upload_dir, avatar_filename)
+    file.save(file_path)
+
+    avatar_url = f"/static/uploads/avatars/{avatar_filename}"
+    updated = ConsumerRepository.update(consumer.id, avatar_url=avatar_url)
+    return jsonify(updated.to_dict()), 200
+
 @bp.route('/me/forbidden-ingredients', methods=['GET'])
 @require_auth
 def get_forbidden_ingredients():
@@ -83,4 +111,3 @@ def update_forbidden_ingredients():
     updated = ConsumerRepository.get_by_id(consumer.id)
     ingredients = [ing.to_dict() for ing in updated.forbidden_ingredients]
     return jsonify(ingredients), 200
-
