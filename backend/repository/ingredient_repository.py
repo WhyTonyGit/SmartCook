@@ -1,3 +1,4 @@
+import re
 from extensions import db
 from models import Ingredient
 
@@ -6,7 +7,8 @@ class IngredientRepository:
     def _normalize_name(name):
         if not name:
             return ''
-        return name.strip().lower().replace('ё', 'е')
+        normalized = name.strip().lower().replace('ё', 'е')
+        return re.sub(r'\s+', ' ', normalized)
 
     @staticmethod
     def get_by_id(ingredient_id):
@@ -29,14 +31,20 @@ class IngredientRepository:
     
     @staticmethod
     def get_by_names(names):
-        normalized_names = {IngredientRepository._normalize_name(name) for name in names if name}
+        normalized_names = [
+            IngredientRepository._normalize_name(name)
+            for name in names
+            if IngredientRepository._normalize_name(name)
+        ]
         if not normalized_names:
             return []
         ingredients = Ingredient.query.all()
-        return [
-            ing for ing in ingredients
-            if IngredientRepository._normalize_name(ing.name) in normalized_names
-        ]
+        matched = []
+        for ing in ingredients:
+            ing_name = IngredientRepository._normalize_name(ing.name)
+            if any(query in ing_name or ing_name in query for query in normalized_names):
+                matched.append(ing)
+        return matched
     
     @staticmethod
     def create(name, image_url=None):

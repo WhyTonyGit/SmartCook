@@ -228,7 +228,7 @@
         import { api } from './js/api.js';
         import { renderRecipeCard } from './js/components.js';
         import { applyImageFallbacks, PLACEHOLDER_IMAGE } from './js/image.js';
-        import { debounce, showLoading, showEmptyState, showToast, sortRecipes } from './js/utils.js';
+        import { debounce, showLoading, showEmptyState, showToast, sortRecipes, normalizeText } from './js/utils.js';
 
         let selectedIngredients = [];
         let allIngredients = [];
@@ -459,11 +459,11 @@
             const params = new URLSearchParams(window.location.search);
             const ingredientsParam = params.get('ingredients');
             if (ingredientsParam) {
-                const names = ingredientsParam.split(',').map(n => n.trim());
+                const names = ingredientsParam.split(',').map(n => normalizeText(n));
                 // Найдем ID ингредиентов по именам
                 api.getIngredients().then(ingredients => {
                     allIngredients = ingredients;
-                    const found = ingredients.filter(ing => names.includes(ing.name));
+                    const found = ingredients.filter(ing => names.includes(normalizeText(ing.name)));
                     selectedIngredients = found.map(ing => ing.id);
                     renderSelectedTags();
                     renderPopularIngredients();

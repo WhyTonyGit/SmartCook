@@ -13,6 +13,15 @@ export function debounce(func, wait) {
     };
 }
 
+export function normalizeText(value) {
+    if (!value) return '';
+    return value
+        .trim()
+        .toLowerCase()
+        .replace(/ё/g, 'е')
+        .replace(/\s+/g, ' ');
+}
+
 // Форматирование времени
 export function formatTime(minutes) {
     if (!minutes) return '—';

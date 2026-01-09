@@ -370,10 +370,14 @@ nav {
 }
 
 .empty-state {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     padding: var(--spacing-2xl) var(--spacing-lg);
     color: var(--color-text-secondary);
-    display: grid;
     gap: var(--spacing-sm);
 }
 
@@ -451,10 +455,11 @@ nav {
 .bottom-nav {
     position: fixed;
     bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    right: 0;
     width: 100%;
     max-width: var(--app-shell-max);
+    margin: 0 auto;
     height: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
     background: var(--color-surface);
     border-top: 1px solid #e5e7eb;
