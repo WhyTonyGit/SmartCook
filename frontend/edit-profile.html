@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Редактирование - SmartCook</title>
     <link rel="stylesheet" href="css/common.css">
     <style>
@@ -80,60 +80,65 @@
     </style>
 </head>
 <body>
-    <div class="page-content">
-        <div class="container">
-            <div class="page-header">
-                <button class="page-back" onclick="window.history.back()">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-                    </svg>
-                </button>
-                <h1 class="page-title">Редактирование</h1>
-            </div>
-
-            <div class="profile-section">
-                <div class="profile-avatar-section">
-                    <div class="profile-avatar" id="avatar-container">
-                        <span id="avatar-text">U</span>
-                    </div>
-                    <label class="avatar-upload">
-                        <input type="file" accept="image/*" id="avatar-file" onchange="handleAvatarUpload(event)">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                    </label>
-                </div>
-
-                <form id="profile-form" onsubmit="saveProfile(event)">
-                    <div class="form-group">
-                        <label>Имя Фамилия</label>
-                        <input type="text" id="username" placeholder="Имя Фамилия" required>
-                    </div>
-                    <div class="form-group">
-                        <label>email@service.domain</label>
-                        <input type="email" id="email" placeholder="email@service.domain" readonly>
+    <div class="app-shell">
+        <main class="app-main">
+            <div class="page-content">
+                <div class="container">
+                    <div class="page-header">
+                        <button class="page-back" onclick="window.history.back()">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                            </svg>
+                        </button>
+                        <h1 class="page-title">Редактирование</h1>
                     </div>
 
-                    <div class="form-group">
-                        <label>Исключить ингредиенты:</label>
-                        <div class="search-bar">
-                            <input type="text" id="ingredient-search" placeholder="Поиск..." autocomplete="off">
-                            <button type="button" class="btn btn-icon" onclick="searchIngredients()">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
-                                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    <div class="profile-section">
+                        <div class="profile-avatar-section">
+                            <div class="profile-avatar" id="avatar-container">
+                                <span id="avatar-text">U</span>
+                            </div>
+                            <label class="avatar-upload">
+                                <input type="file" accept="image/*" id="avatar-file" onchange="handleAvatarUpload(event)">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                    <circle cx="12" cy="12" r="3"/>
                                 </svg>
-                            </button>
+                            </label>
                         </div>
-                        <div id="selected-ingredients" class="forbidden-ingredients"></div>
-                    </div>
+
+                        <form id="profile-form" onsubmit="saveProfile(event)">
+                            <div class="form-group">
+                                <label>Имя Фамилия</label>
+                                <input type="text" id="username" placeholder="Имя Фамилия" required>
+                            </div>
+                            <div class="form-group">
+                                <label>email@service.domain</label>
+                                <input type="email" id="email" placeholder="email@service.domain" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Исключить ингредиенты:</label>
+                                <div class="search-bar">
+                                    <input type="text" id="ingredient-search" placeholder="Поиск..." autocomplete="off">
+                                    <button type="button" class="btn btn-icon" onclick="searchIngredients()">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+                                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div id="selected-ingredients" class="forbidden-ingredients"></div>
+                            </div>
 
                     <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: var(--spacing-lg);" id="save-btn">
                         Сохранить
                     </button>
-                </form>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </div>
+        </main>
+        <div id="bottom-nav"></div>
     </div>
 
     <script type="module">
@@ -317,7 +322,12 @@
 
     <script type="module">
         import { renderBottomNav } from './js/components.js';
-        document.body.insertAdjacentHTML('beforeend', renderBottomNav('profile'));
+        const navContainer = document.getElementById('bottom-nav');
+        if (navContainer) {
+            navContainer.innerHTML = renderBottomNav('profile');
+        } else {
+            document.body.insertAdjacentHTML('beforeend', renderBottomNav('profile'));
+        }
     </script>
 </body>
 </html>

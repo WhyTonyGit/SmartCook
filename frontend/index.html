@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Рецепты для вас - SmartCook</title>
     <link rel="stylesheet" href="css/common.css">
     <style>
@@ -59,37 +59,42 @@
         }
     </script>
 
-    <div class="page-content">
-        <div class="container">
-            <div class="page-header">
-                <h1 class="page-title">Рецепты для вас</h1>
-                <div class="sort-filter">
-                    <span>Сортировка:</span>
-                    <select id="sort-select" onchange="changeSort()">
-                        <option value="match">По совпадению</option>
-                        <option value="popular">По популярности</option>
-                        <option value="rating">По рейтингу</option>
-                        <option value="time">По времени</option>
-                    </select>
+    <div class="app-shell">
+        <main class="app-main">
+            <div class="page-content">
+                <div class="container">
+                    <div class="page-header">
+                        <h1 class="page-title">Рецепты для вас</h1>
+                        <div class="sort-filter">
+                            <span>Сортировка:</span>
+                            <select id="sort-select" onchange="changeSort()">
+                                <option value="match">По совпадению</option>
+                                <option value="popular">По популярности</option>
+                                <option value="rating">По рейтингу</option>
+                                <option value="time">По времени</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <section class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Рекомендации</h2>
+                            <p class="section-subtitle">Подобрано специально для вас</p>
+                        </div>
+                        <div id="recommendations" class="recipe-grid"></div>
+                    </section>
+
+                    <section class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Популярные рецепты</h2>
+                            <p class="section-subtitle">Любимые всеми</p>
+                        </div>
+                        <div id="popular" class="recipe-grid"></div>
+                    </section>
                 </div>
             </div>
-
-            <section class="section">
-                <div class="section-header">
-                    <h2 class="section-title">Рекомендации</h2>
-                    <p class="section-subtitle">Подобрано специально для вас</p>
-                </div>
-                <div id="recommendations" class="recipe-grid"></div>
-            </section>
-
-            <section class="section">
-                <div class="section-header">
-                    <h2 class="section-title">Популярные рецепты</h2>
-                    <p class="section-subtitle">Любимые всеми</p>
-                </div>
-                <div id="popular" class="recipe-grid"></div>
-            </section>
-        </div>
+        </main>
+        <div id="bottom-nav"></div>
     </div>
 
     <script type="module">
@@ -207,7 +212,12 @@
 
     <script type="module">
         import { renderBottomNav } from './js/components.js';
-        document.body.insertAdjacentHTML('beforeend', renderBottomNav('search'));
+        const navContainer = document.getElementById('bottom-nav');
+        if (navContainer) {
+            navContainer.innerHTML = renderBottomNav('search');
+        } else {
+            document.body.insertAdjacentHTML('beforeend', renderBottomNav('search'));
+        }
     </script>
 </body>
 </html>
