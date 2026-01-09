@@ -339,6 +339,28 @@ nav {
     color: #7f8c8d;
 }
 
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    color: var(--color-text-secondary);
+    display: grid;
+    gap: var(--spacing-sm);
+}
+
+.empty-state-icon {
+    font-size: 2rem;
+    opacity: 0.8;
+}
+
+.empty-state-text {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+}
+
+.empty-state-subtext {
+    font-size: var(--font-size-sm);
+}
+
 /* Tags */
 .tags {
     display: flex;

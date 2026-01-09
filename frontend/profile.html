@@ -259,6 +259,7 @@
         import { api } from './js/api.js';
         import { requireAuth } from './js/auth.js';
         import { showToast } from './js/utils.js';
+        import { setImageWithFallback, PLACEHOLDER_IMAGE } from './js/image.js';
 
         if (!requireAuth()) {
             window.location.href = 'login.html';
@@ -273,7 +274,9 @@
                 
                 const avatarContainer = document.getElementById('avatar-container');
                 if (profile.avatar_url) {
-                    avatarContainer.innerHTML = `<img src="${profile.avatar_url}" alt="${profile.username}">`;
+                    avatarContainer.innerHTML = `<img src="${PLACEHOLDER_IMAGE}" data-image-url="${profile.avatar_url}" alt="${profile.username}">`;
+                    const avatarImg = avatarContainer.querySelector('img');
+                    setImageWithFallback(avatarImg, profile.avatar_url);
                 } else {
                     avatarContainer.innerHTML = `<span>${(profile.username || 'U')[0].toUpperCase()}</span>`;
                 }

@@ -1,6 +1,7 @@
 // Компоненты для рендеринга UI элементов
 
 import { formatTime, formatRating, formatReviews, formatServings, getRecipeStatus, getRecipeStatusText, renderStars, truncate } from './utils.js';
+import { PLACEHOLDER_IMAGE } from './image.js';
 
 // Рендер карточки рецепта
 export function renderRecipeCard(recipe, options = {}) {
@@ -13,7 +14,7 @@ export function renderRecipeCard(recipe, options = {}) {
     
     const status = getRecipeStatus(recipe);
     const statusText = getRecipeStatusText(recipe);
-    const imageUrl = recipe.image_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23F3F4F6" width="200" height="200"/%3E%3Ctext fill="%239CA3AF" font-family="sans-serif" font-size="14" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EНет изображения%3C/text%3E%3C/svg%3E';
+    const imageUrl = recipe.image_url || '';
     
     const favoriteClass = recipe.is_favorite ? 'active' : '';
     const favoriteIcon = recipe.is_favorite 
@@ -23,7 +24,7 @@ export function renderRecipeCard(recipe, options = {}) {
     return `
         <div class="recipe-card" ${onClick ? `onclick="${onClick}"` : ''}>
             <div class="recipe-card-image">
-                <img src="${imageUrl}" alt="${recipe.title}" loading="lazy">
+                <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${recipe.title}" loading="lazy">
                 ${showFavorite ? `
                     <div class="recipe-card-favorite ${favoriteClass}" ${favoriteCallback ? `onclick="event.stopPropagation(); ${favoriteCallback}"` : ''}>
                         <svg viewBox="0 0 24 24">
@@ -68,11 +69,11 @@ export function renderIngredientItem(ingredient, options = {}) {
         onAdd = null
     } = options;
     
-    const imageUrl = ingredient.image_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="60" height="60"%3E%3Crect fill="%23F3F4F6" width="60" height="60"/%3E%3C/svg%3E';
+    const imageUrl = ingredient.image_url || '';
     
     return `
         <div class="ingredient-item">
-            <img src="${imageUrl}" alt="${ingredient.name}" class="ingredient-item-image">
+            <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${ingredient.name}" class="ingredient-item-image">
             <span class="ingredient-item-name">${ingredient.name}</span>
             ${showRemove && onRemove ? `
                 <button class="ingredient-item-remove" onclick="${onRemove}">
@@ -136,7 +137,7 @@ export function renderStep(step, stepNumber) {
                 <h4 class="recipe-step-title">${step.title}</h4>
                 <p class="recipe-step-description">${step.description}</p>
                 ${imageUrl ? `
-                    <img src="${imageUrl}" alt="${step.title}" class="recipe-step-image">
+                    <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${step.title}" class="recipe-step-image">
                 ` : ''}
             </div>
         </div>

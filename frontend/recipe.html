@@ -299,6 +299,7 @@
         import { api } from './js/api.js';
         import { renderStep, renderComment } from './js/components.js';
         import { formatTime, formatRating, formatReviews, formatServings, showToast, showLoading } from './js/utils.js';
+        import { applyImageFallbacks, setImageWithFallback, PLACEHOLDER_IMAGE } from './js/image.js';
 
         const recipeId = new URLSearchParams(window.location.search).get('id');
         let isFavorite = false;
@@ -352,7 +353,7 @@
 
         function displayRecipe(recipe) {
             const container = document.getElementById('recipe-content');
-            const mainImage = recipe.image_url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23F3F4F6" width="400" height="300"/%3E%3C/svg%3E';
+            const mainImage = recipe.image_url || '';
             
             container.innerHTML = `
                 <div class="recipe-header">
@@ -366,12 +367,12 @@
                             <path d="${isFavorite ? 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' : 'M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z'}"/>
                         </svg>
                     </button>
-                    <img src="${mainImage}" alt="${recipe.title}" class="recipe-main-image" id="main-image">
+                    <img src="${PLACEHOLDER_IMAGE}" data-image-url="${mainImage}" alt="${recipe.title}" class="recipe-main-image" id="main-image">
                     ${recipe.steps && recipe.steps.some(s => s.image_url) ? `
                         <div class="recipe-thumbnails">
                             ${recipe.steps.filter(s => s.image_url).slice(0, 3).map((step, idx) => `
-                                <img src="${step.image_url}" alt="Шаг ${step.number}" class="recipe-thumbnail ${idx === 0 ? 'active' : ''}" 
-                                     onclick="changeMainImage('${step.image_url}')">
+                                <img src="${PLACEHOLDER_IMAGE}" data-image-url="${step.image_url}" alt="Шаг ${step.number}" class="recipe-thumbnail ${idx === 0 ? 'active' : ''}" 
+                                     onclick="changeMainImage('${step.image_url.replace(/'/g, "\\'")}')">
                             `).join('')}
                         </div>
                     ` : ''}
@@ -439,6 +440,7 @@
                     </div>
                 ` : ''}
             `;
+            applyImageFallbacks(container);
 
             // Показываем форму комментариев если авторизован
             if (api.getToken()) {
@@ -448,9 +450,10 @@
         }
 
         function changeMainImage(url) {
-            document.getElementById('main-image').src = url;
+            const mainImageEl = document.getElementById('main-image');
+            setImageWithFallback(mainImageEl, url);
             document.querySelectorAll('.recipe-thumbnail').forEach(thumb => {
-                thumb.classList.toggle('active', thumb.src === url);
+                thumb.classList.toggle('active', thumb.dataset.imageUrl === url);
             });
         }
 
