@@ -137,47 +137,27 @@
             font-size: var(--font-size-base);
         }
 
-        .recipe-step {
+        .recipe-steps {
             display: flex;
+            flex-direction: column;
             gap: var(--spacing-md);
-            margin-bottom: var(--spacing-xl);
+            padding-left: 1.2rem;
         }
 
-        .recipe-step-number {
-            flex-shrink: 0;
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-full);
-            background: var(--color-primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: var(--font-weight-bold);
-            font-size: var(--font-size-lg);
-        }
-
-        .recipe-step-content {
-            flex: 1;
+        .recipe-steps li {
+            padding-left: var(--spacing-sm);
         }
 
         .recipe-step-title {
             font-size: var(--font-size-lg);
             font-weight: var(--font-weight-semibold);
-            margin-bottom: var(--spacing-sm);
+            margin-bottom: var(--spacing-xs);
         }
 
         .recipe-step-description {
             color: var(--color-text-secondary);
             line-height: 1.6;
             margin-bottom: var(--spacing-sm);
-        }
-
-        .recipe-step-image {
-            width: 100%;
-            max-width: 300px;
-            border-radius: var(--radius-md);
-            margin-top: var(--spacing-sm);
         }
 
         .rating-section {
@@ -189,7 +169,21 @@
 
         .rating-stars-display {
             display: flex;
-            gap: 2px;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rating-input {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rating-actions {
+            margin-top: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
         }
 
         .rating-value {
@@ -297,7 +291,7 @@
 
     <script type="module">
         import { api } from './js/api.js';
-        import { renderStep, renderComment } from './js/components.js';
+        import { renderComment, renderStars } from './js/components.js';
         import { formatTime, formatRating, formatReviews, formatServings, showToast, showLoading } from './js/utils.js';
         import { applyImageFallbacks, setImageWithFallback, PLACEHOLDER_IMAGE } from './js/image.js';
 
@@ -305,6 +299,75 @@
         let isFavorite = false;
         let currentUser = null;
         let userRating = 0;
+        const STAR_PATH = 'M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z';
+
+        function renderStarSvg(fillPercent, size, uid) {
+            return `
+                <svg class="star-icon" viewBox="0 0 24 24" aria-hidden="true" style="--star-size: ${size}px;">
+                    <defs>
+                        <linearGradient id="${uid}" x1="0%" x2="100%">
+                            <stop offset="${fillPercent}%" stop-color="var(--star-fill)"></stop>
+                            <stop offset="${fillPercent}%" stop-color="var(--star-empty)"></stop>
+                        </linearGradient>
+                    </defs>
+                    <path d="${STAR_PATH}" fill="url(#${uid})"></path>
+                </svg>
+            `;
+        }
+
+        function renderRatingButtons(currentRating = 0) {
+            const safeRating = Math.max(0, Math.min(Number(currentRating) || 0, 5));
+            const uid = `rating-${Math.random().toString(36).slice(2, 9)}`;
+            return [1, 2, 3, 4, 5].map((value, index) => {
+                const fillPercent = value <= safeRating ? 100 : 0;
+                const gradientId = `${uid}-${index}`;
+                return `
+                    <button class="star-rating-button" data-value="${value}" aria-label="Оценка ${value}"
+                            onclick="setRating(${value})" onmouseenter="previewRating(${value})" onfocus="previewRating(${value})">
+                        ${renderStarSvg(fillPercent, 28, gradientId)}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function updateRatingInput(value = 0) {
+            const container = document.getElementById('rating-input');
+            if (!container) return;
+            container.innerHTML = renderRatingButtons(value);
+        }
+
+        function previewRating(value) {
+            updateRatingInput(value);
+        }
+
+        function resetRatingPreview() {
+            updateRatingInput(userRating);
+        }
+
+        function updateDeleteButton() {
+            const deleteBtn = document.getElementById('delete-rating-btn');
+            if (deleteBtn) {
+                deleteBtn.style.display = userRating ? 'inline-flex' : 'none';
+            }
+        }
+
+        async function refreshRatingSummary() {
+            try {
+                const recipe = await api.getRecipe(recipeId);
+                const summary = document.getElementById('rating-summary');
+                if (summary) {
+                    summary.innerHTML = `
+                        <div class="rating-stars-display">
+                            ${renderStars(recipe.avg_rating ?? 0, 5, { size: 18 })}
+                        </div>
+                        <span class="rating-value">${formatRating(recipe.avg_rating ?? 0)}</span>
+                        <span class="rating-reviews">${formatReviews(recipe.comments_count || 0)}</span>
+                    `;
+                }
+            } catch (e) {
+                console.error('Failed to refresh rating summary:', e);
+            }
+        }
 
         async function init() {
             if (!recipeId) {
@@ -381,17 +444,13 @@
                 <h1 class="recipe-title">${recipe.title}</h1>
 
                 <div class="recipe-meta">
-                    ${recipe.avg_rating ? `
-                        <div class="rating-section">
-                            <div class="rating-stars-display">
-                                ${Array(5).fill(0).map((_, i) => 
-                                    `<span style="color: ${i < Math.floor(recipe.avg_rating) ? '#F59E0B' : '#E5E7EB'}">⭐</span>`
-                                ).join('')}
-                            </div>
-                            <span class="rating-value">${formatRating(recipe.avg_rating)}</span>
-                            ${recipe.comments_count ? `<span class="rating-reviews">${formatReviews(recipe.comments_count)}</span>` : ''}
+                    <div class="rating-section" id="rating-summary">
+                        <div class="rating-stars-display">
+                            ${renderStars(recipe.avg_rating ?? 0, 5, { size: 18 })}
                         </div>
-                    ` : ''}
+                        <span class="rating-value">${formatRating(recipe.avg_rating ?? 0)}</span>
+                        <span class="rating-reviews">${formatReviews(recipe.comments_count || 0)}</span>
+                    </div>
                     <span>⏱ ${formatTime(recipe.cooking_time)}</span>
                     <span>${formatServings(5)}</span>
                     <span>${recipe.difficulty}</span>
@@ -417,7 +476,14 @@
                 ${recipe.steps && recipe.steps.length > 0 ? `
                     <div class="recipe-section">
                         <h3 class="recipe-section-title">Как готовить?</h3>
-                        ${recipe.steps.map(step => renderStep(step, step.number)).join('')}
+                        <ol class="recipe-steps">
+                            ${recipe.steps.map(step => `
+                                <li>
+                                    <div class="recipe-step-title">${step.title}</div>
+                                    <p class="recipe-step-description">${step.description}</p>
+                                </li>
+                            `).join('')}
+                        </ol>
                     </div>
                 ` : ''}
 
@@ -432,15 +498,20 @@
                 ${api.getToken() ? `
                     <div class="recipe-section">
                         <h3 class="recipe-section-title">Оцените рецепт</h3>
-                        <div class="rating-input">
-                            ${[1,2,3,4,5].map(i => `
-                                <button onclick="setRating(${i})" id="star-${i}" class="rating-star ${i <= userRating ? 'active' : ''}" style="font-size: 2rem; background: none; border: none; cursor: pointer; color: ${i <= userRating ? '#F59E0B' : '#E5E7EB'}">⭐</button>
-                            `).join('')}
+                        <div class="rating-input" id="rating-input" onmouseleave="resetRatingPreview()" onfocusout="resetRatingPreview()">
+                            ${renderRatingButtons(userRating)}
+                        </div>
+                        <div class="rating-actions">
+                            <button class="btn btn-outline" id="delete-rating-btn" onclick="deleteRating()" style="${userRating ? '' : 'display: none;'}">
+                                Удалить оценку
+                            </button>
                         </div>
                     </div>
                 ` : ''}
             `;
             applyImageFallbacks(container);
+            updateRatingInput(userRating);
+            updateDeleteButton();
 
             // Показываем форму комментариев если авторизован
             if (api.getToken()) {
@@ -524,18 +595,32 @@
             try {
                 await api.upsertMark(recipeId, value);
                 userRating = value;
-                
-                // Обновляем звёзды
-                for (let i = 1; i <= 5; i++) {
-                    const star = document.getElementById(`star-${i}`);
-                    if (star) {
-                        star.style.color = i <= value ? '#F59E0B' : '#E5E7EB';
-                        star.classList.toggle('active', i <= value);
-                    }
-                }
+                updateRatingInput(userRating);
+                updateDeleteButton();
+                await refreshRatingSummary();
                 showToast('Оценка сохранена', 'success');
             } catch (error) {
                 showToast('Ошибка сохранения оценки', 'error');
+            }
+        }
+
+        async function deleteRating() {
+            if (!api.getToken()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            if (!confirm('Удалить оценку?')) return;
+
+            try {
+                await api.deleteMark(recipeId);
+                userRating = 0;
+                updateRatingInput(userRating);
+                updateDeleteButton();
+                await refreshRatingSummary();
+                showToast('Оценка удалена', 'success');
+            } catch (error) {
+                showToast('Ошибка удаления оценки', 'error');
             }
         }
 
@@ -602,6 +687,9 @@
 
         window.toggleFavorite = toggleFavorite;
         window.setRating = setRating;
+        window.deleteRating = deleteRating;
+        window.previewRating = previewRating;
+        window.resetRatingPreview = resetRatingPreview;
         window.submitComment = submitComment;
         window.deleteComment = deleteComment;
         window.changeMainImage = changeMainImage;

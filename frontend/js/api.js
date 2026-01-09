@@ -229,6 +229,12 @@ class API {
         });
     }
 
+    async deleteMark(recipeId) {
+        return this.request(`/recipes/${recipeId}/mark`, {
+            method: 'DELETE'
+        });
+    }
+
     async getMarks() {
         return this.request('/me/marks');
     }

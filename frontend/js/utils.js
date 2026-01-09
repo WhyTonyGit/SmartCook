@@ -101,25 +101,6 @@ export function getRecipeStatusText(recipe) {
     return '';
 }
 
-// Рендер звезд рейтинга
-export function renderStars(rating, maxRating = 5) {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    const emptyStars = maxRating - fullStars - (hasHalfStar ? 1 : 0);
-    
-    let html = '';
-    for (let i = 0; i < fullStars; i++) {
-        html += '<span class="rating-star">⭐</span>';
-    }
-    if (hasHalfStar) {
-        html += '<span class="rating-star">⭐</span>';
-    }
-    for (let i = 0; i < emptyStars; i++) {
-        html += '<span class="rating-star empty">⭐</span>';
-    }
-    return html;
-}
-
 // Показать toast уведомление
 export function showToast(message, type = 'info', duration = 3000) {
     const toast = document.createElement('div');

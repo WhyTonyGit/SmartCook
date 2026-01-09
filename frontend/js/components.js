@@ -1,7 +1,35 @@
 // Компоненты для рендеринга UI элементов
 
-import { formatTime, formatRating, formatReviews, formatServings, getRecipeStatus, getRecipeStatusText, renderStars, truncate } from './utils.js';
+import { formatTime, formatRating, formatReviews, formatServings, getRecipeStatus, getRecipeStatusText, truncate } from './utils.js';
 import { PLACEHOLDER_IMAGE } from './image.js';
+
+const STAR_PATH = 'M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z';
+
+export function renderStars(rating = 0, maxRating = 5, options = {}) {
+    const safeRating = Math.max(0, Math.min(Number(rating) || 0, maxRating));
+    const size = options.size || 18;
+    const className = options.className ? ` ${options.className}` : '';
+    const uid = `star-${Math.random().toString(36).slice(2, 9)}`;
+
+    const stars = Array.from({ length: maxRating }, (_, index) => {
+        const fill = Math.max(0, Math.min(1, safeRating - index));
+        const percent = Math.round(fill * 100);
+        const gradientId = `${uid}-${index}`;
+        return `
+            <svg class="star-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <defs>
+                    <linearGradient id="${gradientId}" x1="0%" x2="100%">
+                        <stop offset="${percent}%" stop-color="var(--star-fill)"></stop>
+                        <stop offset="${percent}%" stop-color="var(--star-empty)"></stop>
+                    </linearGradient>
+                </defs>
+                <path d="${STAR_PATH}" fill="url(#${gradientId})"></path>
+            </svg>
+        `;
+    }).join('');
+
+    return `<span class="star-rating${className}" style="--star-size: ${size}px;">${stars}</span>`;
+}
 
 // Рендер карточки рецепта
 export function renderRecipeCard(recipe, options = {}) {
@@ -41,11 +69,10 @@ export function renderRecipeCard(recipe, options = {}) {
                     </div>
                 ` : ''}
                 <div class="recipe-card-meta">
-                    ${recipe.avg_rating ? `
-                        <div class="recipe-card-rating">
-                            ⭐ ${formatRating(recipe.avg_rating)}
-                        </div>
-                    ` : ''}
+                    <div class="recipe-card-rating">
+                        ${renderStars(recipe.avg_rating ?? 0, 5, { size: 16 })}
+                        <span class="recipe-card-rating-value">${formatRating(recipe.avg_rating ?? 0)}</span>
+                    </div>
                     ${recipe.comments_count ? `
                         <span class="recipe-card-reviews">${formatReviews(recipe.comments_count)}</span>
                     ` : ''}
@@ -148,7 +175,7 @@ export function renderStep(step, stepNumber) {
 export function renderBottomNav(currentPage = '') {
     const navItems = [
         { id: 'catalog', icon: 'M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z', label: 'Каталог', href: 'categories.html' },
-        { id: 'history', icon: 'M12 4a8 8 0 1 0 8 8 8 8 0 0 0-8-8zm1 4h-2v5.2l3.6 2.1 1-1.7-2.6-1.5z', label: 'История', href: 'history.html' },
+        { id: 'history', icon: 'M13 3a9 9 0 1 0 8.95 10h-2.02A7 7 0 1 1 13 5c1.61 0 3.09.55 4.26 1.47L15 9h7V2l-2.35 2.35A8.97 8.97 0 0 0 13 3zm-1 5h2v6l5 3-.9 1.48L12 15V8z', label: 'История', href: 'history.html' },
         { id: 'search', icon: 'M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z', label: 'Поиск', href: 'find-recipe.html' },
         { id: 'favorites', icon: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z', label: 'Избранное', href: 'favourites.html' },
         { id: 'profile', icon: 'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z', label: 'Профиль', href: 'profile.html' }
