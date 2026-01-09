@@ -9,26 +9,34 @@
         body {
             background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
             min-height: 100vh;
-            padding: var(--spacing-md);
+            padding: 24px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .app-shell.app-shell--auth {
             background: transparent;
             box-shadow: none;
+            width: 100%;
         }
 
         .app-shell.app-shell--auth .app-main {
             min-height: auto;
             padding: var(--spacing-xl) 0;
+            display: flex;
+            justify-content: center;
         }
 
         .auth-container {
             width: 100%;
-            max-width: 400px;
+            max-width: 480px;
             background: var(--color-bg);
             padding: var(--spacing-2xl);
             border-radius: var(--radius-xl);
             box-shadow: var(--shadow-lg);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .auth-header {
@@ -151,6 +159,13 @@
 
         #alert {
             margin-bottom: var(--spacing-md);
+        }
+
+        @media (max-height: 650px) {
+            body {
+                align-items: flex-start;
+                padding-top: 32px;
+            }
         }
     </style>
 </head>

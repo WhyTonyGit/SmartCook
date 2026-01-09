@@ -3,14 +3,24 @@
 import { api } from './api.js';
 
 // Проверка авторизации
-export function isAuthenticated() {
-    return !!api.getToken();
+export async function isAuthenticated() {
+    if (!api.getToken()) {
+        return false;
+    }
+    try {
+        await api.getProfile();
+        return true;
+    } catch (error) {
+        api.setToken(null);
+        return false;
+    }
 }
 
 // Редирект на логин если не авторизован
-export function requireAuth() {
-    if (!isAuthenticated()) {
-        window.location.href = '/login.html';
+export async function requireAuth() {
+    const authenticated = await isAuthenticated();
+    if (!authenticated) {
+        window.location.replace('login.html');
         return false;
     }
     return true;

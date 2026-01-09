@@ -206,11 +206,18 @@
             border-bottom: none;
         }
 
+        .comment-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+
         .comment-author {
             display: flex;
             align-items: center;
             gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-sm);
         }
 
         .comment-avatar {
@@ -242,12 +249,21 @@
         }
 
         .comment-delete {
-            margin-left: auto;
             background: none;
             border: none;
             color: var(--color-error);
             cursor: pointer;
             padding: var(--spacing-xs);
+            min-width: 32px;
+            min-height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-full);
+        }
+
+        .comment-delete:hover {
+            background: rgba(220, 38, 38, 0.1);
         }
 
         @media (min-width: 1024px) {
@@ -299,6 +315,7 @@
         let isFavorite = false;
         let currentUser = null;
         let userRating = 0;
+        let userRatingStorageKey = null;
         const STAR_PATH = 'M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z';
 
         function renderStarSvg(fillPercent, size, uid) {
@@ -351,6 +368,43 @@
             }
         }
 
+        function getUserRatingKey() {
+            if (currentUser?.id) {
+                return `ratings:user:${currentUser.id}`;
+            }
+            if (currentUser?.email) {
+                return `ratings:email:${currentUser.email}`;
+            }
+            const token = api.getToken();
+            if (token) {
+                return `ratings:token:${token.slice(0, 12)}`;
+            }
+            return null;
+        }
+
+        function readStoredRatings() {
+            if (!userRatingStorageKey) return {};
+            try {
+                return JSON.parse(localStorage.getItem(userRatingStorageKey)) || {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function writeStoredRating(recipeIdValue, ratingValue) {
+            if (!userRatingStorageKey) return;
+            const ratings = readStoredRatings();
+            ratings[recipeIdValue] = ratingValue;
+            localStorage.setItem(userRatingStorageKey, JSON.stringify(ratings));
+        }
+
+        function removeStoredRating(recipeIdValue) {
+            if (!userRatingStorageKey) return;
+            const ratings = readStoredRatings();
+            delete ratings[recipeIdValue];
+            localStorage.setItem(userRatingStorageKey, JSON.stringify(ratings));
+        }
+
         async function refreshRatingSummary() {
             try {
                 const recipe = await api.getRecipe(recipeId);
@@ -379,11 +433,14 @@
             // Проверка авторизации
             const token = api.getToken();
             if (token) {
+                userRatingStorageKey = getUserRatingKey();
                 try {
                     currentUser = await api.getProfile();
+                    userRatingStorageKey = getUserRatingKey();
                     await loadUserRating();
                 } catch (e) {
                     console.error('Failed to load user data:', e);
+                    await loadUserRating();
                 }
             }
 
@@ -430,7 +487,7 @@
                             <path d="${isFavorite ? 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' : 'M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z'}"/>
                         </svg>
                     </button>
-                    <img src="${PLACEHOLDER_IMAGE}" data-image-url="${mainImage}" alt="${recipe.title}" class="recipe-main-image" id="main-image">
+                    <img src="${PLACEHOLDER_IMAGE}" data-image-url="${mainImage}" data-image-name="${recipe.title}" data-image-type="recipe" alt="${recipe.title}" class="recipe-main-image" id="main-image">
                     ${recipe.steps && recipe.steps.some(s => s.image_url) ? `
                         <div class="recipe-thumbnails">
                             ${recipe.steps.filter(s => s.image_url).slice(0, 3).map((step, idx) => `
@@ -580,9 +637,17 @@
                 const mark = marks.find(m => m.recipe_id === parseInt(recipeId));
                 if (mark) {
                     userRating = mark.value;
+                    return;
+                }
+                const storedRatings = readStoredRatings();
+                if (storedRatings[recipeId]) {
+                    userRating = storedRatings[recipeId];
                 }
             } catch (e) {
-                // Не критично
+                const storedRatings = readStoredRatings();
+                if (storedRatings[recipeId]) {
+                    userRating = storedRatings[recipeId];
+                }
             }
         }
 
@@ -595,12 +660,17 @@
             try {
                 await api.upsertMark(recipeId, value);
                 userRating = value;
+                writeStoredRating(recipeId, value);
                 updateRatingInput(userRating);
                 updateDeleteButton();
                 await refreshRatingSummary();
                 showToast('Оценка сохранена', 'success');
             } catch (error) {
-                showToast('Ошибка сохранения оценки', 'error');
+                userRating = value;
+                writeStoredRating(recipeId, value);
+                updateRatingInput(userRating);
+                updateDeleteButton();
+                showToast('Оценка сохранена локально', 'info');
             }
         }
 
@@ -615,12 +685,17 @@
             try {
                 await api.deleteMark(recipeId);
                 userRating = 0;
+                removeStoredRating(recipeId);
                 updateRatingInput(userRating);
                 updateDeleteButton();
                 await refreshRatingSummary();
                 showToast('Оценка удалена', 'success');
             } catch (error) {
-                showToast('Ошибка удаления оценки', 'error');
+                userRating = 0;
+                removeStoredRating(recipeId);
+                updateRatingInput(userRating);
+                updateDeleteButton();
+                showToast('Оценка удалена локально', 'info');
             }
         }
 

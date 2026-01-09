@@ -107,14 +107,13 @@
         import { applyImageFallbacks } from './js/image.js';
         import { showLoading, showEmptyState, showToast } from './js/utils.js';
 
-        if (!requireAuth()) {
-            window.location.href = 'login.html';
-        }
-
         let currentUser = null;
         let editingCommentId = null;
 
         async function init() {
+            if (!(await requireAuth())) {
+                return;
+            }
             try {
                 currentUser = await api.getProfile();
                 await loadComments();

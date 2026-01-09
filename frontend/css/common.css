@@ -101,7 +101,7 @@ a {
 
 .app-main {
     padding: var(--spacing-lg);
-    padding-bottom: calc(var(--bottom-nav-height) + var(--spacing-xl));
+    padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + var(--spacing-xl));
     min-height: 100vh;
 }
 
@@ -366,6 +366,7 @@ nav {
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
 }
 
 .empty-state {
@@ -448,19 +449,20 @@ nav {
 }
 
 .bottom-nav {
-    position: sticky;
+    position: fixed;
     bottom: 0;
-    left: auto;
-    transform: none;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
-    height: var(--bottom-nav-height);
+    max-width: var(--app-shell-max);
+    height: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
     background: var(--color-surface);
     border-top: 1px solid #e5e7eb;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 0 var(--spacing-md);
-    z-index: 20;
+    padding: 0 var(--spacing-md) env(safe-area-inset-bottom);
+    z-index: 1000;
     font-size: var(--font-size-xs);
     box-shadow: 0 -6px 20px rgba(17, 24, 39, 0.08);
 }

@@ -72,10 +72,12 @@
             justify-content: center;
             cursor: pointer;
             border: 2px solid white;
+            font-size: 20px;
+            font-weight: var(--font-weight-bold);
         }
 
-        .avatar-upload input {
-            display: none;
+        .avatar-upload:hover {
+            background: var(--color-primary-dark);
         }
     </style>
 </head>
@@ -96,14 +98,10 @@
                     <div class="profile-section">
                         <div class="profile-avatar-section">
                             <div class="profile-avatar" id="avatar-container">
+                                <img id="avatar-image" alt="Аватар" style="display: none;">
                                 <span id="avatar-text">U</span>
-                                <label class="avatar-upload">
-                                    <input type="file" accept="image/*" id="avatar-file" onchange="handleAvatarUpload(event)">
-                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                                        <circle cx="12" cy="12" r="3"/>
-                                    </svg>
-                                </label>
+                                <button type="button" class="avatar-upload" id="avatar-trigger" aria-label="Сменить фото">+</button>
+                                <input type="file" accept="image/*" id="avatar-file" style="display: none;">
                             </div>
                         </div>
 
@@ -134,129 +132,57 @@
         import { showToast } from './js/utils.js';
         import { setImageWithFallback, PLACEHOLDER_IMAGE } from './js/image.js';
 
-        if (!requireAuth()) {
-            window.location.href = 'login.html';
+        let selectedAvatarFile = null;
+        let selectedAvatarDataUrl = '';
+        let currentUser = null;
+
+        const avatarImage = document.getElementById('avatar-image');
+        const avatarText = document.getElementById('avatar-text');
+        const avatarFileInput = document.getElementById('avatar-file');
+        const avatarTrigger = document.getElementById('avatar-trigger');
+
+        avatarTrigger.addEventListener('click', () => {
+            avatarFileInput.click();
+        });
+
+        avatarFileInput.addEventListener('change', handleAvatarUpload);
+
+        function getAvatarStorageKey() {
+            if (currentUser?.id) {
+                return `avatar:user:${currentUser.id}`;
+            }
+            if (currentUser?.email) {
+                return `avatar:email:${currentUser.email}`;
+            }
+            return null;
         }
 
-        let selectedAvatarFile = null;
+        function applyAvatarPreview(sourceUrl, fallbackLetter) {
+            if (sourceUrl) {
+                avatarImage.style.display = 'block';
+                avatarText.style.display = 'none';
+                avatarImage.src = PLACEHOLDER_IMAGE;
+                avatarImage.dataset.imageUrl = sourceUrl;
+                setImageWithFallback(avatarImage, sourceUrl);
+            } else {
+                avatarImage.style.display = 'none';
+                avatarText.style.display = 'block';
+                avatarText.textContent = fallbackLetter;
+            }
+        }
 
         async function loadProfile() {
             try {
-                const profile = await api.getProfile();
-                document.getElementById('username').value = profile.username || '';
-                document.getElementById('email').value = profile.email || '';
-                
-                const avatarContainer = document.getElementById('avatar-container');
-                if (profile.avatar_url) {
-                    avatarContainer.innerHTML = `<img src="${PLACEHOLDER_IMAGE}" data-image-url="${profile.avatar_url}" alt="${profile.username}">`;
-                    const avatarImg = avatarContainer.querySelector('img');
-                    setImageWithFallback(avatarImg, profile.avatar_url);
-                } else {
-                    avatarContainer.innerHTML = `<span>${(profile.username || 'U')[0].toUpperCase()}</span>`;
-                }
+                currentUser = await api.getProfile();
+                document.getElementById('username').value = currentUser.username || '';
+                document.getElementById('email').value = currentUser.email || '';
 
+                const storageKey = getAvatarStorageKey();
+                const storedAvatar = storageKey ? localStorage.getItem(storageKey) : '';
+                const avatarUrl = currentUser.avatar_url || storedAvatar || '';
+                applyAvatarPreview(avatarUrl, (currentUser.username || 'U')[0].toUpperCase());
             } catch (e) {
                 showToast('Ошибка загрузки профиля', 'error');
-            }
-        }
-
-        async function loadAllIngredients() {
-            try {
-                allIngredients = await api.getIngredients();
-            } catch (e) {
-                console.error('Failed to load ingredients:', e);
-            }
-        }
-
-        const searchDebounced = debounce(async function(query) {
-            if (!query || query.length < 2) {
-                document.getElementById('suggestions')?.remove();
-                return;
-            }
-
-            try {
-                const ingredients = await api.getIngredients(query);
-                showSuggestions(ingredients);
-            } catch (e) {
-                console.error('Failed to search ingredients:', e);
-            }
-        }, 300);
-
-        document.getElementById('ingredient-search').addEventListener('input', (e) => {
-            searchDebounced(e.target.value);
-        });
-
-        function showSuggestions(ingredients) {
-            let suggestionsEl = document.getElementById('suggestions');
-            if (!suggestionsEl) {
-                suggestionsEl = document.createElement('div');
-                suggestionsEl.id = 'suggestions';
-                suggestionsEl.className = 'ingredient-suggestions';
-                document.getElementById('ingredient-search').parentElement.appendChild(suggestionsEl);
-            }
-
-            const filtered = ingredients.filter(ing => !selectedIngredients.includes(ing.id));
-            
-            if (filtered.length === 0) {
-                suggestionsEl.remove();
-                return;
-            }
-
-            suggestionsEl.innerHTML = filtered.map(ing => {
-                const imageUrl = ing.image_url || '';
-                return `
-                    <div class="ingredient-suggestion" onclick="addIngredient(${ing.id}, '${ing.name.replace(/'/g, "\\'")}')">
-                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${ing.name}" class="ingredient-suggestion-image">
-                        <span class="ingredient-suggestion-name">${ing.name}</span>
-                    </div>
-                `;
-            }).join('');
-            suggestionsEl.style.display = 'block';
-            applyImageFallbacks(suggestionsEl);
-        }
-
-        function addIngredient(id, name) {
-            if (selectedIngredients.includes(id)) return;
-            selectedIngredients.push(id);
-            renderSelected();
-            document.getElementById('ingredient-search').value = '';
-            document.getElementById('suggestions')?.remove();
-        }
-
-        function removeIngredient(id) {
-            selectedIngredients = selectedIngredients.filter(ingId => ingId !== id);
-            renderSelected();
-        }
-
-        async function renderSelected() {
-            const container = document.getElementById('selected-ingredients');
-            
-            if (selectedIngredients.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
-
-            try {
-                const ingredients = await api.getIngredients();
-                const selected = ingredients.filter(ing => selectedIngredients.includes(ing.id));
-                
-                container.innerHTML = selected.map(ing => {
-                    const imageUrl = ing.image_url || '';
-                    return `
-                        <div class="ingredient-item">
-                            <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${ing.name}" class="ingredient-item-image">
-                            <span class="ingredient-item-name">${ing.name}</span>
-                            <button type="button" class="ingredient-item-remove" onclick="removeIngredient(${ing.id})">
-                                <svg viewBox="0 0 24 24" width="18" height="18" fill="white">
-                                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                                </svg>
-                            </button>
-                        </div>
-                    `;
-                }).join('');
-                applyImageFallbacks(container);
-            } catch (e) {
-                console.error('Failed to render selected:', e);
             }
         }
 
@@ -266,10 +192,8 @@
                 selectedAvatarFile = file;
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    const avatarContainer = document.getElementById('avatar-container');
-                    avatarContainer.innerHTML = `<img src="${PLACEHOLDER_IMAGE}" data-image-url="${e.target.result}" alt="Avatar">`;
-                    const avatarImg = avatarContainer.querySelector('img');
-                    setImageWithFallback(avatarImg, e.target.result);
+                    selectedAvatarDataUrl = e.target.result;
+                    applyAvatarPreview(selectedAvatarDataUrl, (currentUser?.username || 'U')[0].toUpperCase());
                 };
                 reader.readAsDataURL(file);
             }
@@ -284,7 +208,14 @@
             try {
                 const username = document.getElementById('username').value;
                 if (selectedAvatarFile) {
-                    await api.uploadAvatar(selectedAvatarFile);
+                    try {
+                        await api.uploadAvatar(selectedAvatarFile);
+                    } catch (error) {
+                        const storageKey = getAvatarStorageKey();
+                        if (storageKey && selectedAvatarDataUrl) {
+                            localStorage.setItem(storageKey, selectedAvatarDataUrl);
+                        }
+                    }
                     selectedAvatarFile = null;
                 }
                 await api.updateProfile({ username });
@@ -299,7 +230,16 @@
             }
         }
 
-        loadProfile();
+        async function init() {
+            if (!(await requireAuth())) {
+                return;
+            }
+            await loadProfile();
+        }
+
+        window.saveProfile = saveProfile;
+
+        init();
     </script>
 
     <script type="module">

@@ -64,10 +64,6 @@
         import { applyImageFallbacks } from './js/image.js';
         import { showLoading, showEmptyState, debounce } from './js/utils.js';
 
-        if (!requireAuth()) {
-            window.location.href = 'login.html';
-        }
-
         let allHistory = [];
 
         async function loadHistory() {
@@ -119,7 +115,14 @@
 
         window.searchHistory = searchHistory;
 
-        loadHistory();
+        async function init() {
+            if (!(await requireAuth())) {
+                return;
+            }
+            loadHistory();
+        }
+
+        init();
     </script>
 
     <script type="module">

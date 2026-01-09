@@ -52,7 +52,7 @@ export function renderRecipeCard(recipe, options = {}) {
     return `
         <div class="recipe-card" ${onClick ? `onclick="${onClick}"` : ''}>
             <div class="recipe-card-image">
-                <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${recipe.title}" loading="lazy">
+                <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" data-image-name="${recipe.title}" data-image-type="recipe" alt="${recipe.title}" loading="lazy">
                 ${showFavorite ? `
                     <div class="recipe-card-favorite ${favoriteClass}" ${favoriteCallback ? `onclick="event.stopPropagation(); ${favoriteCallback}"` : ''}>
                         <svg viewBox="0 0 24 24">
@@ -100,7 +100,7 @@ export function renderIngredientItem(ingredient, options = {}) {
     
     return `
         <div class="ingredient-item">
-            <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${ingredient.name}" class="ingredient-item-image">
+            <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" data-image-name="${ingredient.name}" data-image-type="ingredient" alt="${ingredient.name}" class="ingredient-item-image">
             <span class="ingredient-item-name">${ingredient.name}</span>
             ${showRemove && onRemove ? `
                 <button class="ingredient-item-remove" onclick="${onRemove}">

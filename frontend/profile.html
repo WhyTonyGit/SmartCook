@@ -261,10 +261,6 @@
         import { showToast } from './js/utils.js';
         import { setImageWithFallback, PLACEHOLDER_IMAGE } from './js/image.js';
 
-        if (!requireAuth()) {
-            window.location.href = 'login.html';
-        }
-
         async function loadProfile() {
             try {
                 const profile = await api.getProfile();
@@ -273,10 +269,13 @@
                 document.getElementById('profile-email').textContent = profile.email || '';
                 
                 const avatarContainer = document.getElementById('avatar-container');
-                if (profile.avatar_url) {
-                    avatarContainer.innerHTML = `<img src="${PLACEHOLDER_IMAGE}" data-image-url="${profile.avatar_url}" alt="${profile.username}">`;
+                const storageKey = profile.id ? `avatar:user:${profile.id}` : profile.email ? `avatar:email:${profile.email}` : null;
+                const storedAvatar = storageKey ? localStorage.getItem(storageKey) : '';
+                const avatarUrl = profile.avatar_url || storedAvatar || '';
+                if (avatarUrl) {
+                    avatarContainer.innerHTML = `<img src="${PLACEHOLDER_IMAGE}" data-image-url="${avatarUrl}" alt="${profile.username}">`;
                     const avatarImg = avatarContainer.querySelector('img');
-                    setImageWithFallback(avatarImg, profile.avatar_url);
+                    setImageWithFallback(avatarImg, avatarUrl);
                 } else {
                     avatarContainer.innerHTML = `<span>${(profile.username || 'U')[0].toUpperCase()}</span>`;
                 }
@@ -315,7 +314,14 @@
 
         window.logout = logout;
 
-        loadProfile();
+        async function init() {
+            if (!(await requireAuth())) {
+                return;
+            }
+            loadProfile();
+        }
+
+        init();
     </script>
 
     <script type="module">
