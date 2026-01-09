@@ -203,3 +203,23 @@ export function truncate(text, maxLength) {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
 }
+
+export function sortRecipes(list, sortKey = 'popular') {
+    const items = Array.isArray(list) ? [...list] : [];
+    const compareNumber = (a, b) => (Number(b) || 0) - (Number(a) || 0);
+
+    switch (sortKey) {
+        case 'time':
+            return items.sort((a, b) => (Number(a.cooking_time) || 0) - (Number(b.cooking_time) || 0));
+        case 'rating':
+            return items.sort((a, b) => compareNumber(a.avg_rating, b.avg_rating));
+        case 'popular':
+            return items.sort((a, b) => compareNumber(a.comments_count, b.comments_count));
+        case 'match':
+            return items.sort((a, b) => compareNumber(a.match_percent, b.match_percent));
+        case 'name':
+            return items.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ru'));
+        default:
+            return items;
+    }
+}

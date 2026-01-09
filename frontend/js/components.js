@@ -100,7 +100,7 @@ export function renderIngredientItem(ingredient, options = {}) {
     
     return `
         <div class="ingredient-item">
-            <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" data-image-name="${ingredient.name}" data-image-type="ingredient" alt="${ingredient.name}" class="ingredient-item-image">
+            <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" data-image-name="${ingredient.name}" data-image-type="ingredient" alt="${ingredient.name}" class="ingredient-item-image" loading="lazy">
             <span class="ingredient-item-name">${ingredient.name}</span>
             ${showRemove && onRemove ? `
                 <button class="ingredient-item-remove" onclick="${onRemove}">

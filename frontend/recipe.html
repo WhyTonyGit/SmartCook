@@ -657,19 +657,16 @@
                 return;
             }
 
+            userRating = value;
+            writeStoredRating(recipeId, value);
+            updateRatingInput(userRating);
+            updateDeleteButton();
+
             try {
                 await api.upsertMark(recipeId, value);
-                userRating = value;
-                writeStoredRating(recipeId, value);
-                updateRatingInput(userRating);
-                updateDeleteButton();
                 await refreshRatingSummary();
                 showToast('Оценка сохранена', 'success');
             } catch (error) {
-                userRating = value;
-                writeStoredRating(recipeId, value);
-                updateRatingInput(userRating);
-                updateDeleteButton();
                 showToast('Оценка сохранена локально', 'info');
             }
         }

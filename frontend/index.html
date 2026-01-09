@@ -103,7 +103,7 @@
         import { api } from './js/api.js';
         import { renderRecipeCard } from './js/components.js';
         import { applyImageFallbacks } from './js/image.js';
-        import { showLoading, showEmptyState } from './js/utils.js';
+        import { showLoading, showEmptyState, sortRecipes } from './js/utils.js';
 
         let currentSort = 'match';
         let favorites = new Set();
@@ -155,7 +155,8 @@
 
             try {
                 const recipes = await api.searchRecipes({ sort: currentSort });
-                displayRecipes(recipes.slice(0, 6), container, 'popular');
+                const sorted = sortRecipes(recipes, currentSort).slice(0, 6);
+                displayRecipes(sorted, container, 'popular');
             } catch (e) {
                 console.error('Failed to load popular:', e);
                 showEmptyState(container, 'Не удалось загрузить рецепты', 'Попробуйте обновить страницу');
