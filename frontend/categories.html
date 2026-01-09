@@ -140,6 +140,7 @@
 
     <script type="module">
         import { api } from './js/api.js';
+        import { requireAuth } from './js/auth.js';
         import { renderRecipeCard } from './js/components.js';
         import { applyImageFallbacks, PLACEHOLDER_IMAGE } from './js/image.js';
         import { showLoading, showEmptyState, debounce } from './js/utils.js';
@@ -166,7 +167,7 @@
                 const imageUrl = cat.image_url || '';
                 return `
                     <div class="category-card" onclick="selectCategory(${cat.id}, '${cat.name.replace(/'/g, "\\'")}')">
-                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${cat.name}" class="category-card-image">
+                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" data-image-name="${cat.name}" data-image-type="category" alt="${cat.name}" class="category-card-image">
                         <div class="category-card-title">${cat.name}</div>
                     </div>
                 `;
@@ -293,6 +294,9 @@
 
         // Инициализация
         async function init() {
+            if (!(await requireAuth())) {
+                return;
+            }
             await loadFavorites();
             await loadCategories();
         }

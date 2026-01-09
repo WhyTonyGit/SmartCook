@@ -253,7 +253,7 @@
                 const isSelected = selectedIngredients.includes(ing.id);
                 return `
                     <div class="ingredient-card ${isSelected ? 'selected' : ''}" onclick="toggleIngredient(${ing.id}, '${ing.name.replace(/'/g, "\\'")}')">
-                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${ing.name}" class="ingredient-card-image">
+                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" data-image-name="${ing.name}" data-image-type="ingredient" alt="${ing.name}" class="ingredient-card-image">
                         <div class="ingredient-card-name">${ing.name}</div>
                     </div>
                 `;
@@ -327,7 +327,7 @@
                 const imageUrl = ing.image_url || '';
                 return `
                     <div class="ingredient-suggestion" onclick="addIngredient(${ing.id}, '${ing.name.replace(/'/g, "\\'")}')">
-                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${ing.name}" class="ingredient-suggestion-image">
+                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" data-image-name="${ing.name}" data-image-type="ingredient" alt="${ing.name}" class="ingredient-suggestion-image">
                         <span class="ingredient-suggestion-name">${ing.name}</span>
                     </div>
                 `;

@@ -52,11 +52,13 @@
     </style>
 </head>
 <body>
-    <!-- Проверка onboarding -->
-    <script>
-        if (!localStorage.getItem('onboarding_done')) {
-            window.location.href = 'onboarding.html';
-        }
+    <script type="module">
+        import { isAuthenticated } from './js/auth.js';
+
+        (async () => {
+            const authenticated = await isAuthenticated();
+            window.location.replace(authenticated ? 'categories.html' : 'login.html');
+        })();
     </script>
 
     <div class="app-shell">
