@@ -272,15 +272,6 @@
             applyImageFallbacks(container);
         }
 
-        async function syncForbiddenIngredients() {
-            try {
-                await api.updateForbiddenIngredients(selectedIngredients);
-            } catch (error) {
-                console.error('Failed to update forbidden ingredients:', error);
-                showToast('Не удалось сохранить исключения', 'error');
-            }
-        }
-
         function addIngredient(id, name) {
             if (selectedIngredients.includes(id)) return;
             selectedIngredients.push(id);

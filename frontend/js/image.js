@@ -2,7 +2,7 @@ import { BASE_URL } from './api.js';
 
 export const PLACEHOLDER_IMAGE = '/static/img/placeholder.svg';
 
-export function normalizeUrl(url) {
+export function normalizeImageUrl(url) {
     if (!url) {
         return PLACEHOLDER_IMAGE;
     }
@@ -19,11 +19,7 @@ export function normalizeUrl(url) {
     return `${BASE_URL}${normalizedPath}`;
 }
 
-export function normalizeImageUrl(url) {
-    return normalizeUrl(url);
-}
-
-export function setImageWithFallback(imgEl, url, fallback = PLACEHOLDER_IMAGE) {
+export function setImageWithFallback(imgEl, url) {
     if (!imgEl) return;
 
     imgEl.dataset.imageUrl = url || '';
@@ -32,10 +28,10 @@ export function setImageWithFallback(imgEl, url, fallback = PLACEHOLDER_IMAGE) {
             return;
         }
         imgEl.dataset.fallbackApplied = 'true';
-        imgEl.src = fallback;
+        imgEl.src = PLACEHOLDER_IMAGE;
     };
 
-    imgEl.src = normalizeUrl(url);
+    imgEl.src = normalizeImageUrl(url);
 }
 
 export function applyImageFallbacks(container) {

@@ -160,6 +160,106 @@
             }
         }
 
+        async function loadAllIngredients() {
+            try {
+                allIngredients = await api.getIngredients();
+            } catch (e) {
+                console.error('Failed to load ingredients:', e);
+            }
+        }
+
+        const searchDebounced = debounce(async function(query) {
+            if (!query || query.length < 2) {
+                document.getElementById('suggestions')?.remove();
+                return;
+            }
+
+            try {
+                const ingredients = await api.getIngredients(query);
+                showSuggestions(ingredients);
+            } catch (e) {
+                console.error('Failed to search ingredients:', e);
+            }
+        }, 300);
+
+        document.getElementById('ingredient-search').addEventListener('input', (e) => {
+            searchDebounced(e.target.value);
+        });
+
+        function showSuggestions(ingredients) {
+            let suggestionsEl = document.getElementById('suggestions');
+            if (!suggestionsEl) {
+                suggestionsEl = document.createElement('div');
+                suggestionsEl.id = 'suggestions';
+                suggestionsEl.className = 'ingredient-suggestions';
+                document.getElementById('ingredient-search').parentElement.appendChild(suggestionsEl);
+            }
+
+            const filtered = ingredients.filter(ing => !selectedIngredients.includes(ing.id));
+            
+            if (filtered.length === 0) {
+                suggestionsEl.remove();
+                return;
+            }
+
+            suggestionsEl.innerHTML = filtered.map(ing => {
+                const imageUrl = ing.image_url || '';
+                return `
+                    <div class="ingredient-suggestion" onclick="addIngredient(${ing.id}, '${ing.name.replace(/'/g, "\\'")}')">
+                        <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${ing.name}" class="ingredient-suggestion-image">
+                        <span class="ingredient-suggestion-name">${ing.name}</span>
+                    </div>
+                `;
+            }).join('');
+            suggestionsEl.style.display = 'block';
+            applyImageFallbacks(suggestionsEl);
+        }
+
+        function addIngredient(id, name) {
+            if (selectedIngredients.includes(id)) return;
+            selectedIngredients.push(id);
+            renderSelected();
+            document.getElementById('ingredient-search').value = '';
+            document.getElementById('suggestions')?.remove();
+        }
+
+        function removeIngredient(id) {
+            selectedIngredients = selectedIngredients.filter(ingId => ingId !== id);
+            renderSelected();
+        }
+
+        async function renderSelected() {
+            const container = document.getElementById('selected-ingredients');
+            
+            if (selectedIngredients.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            try {
+                const ingredients = await api.getIngredients();
+                const selected = ingredients.filter(ing => selectedIngredients.includes(ing.id));
+                
+                container.innerHTML = selected.map(ing => {
+                    const imageUrl = ing.image_url || '';
+                    return `
+                        <div class="ingredient-item">
+                            <img src="${PLACEHOLDER_IMAGE}" data-image-url="${imageUrl}" alt="${ing.name}" class="ingredient-item-image">
+                            <span class="ingredient-item-name">${ing.name}</span>
+                            <button type="button" class="ingredient-item-remove" onclick="removeIngredient(${ing.id})">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="white">
+                                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+                applyImageFallbacks(container);
+            } catch (e) {
+                console.error('Failed to render selected:', e);
+            }
+        }
+
         function handleAvatarUpload(event) {
             const file = event.target.files[0];
             if (file) {

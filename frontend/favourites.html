@@ -85,7 +85,6 @@
         function displayRecipes(recipes) {
             const container = document.getElementById('favorites');
             if (!recipes || recipes.length === 0) {
-                container.classList.add('empty-centered');
                 showEmptyState(container, 'В избранном пока ничего нет', 'Добавьте рецепты в избранное, чтобы они отображались здесь', '💜');
                 return;
             }
