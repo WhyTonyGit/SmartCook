@@ -1,11 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640">
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240" fill="none">
   <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="rgb(16, 163, 74)" />
-      <stop offset="100%" stop-color="rgb(99, 102, 241)" />
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FEF3C7"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
     </linearGradient>
   </defs>
-  <rect width="960" height="640" fill="url(#grad)" />
-  <rect x="24" y="24" width="912" height="592" rx="28" fill="rgba(255,255,255,0.15)" />
-  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="600">Выпечка</text>
+  <rect width="320" height="240" rx="24" fill="url(#bg)"/>
+  <g id="shadow" opacity="0.18">
+    <ellipse cx="160" cy="176" rx="78" ry="16" fill="#4C1D95"/>
+  </g>
+  <g id="main">
+    <path d="M120 150c10-32 54-52 86-36 18 10 18 32 0 48-18 16-50 28-70 22-12-4-20-16-16-34z" fill="#FBBF24"/>
+    <path d="M186 114c10-8 24-8 32 0" stroke="#F59E0B" stroke-width="8" stroke-linecap="round"/>
+  </g>
 </svg>

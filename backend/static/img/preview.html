@@ -1,0 +1,1354 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Backend SVG preview</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; background: #f8fafc; color: #0f172a; }
+    h2 { margin-top: 32px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+    .card { background: #fff; padding: 12px; border-radius: 16px; box-shadow: 0 6px 20px rgba(15,23,42,0.08); }
+    .label { font-size: 12px; color: #475569; word-break: break-all; margin-top: 8px; }
+    .sizes { display: flex; gap: 8px; align-items: center; }
+    img { display: block; border-radius: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Backend SVG preview</h1>
+  <h2>Categories</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="sizes">
+        <img src="categories/default.svg" width="96" height="72"/>
+        <img src="categories/default.svg" width="48" height="36"/>
+        <img src="categories/default.svg" width="24" height="18"/>
+      </div>
+      <div class="label">categories/default.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="categories/deserty.svg" width="96" height="72"/>
+        <img src="categories/deserty.svg" width="48" height="36"/>
+        <img src="categories/deserty.svg" width="24" height="18"/>
+      </div>
+      <div class="label">categories/deserty.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="categories/myaso.svg" width="96" height="72"/>
+        <img src="categories/myaso.svg" width="48" height="36"/>
+        <img src="categories/myaso.svg" width="24" height="18"/>
+      </div>
+      <div class="label">categories/myaso.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="categories/napitki.svg" width="96" height="72"/>
+        <img src="categories/napitki.svg" width="48" height="36"/>
+        <img src="categories/napitki.svg" width="24" height="18"/>
+      </div>
+      <div class="label">categories/napitki.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="categories/obedy.svg" width="96" height="72"/>
+        <img src="categories/obedy.svg" width="48" height="36"/>
+        <img src="categories/obedy.svg" width="24" height="18"/>
+      </div>
+      <div class="label">categories/obedy.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="categories/pasta.svg" width="96" height="72"/>
+        <img src="categories/pasta.svg" width="48" height="36"/>
+        <img src="categories/pasta.svg" width="24" height="18"/>
+      </div>
+      <div class="label">categories/pasta.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="categories/salaty.svg" width="96" height="72"/>
+        <img src="categories/salaty.svg" width="48" height="36"/>
+        <img src="categories/salaty.svg" width="24" height="18"/>
+      </div>
+      <div class="label">categories/salaty.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="categories/supy.svg" width="96" height="72"/>
+        <img src="categories/supy.svg" width="48" height="36"/>
+        <img src="categories/supy.svg" width="24" height="18"/>
+      </div>
+      <div class="label">categories/supy.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="categories/uzhiny.svg" width="96" height="72"/>
+        <img src="categories/uzhiny.svg" width="48" height="36"/>
+        <img src="categories/uzhiny.svg" width="24" height="18"/>
+      </div>
+      <div class="label">categories/uzhiny.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="categories/vegetarianskie.svg" width="96" height="72"/>
+        <img src="categories/vegetarianskie.svg" width="48" height="36"/>
+        <img src="categories/vegetarianskie.svg" width="24" height="18"/>
+      </div>
+      <div class="label">categories/vegetarianskie.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="categories/vse-blyuda.svg" width="96" height="72"/>
+        <img src="categories/vse-blyuda.svg" width="48" height="36"/>
+        <img src="categories/vse-blyuda.svg" width="24" height="18"/>
+      </div>
+      <div class="label">categories/vse-blyuda.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="categories/vypechka.svg" width="96" height="72"/>
+        <img src="categories/vypechka.svg" width="48" height="36"/>
+        <img src="categories/vypechka.svg" width="24" height="18"/>
+      </div>
+      <div class="label">categories/vypechka.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="categories/zakuski.svg" width="96" height="72"/>
+        <img src="categories/zakuski.svg" width="48" height="36"/>
+        <img src="categories/zakuski.svg" width="24" height="18"/>
+      </div>
+      <div class="label">categories/zakuski.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="categories/zavtraki.svg" width="96" height="72"/>
+        <img src="categories/zavtraki.svg" width="48" height="36"/>
+        <img src="categories/zavtraki.svg" width="24" height="18"/>
+      </div>
+      <div class="label">categories/zavtraki.svg</div>
+    </div>
+  </div>
+  <h2>Recipes</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/bananovyi-smuzi.svg" width="96" height="72"/>
+        <img src="recipes/bananovyi-smuzi.svg" width="48" height="36"/>
+        <img src="recipes/bananovyi-smuzi.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/bananovyi-smuzi.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/borsch-domashnii.svg" width="96" height="72"/>
+        <img src="recipes/borsch-domashnii.svg" width="48" height="36"/>
+        <img src="recipes/borsch-domashnii.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/borsch-domashnii.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/chia-puding-s-yagodami.svg" width="96" height="72"/>
+        <img src="recipes/chia-puding-s-yagodami.svg" width="48" height="36"/>
+        <img src="recipes/chia-puding-s-yagodami.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/chia-puding-s-yagodami.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/frittata-so-shpinatom.svg" width="96" height="72"/>
+        <img src="recipes/frittata-so-shpinatom.svg" width="48" height="36"/>
+        <img src="recipes/frittata-so-shpinatom.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/frittata-so-shpinatom.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/grecheskii-salat.svg" width="96" height="72"/>
+        <img src="recipes/grecheskii-salat.svg" width="48" height="36"/>
+        <img src="recipes/grecheskii-salat.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/grecheskii-salat.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/kalmar-v-slivochno-chesnochnom-souse.svg" width="96" height="72"/>
+        <img src="recipes/kalmar-v-slivochno-chesnochnom-souse.svg" width="48" height="36"/>
+        <img src="recipes/kalmar-v-slivochno-chesnochnom-souse.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/kalmar-v-slivochno-chesnochnom-souse.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/kartofelnoe-pyure-s-gribami.svg" width="96" height="72"/>
+        <img src="recipes/kartofelnoe-pyure-s-gribami.svg" width="48" height="36"/>
+        <img src="recipes/kartofelnoe-pyure-s-gribami.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/kartofelnoe-pyure-s-gribami.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/kotlety-iz-indeiki.svg" width="96" height="72"/>
+        <img src="recipes/kotlety-iz-indeiki.svg" width="48" height="36"/>
+        <img src="recipes/kotlety-iz-indeiki.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/kotlety-iz-indeiki.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/krolik-v-smetannom-souse.svg" width="96" height="72"/>
+        <img src="recipes/krolik-v-smetannom-souse.svg" width="48" height="36"/>
+        <img src="recipes/krolik-v-smetannom-souse.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/krolik-v-smetannom-souse.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/kurinoe-file-na-grile.svg" width="96" height="72"/>
+        <img src="recipes/kurinoe-file-na-grile.svg" width="48" height="36"/>
+        <img src="recipes/kurinoe-file-na-grile.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/kurinoe-file-na-grile.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/kuritsa-teriyaki-s-risom.svg" width="96" height="72"/>
+        <img src="recipes/kuritsa-teriyaki-s-risom.svg" width="48" height="36"/>
+        <img src="recipes/kuritsa-teriyaki-s-risom.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/kuritsa-teriyaki-s-risom.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/omlet-s-ovoschami.svg" width="96" height="72"/>
+        <img src="recipes/omlet-s-ovoschami.svg" width="48" height="36"/>
+        <img src="recipes/omlet-s-ovoschami.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/omlet-s-ovoschami.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/ovoschnaya-pasta-s-tomatami.svg" width="96" height="72"/>
+        <img src="recipes/ovoschnaya-pasta-s-tomatami.svg" width="48" height="36"/>
+        <img src="recipes/ovoschnaya-pasta-s-tomatami.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/ovoschnaya-pasta-s-tomatami.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/ovoschnoi-ratatui.svg" width="96" height="72"/>
+        <img src="recipes/ovoschnoi-ratatui.svg" width="48" height="36"/>
+        <img src="recipes/ovoschnoi-ratatui.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/ovoschnoi-ratatui.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/ovsyanaya-kasha-s-yagodami.svg" width="96" height="72"/>
+        <img src="recipes/ovsyanaya-kasha-s-yagodami.svg" width="48" height="36"/>
+        <img src="recipes/ovsyanaya-kasha-s-yagodami.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/ovsyanaya-kasha-s-yagodami.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/pasta-karbonara.svg" width="96" height="72"/>
+        <img src="recipes/pasta-karbonara.svg" width="48" height="36"/>
+        <img src="recipes/pasta-karbonara.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/pasta-karbonara.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/plov-s-govyadinoi.svg" width="96" height="72"/>
+        <img src="recipes/plov-s-govyadinoi.svg" width="48" height="36"/>
+        <img src="recipes/plov-s-govyadinoi.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/plov-s-govyadinoi.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/ragu-iz-ovoschei.svg" width="96" height="72"/>
+        <img src="recipes/ragu-iz-ovoschei.svg" width="48" height="36"/>
+        <img src="recipes/ragu-iz-ovoschei.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/ragu-iz-ovoschei.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/rizotto-s-gribami.svg" width="96" height="72"/>
+        <img src="recipes/rizotto-s-gribami.svg" width="48" height="36"/>
+        <img src="recipes/rizotto-s-gribami.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/rizotto-s-gribami.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/rybnye-kotlety.svg" width="96" height="72"/>
+        <img src="recipes/rybnye-kotlety.svg" width="48" height="36"/>
+        <img src="recipes/rybnye-kotlety.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/rybnye-kotlety.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/salat-s-pechenoi-svekloi-i-kozim-syrom.svg" width="96" height="72"/>
+        <img src="recipes/salat-s-pechenoi-svekloi-i-kozim-syrom.svg" width="48" height="36"/>
+        <img src="recipes/salat-s-pechenoi-svekloi-i-kozim-syrom.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/salat-s-pechenoi-svekloi-i-kozim-syrom.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/salat-s-tuntsom-i-yaitsom.svg" width="96" height="72"/>
+        <img src="recipes/salat-s-tuntsom-i-yaitsom.svg" width="48" height="36"/>
+        <img src="recipes/salat-s-tuntsom-i-yaitsom.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/salat-s-tuntsom-i-yaitsom.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/salat-tsezar.svg" width="96" height="72"/>
+        <img src="recipes/salat-tsezar.svg" width="48" height="36"/>
+        <img src="recipes/salat-tsezar.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/salat-tsezar.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/shokoladnyi-brauni.svg" width="96" height="72"/>
+        <img src="recipes/shokoladnyi-brauni.svg" width="48" height="36"/>
+        <img src="recipes/shokoladnyi-brauni.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/shokoladnyi-brauni.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/sup-minestrone.svg" width="96" height="72"/>
+        <img src="recipes/sup-minestrone.svg" width="48" height="36"/>
+        <img src="recipes/sup-minestrone.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/sup-minestrone.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/svinina-s-ovoschami-na-skovorode.svg" width="96" height="72"/>
+        <img src="recipes/svinina-s-ovoschami-na-skovorode.svg" width="48" height="36"/>
+        <img src="recipes/svinina-s-ovoschami-na-skovorode.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/svinina-s-ovoschami-na-skovorode.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/syrniki-so-smetanoi.svg" width="96" height="72"/>
+        <img src="recipes/syrniki-so-smetanoi.svg" width="48" height="36"/>
+        <img src="recipes/syrniki-so-smetanoi.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/syrniki-so-smetanoi.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/teplyi-salat-s-krevetkami.svg" width="96" height="72"/>
+        <img src="recipes/teplyi-salat-s-krevetkami.svg" width="48" height="36"/>
+        <img src="recipes/teplyi-salat-s-krevetkami.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/teplyi-salat-s-krevetkami.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/treska-s-limonom-v-duhovke.svg" width="96" height="72"/>
+        <img src="recipes/treska-s-limonom-v-duhovke.svg" width="48" height="36"/>
+        <img src="recipes/treska-s-limonom-v-duhovke.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/treska-s-limonom-v-duhovke.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/tushenaya-baranina-s-kartofelem.svg" width="96" height="72"/>
+        <img src="recipes/tushenaya-baranina-s-kartofelem.svg" width="48" height="36"/>
+        <img src="recipes/tushenaya-baranina-s-kartofelem.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/tushenaya-baranina-s-kartofelem.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/tykvennye-pankeiki.svg" width="96" height="72"/>
+        <img src="recipes/tykvennye-pankeiki.svg" width="48" height="36"/>
+        <img src="recipes/tykvennye-pankeiki.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/tykvennye-pankeiki.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/tykvennyi-krem-sup.svg" width="96" height="72"/>
+        <img src="recipes/tykvennyi-krem-sup.svg" width="48" height="36"/>
+        <img src="recipes/tykvennyi-krem-sup.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/tykvennyi-krem-sup.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="recipes/zapechennyi-losos-s-limonom.svg" width="96" height="72"/>
+        <img src="recipes/zapechennyi-losos-s-limonom.svg" width="48" height="36"/>
+        <img src="recipes/zapechennyi-losos-s-limonom.svg" width="24" height="18"/>
+      </div>
+      <div class="label">recipes/zapechennyi-losos-s-limonom.svg</div>
+    </div>
+  </div>
+  <h2>Ingredients</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/adzhika.svg" width="96" height="72"/>
+        <img src="ingredients/adzhika.svg" width="48" height="36"/>
+        <img src="ingredients/adzhika.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/adzhika.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/avokado.svg" width="96" height="72"/>
+        <img src="ingredients/avokado.svg" width="48" height="36"/>
+        <img src="ingredients/avokado.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/avokado.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/baklazhany.svg" width="96" height="72"/>
+        <img src="ingredients/baklazhany.svg" width="48" height="36"/>
+        <img src="ingredients/baklazhany.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/baklazhany.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/banan.svg" width="96" height="72"/>
+        <img src="ingredients/banan.svg" width="48" height="36"/>
+        <img src="ingredients/banan.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/banan.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/baranina.svg" width="96" height="72"/>
+        <img src="ingredients/baranina.svg" width="48" height="36"/>
+        <img src="ingredients/baranina.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/baranina.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/basmati.svg" width="96" height="72"/>
+        <img src="ingredients/basmati.svg" width="48" height="36"/>
+        <img src="ingredients/basmati.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/basmati.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/batat.svg" width="96" height="72"/>
+        <img src="ingredients/batat.svg" width="48" height="36"/>
+        <img src="ingredients/batat.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/batat.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/bazilik.svg" width="96" height="72"/>
+        <img src="ingredients/bazilik.svg" width="48" height="36"/>
+        <img src="ingredients/bazilik.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/bazilik.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/bekon.svg" width="96" height="72"/>
+        <img src="ingredients/bekon.svg" width="48" height="36"/>
+        <img src="ingredients/bekon.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/bekon.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/bolgarskii-perets.svg" width="96" height="72"/>
+        <img src="ingredients/bolgarskii-perets.svg" width="48" height="36"/>
+        <img src="ingredients/bolgarskii-perets.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/bolgarskii-perets.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/brokkoli.svg" width="96" height="72"/>
+        <img src="ingredients/brokkoli.svg" width="48" height="36"/>
+        <img src="ingredients/brokkoli.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/brokkoli.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/bulgur.svg" width="96" height="72"/>
+        <img src="ingredients/bulgur.svg" width="48" height="36"/>
+        <img src="ingredients/bulgur.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/bulgur.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/chechevitsa.svg" width="96" height="72"/>
+        <img src="ingredients/chechevitsa.svg" width="48" height="36"/>
+        <img src="ingredients/chechevitsa.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/chechevitsa.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/chernika.svg" width="96" height="72"/>
+        <img src="ingredients/chernika.svg" width="48" height="36"/>
+        <img src="ingredients/chernika.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/chernika.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/cherri.svg" width="96" height="72"/>
+        <img src="ingredients/cherri.svg" width="48" height="36"/>
+        <img src="ingredients/cherri.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/cherri.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/chesnok.svg" width="96" height="72"/>
+        <img src="ingredients/chesnok.svg" width="48" height="36"/>
+        <img src="ingredients/chesnok.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/chesnok.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/default.svg" width="96" height="72"/>
+        <img src="ingredients/default.svg" width="48" height="36"/>
+        <img src="ingredients/default.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/default.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/drozhzhi.svg" width="96" height="72"/>
+        <img src="ingredients/drozhzhi.svg" width="48" height="36"/>
+        <img src="ingredients/drozhzhi.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/drozhzhi.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/fasol.svg" width="96" height="72"/>
+        <img src="ingredients/fasol.svg" width="48" height="36"/>
+        <img src="ingredients/fasol.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/fasol.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/finiki.svg" width="96" height="72"/>
+        <img src="ingredients/finiki.svg" width="48" height="36"/>
+        <img src="ingredients/finiki.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/finiki.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/gorchitsa.svg" width="96" height="72"/>
+        <img src="ingredients/gorchitsa.svg" width="48" height="36"/>
+        <img src="ingredients/gorchitsa.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/gorchitsa.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/goroh.svg" width="96" height="72"/>
+        <img src="ingredients/goroh.svg" width="48" height="36"/>
+        <img src="ingredients/goroh.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/goroh.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/govyadina.svg" width="96" height="72"/>
+        <img src="ingredients/govyadina.svg" width="48" height="36"/>
+        <img src="ingredients/govyadina.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/govyadina.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/grechka.svg" width="96" height="72"/>
+        <img src="ingredients/grechka.svg" width="48" height="36"/>
+        <img src="ingredients/grechka.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/grechka.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/gretskie-orehi.svg" width="96" height="72"/>
+        <img src="ingredients/gretskie-orehi.svg" width="48" height="36"/>
+        <img src="ingredients/gretskie-orehi.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/gretskie-orehi.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/griby.svg" width="96" height="72"/>
+        <img src="ingredients/griby.svg" width="48" height="36"/>
+        <img src="ingredients/griby.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/griby.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/grusha.svg" width="96" height="72"/>
+        <img src="ingredients/grusha.svg" width="48" height="36"/>
+        <img src="ingredients/grusha.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/grusha.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/indeika.svg" width="96" height="72"/>
+        <img src="ingredients/indeika.svg" width="48" height="36"/>
+        <img src="ingredients/indeika.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/indeika.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/iogurt.svg" width="96" height="72"/>
+        <img src="ingredients/iogurt.svg" width="48" height="36"/>
+        <img src="ingredients/iogurt.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/iogurt.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/izyum.svg" width="96" height="72"/>
+        <img src="ingredients/izyum.svg" width="48" height="36"/>
+        <img src="ingredients/izyum.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/izyum.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/kabachki.svg" width="96" height="72"/>
+        <img src="ingredients/kabachki.svg" width="48" height="36"/>
+        <img src="ingredients/kabachki.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/kabachki.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/kakao.svg" width="96" height="72"/>
+        <img src="ingredients/kakao.svg" width="48" height="36"/>
+        <img src="ingredients/kakao.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/kakao.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/kalmar.svg" width="96" height="72"/>
+        <img src="ingredients/kalmar.svg" width="48" height="36"/>
+        <img src="ingredients/kalmar.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/kalmar.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/kapusta.svg" width="96" height="72"/>
+        <img src="ingredients/kapusta.svg" width="48" height="36"/>
+        <img src="ingredients/kapusta.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/kapusta.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/kartofel.svg" width="96" height="72"/>
+        <img src="ingredients/kartofel.svg" width="48" height="36"/>
+        <img src="ingredients/kartofel.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/kartofel.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/kefir.svg" width="96" height="72"/>
+        <img src="ingredients/kefir.svg" width="48" height="36"/>
+        <img src="ingredients/kefir.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/kefir.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/kinza.svg" width="96" height="72"/>
+        <img src="ingredients/kinza.svg" width="48" height="36"/>
+        <img src="ingredients/kinza.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/kinza.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/klubnika.svg" width="96" height="72"/>
+        <img src="ingredients/klubnika.svg" width="48" height="36"/>
+        <img src="ingredients/klubnika.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/klubnika.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/koritsa.svg" width="96" height="72"/>
+        <img src="ingredients/koritsa.svg" width="48" height="36"/>
+        <img src="ingredients/koritsa.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/koritsa.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/krahmal.svg" width="96" height="72"/>
+        <img src="ingredients/krahmal.svg" width="48" height="36"/>
+        <img src="ingredients/krahmal.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/krahmal.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/krevetki.svg" width="96" height="72"/>
+        <img src="ingredients/krevetki.svg" width="48" height="36"/>
+        <img src="ingredients/krevetki.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/krevetki.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/krolik.svg" width="96" height="72"/>
+        <img src="ingredients/krolik.svg" width="48" height="36"/>
+        <img src="ingredients/krolik.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/krolik.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/kukuruza.svg" width="96" height="72"/>
+        <img src="ingredients/kukuruza.svg" width="48" height="36"/>
+        <img src="ingredients/kukuruza.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/kukuruza.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/kunzhut.svg" width="96" height="72"/>
+        <img src="ingredients/kunzhut.svg" width="48" height="36"/>
+        <img src="ingredients/kunzhut.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/kunzhut.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/kuraga.svg" width="96" height="72"/>
+        <img src="ingredients/kuraga.svg" width="48" height="36"/>
+        <img src="ingredients/kuraga.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/kuraga.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/kuritsa.svg" width="96" height="72"/>
+        <img src="ingredients/kuritsa.svg" width="48" height="36"/>
+        <img src="ingredients/kuritsa.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/kuritsa.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/kuskus.svg" width="96" height="72"/>
+        <img src="ingredients/kuskus.svg" width="48" height="36"/>
+        <img src="ingredients/kuskus.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/kuskus.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/laim.svg" width="96" height="72"/>
+        <img src="ingredients/laim.svg" width="48" height="36"/>
+        <img src="ingredients/laim.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/laim.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/lapsha.svg" width="96" height="72"/>
+        <img src="ingredients/lapsha.svg" width="48" height="36"/>
+        <img src="ingredients/lapsha.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/lapsha.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/limon.svg" width="96" height="72"/>
+        <img src="ingredients/limon.svg" width="48" height="36"/>
+        <img src="ingredients/limon.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/limon.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/listovoi-salat.svg" width="96" height="72"/>
+        <img src="ingredients/listovoi-salat.svg" width="48" height="36"/>
+        <img src="ingredients/listovoi-salat.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/listovoi-salat.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/losos.svg" width="96" height="72"/>
+        <img src="ingredients/losos.svg" width="48" height="36"/>
+        <img src="ingredients/losos.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/losos.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/luk.svg" width="96" height="72"/>
+        <img src="ingredients/luk.svg" width="48" height="36"/>
+        <img src="ingredients/luk.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/luk.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/maionez.svg" width="96" height="72"/>
+        <img src="ingredients/maionez.svg" width="48" height="36"/>
+        <img src="ingredients/maionez.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/maionez.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/makarony.svg" width="96" height="72"/>
+        <img src="ingredients/makarony.svg" width="48" height="36"/>
+        <img src="ingredients/makarony.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/makarony.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/malina.svg" width="96" height="72"/>
+        <img src="ingredients/malina.svg" width="48" height="36"/>
+        <img src="ingredients/malina.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/malina.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/med.svg" width="96" height="72"/>
+        <img src="ingredients/med.svg" width="48" height="36"/>
+        <img src="ingredients/med.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/med.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/midii.svg" width="96" height="72"/>
+        <img src="ingredients/midii.svg" width="48" height="36"/>
+        <img src="ingredients/midii.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/midii.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/mindal.svg" width="96" height="72"/>
+        <img src="ingredients/mindal.svg" width="48" height="36"/>
+        <img src="ingredients/mindal.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/mindal.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/moloko.svg" width="96" height="72"/>
+        <img src="ingredients/moloko.svg" width="48" height="36"/>
+        <img src="ingredients/moloko.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/moloko.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/morkov.svg" width="96" height="72"/>
+        <img src="ingredients/morkov.svg" width="48" height="36"/>
+        <img src="ingredients/morkov.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/morkov.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/muka.svg" width="96" height="72"/>
+        <img src="ingredients/muka.svg" width="48" height="36"/>
+        <img src="ingredients/muka.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/muka.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/muskatnyi-oreh.svg" width="96" height="72"/>
+        <img src="ingredients/muskatnyi-oreh.svg" width="48" height="36"/>
+        <img src="ingredients/muskatnyi-oreh.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/muskatnyi-oreh.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/nut.svg" width="96" height="72"/>
+        <img src="ingredients/nut.svg" width="48" height="36"/>
+        <img src="ingredients/nut.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/nut.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/ogurtsy.svg" width="96" height="72"/>
+        <img src="ingredients/ogurtsy.svg" width="48" height="36"/>
+        <img src="ingredients/ogurtsy.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/ogurtsy.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/olivki.svg" width="96" height="72"/>
+        <img src="ingredients/olivki.svg" width="48" height="36"/>
+        <img src="ingredients/olivki.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/olivki.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/olivkovoe-maslo.svg" width="96" height="72"/>
+        <img src="ingredients/olivkovoe-maslo.svg" width="48" height="36"/>
+        <img src="ingredients/olivkovoe-maslo.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/olivkovoe-maslo.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/oregano.svg" width="96" height="72"/>
+        <img src="ingredients/oregano.svg" width="48" height="36"/>
+        <img src="ingredients/oregano.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/oregano.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/orehi.svg" width="96" height="72"/>
+        <img src="ingredients/orehi.svg" width="48" height="36"/>
+        <img src="ingredients/orehi.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/orehi.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/ovsyanka.svg" width="96" height="72"/>
+        <img src="ingredients/ovsyanka.svg" width="48" height="36"/>
+        <img src="ingredients/ovsyanka.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/ovsyanka.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/paprika.svg" width="96" height="72"/>
+        <img src="ingredients/paprika.svg" width="48" height="36"/>
+        <img src="ingredients/paprika.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/paprika.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/pasta.svg" width="96" height="72"/>
+        <img src="ingredients/pasta.svg" width="48" height="36"/>
+        <img src="ingredients/pasta.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/pasta.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/perets.svg" width="96" height="72"/>
+        <img src="ingredients/perets.svg" width="48" height="36"/>
+        <img src="ingredients/perets.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/perets.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/perlovka.svg" width="96" height="72"/>
+        <img src="ingredients/perlovka.svg" width="48" height="36"/>
+        <img src="ingredients/perlovka.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/perlovka.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/petrushka.svg" width="96" height="72"/>
+        <img src="ingredients/petrushka.svg" width="48" height="36"/>
+        <img src="ingredients/petrushka.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/petrushka.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/pomidory.svg" width="96" height="72"/>
+        <img src="ingredients/pomidory.svg" width="48" height="36"/>
+        <img src="ingredients/pomidory.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/pomidory.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/psheno.svg" width="96" height="72"/>
+        <img src="ingredients/psheno.svg" width="48" height="36"/>
+        <img src="ingredients/psheno.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/psheno.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/rastitelnoe-maslo.svg" width="96" height="72"/>
+        <img src="ingredients/rastitelnoe-maslo.svg" width="48" height="36"/>
+        <img src="ingredients/rastitelnoe-maslo.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/rastitelnoe-maslo.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/razryhlitel.svg" width="96" height="72"/>
+        <img src="ingredients/razryhlitel.svg" width="48" height="36"/>
+        <img src="ingredients/razryhlitel.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/razryhlitel.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/ris.svg" width="96" height="72"/>
+        <img src="ingredients/ris.svg" width="48" height="36"/>
+        <img src="ingredients/ris.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/ris.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/rozmarin.svg" width="96" height="72"/>
+        <img src="ingredients/rozmarin.svg" width="48" height="36"/>
+        <img src="ingredients/rozmarin.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/rozmarin.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/rukkola.svg" width="96" height="72"/>
+        <img src="ingredients/rukkola.svg" width="48" height="36"/>
+        <img src="ingredients/rukkola.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/rukkola.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/ryba.svg" width="96" height="72"/>
+        <img src="ingredients/ryba.svg" width="48" height="36"/>
+        <img src="ingredients/ryba.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/ryba.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/sahar.svg" width="96" height="72"/>
+        <img src="ingredients/sahar.svg" width="48" height="36"/>
+        <img src="ingredients/sahar.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/sahar.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/saharnaya-pudra.svg" width="96" height="72"/>
+        <img src="ingredients/saharnaya-pudra.svg" width="48" height="36"/>
+        <img src="ingredients/saharnaya-pudra.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/saharnaya-pudra.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/selderei.svg" width="96" height="72"/>
+        <img src="ingredients/selderei.svg" width="48" height="36"/>
+        <img src="ingredients/selderei.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/selderei.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/semena-chia.svg" width="96" height="72"/>
+        <img src="ingredients/semena-chia.svg" width="48" height="36"/>
+        <img src="ingredients/semena-chia.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/semena-chia.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/semena-podsolnuha.svg" width="96" height="72"/>
+        <img src="ingredients/semena-podsolnuha.svg" width="48" height="36"/>
+        <img src="ingredients/semena-podsolnuha.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/semena-podsolnuha.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/semena-tykvy.svg" width="96" height="72"/>
+        <img src="ingredients/semena-tykvy.svg" width="48" height="36"/>
+        <img src="ingredients/semena-tykvy.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/semena-tykvy.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/shampinony.svg" width="96" height="72"/>
+        <img src="ingredients/shampinony.svg" width="48" height="36"/>
+        <img src="ingredients/shampinony.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/shampinony.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/shokolad.svg" width="96" height="72"/>
+        <img src="ingredients/shokolad.svg" width="48" height="36"/>
+        <img src="ingredients/shokolad.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/shokolad.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/shpinat.svg" width="96" height="72"/>
+        <img src="ingredients/shpinat.svg" width="48" height="36"/>
+        <img src="ingredients/shpinat.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/shpinat.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/slivki.svg" width="96" height="72"/>
+        <img src="ingredients/slivki.svg" width="48" height="36"/>
+        <img src="ingredients/slivki.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/slivki.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/slivochnoe-maslo.svg" width="96" height="72"/>
+        <img src="ingredients/slivochnoe-maslo.svg" width="48" height="36"/>
+        <img src="ingredients/slivochnoe-maslo.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/slivochnoe-maslo.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/smetana.svg" width="96" height="72"/>
+        <img src="ingredients/smetana.svg" width="48" height="36"/>
+        <img src="ingredients/smetana.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/smetana.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/soevyi-sous.svg" width="96" height="72"/>
+        <img src="ingredients/soevyi-sous.svg" width="48" height="36"/>
+        <img src="ingredients/soevyi-sous.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/soevyi-sous.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/sol.svg" width="96" height="72"/>
+        <img src="ingredients/sol.svg" width="48" height="36"/>
+        <img src="ingredients/sol.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/sol.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/suhari.svg" width="96" height="72"/>
+        <img src="ingredients/suhari.svg" width="48" height="36"/>
+        <img src="ingredients/suhari.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/suhari.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/svekla.svg" width="96" height="72"/>
+        <img src="ingredients/svekla.svg" width="48" height="36"/>
+        <img src="ingredients/svekla.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/svekla.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/svinina.svg" width="96" height="72"/>
+        <img src="ingredients/svinina.svg" width="48" height="36"/>
+        <img src="ingredients/svinina.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/svinina.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/syr.svg" width="96" height="72"/>
+        <img src="ingredients/syr.svg" width="48" height="36"/>
+        <img src="ingredients/syr.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/syr.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/timyan.svg" width="96" height="72"/>
+        <img src="ingredients/timyan.svg" width="48" height="36"/>
+        <img src="ingredients/timyan.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/timyan.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/tomatnaya-pasta.svg" width="96" height="72"/>
+        <img src="ingredients/tomatnaya-pasta.svg" width="48" height="36"/>
+        <img src="ingredients/tomatnaya-pasta.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/tomatnaya-pasta.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/treska.svg" width="96" height="72"/>
+        <img src="ingredients/treska.svg" width="48" height="36"/>
+        <img src="ingredients/treska.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/treska.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/tsukini.svg" width="96" height="72"/>
+        <img src="ingredients/tsukini.svg" width="48" height="36"/>
+        <img src="ingredients/tsukini.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/tsukini.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/tsvetnaya-kapusta.svg" width="96" height="72"/>
+        <img src="ingredients/tsvetnaya-kapusta.svg" width="48" height="36"/>
+        <img src="ingredients/tsvetnaya-kapusta.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/tsvetnaya-kapusta.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/tunets.svg" width="96" height="72"/>
+        <img src="ingredients/tunets.svg" width="48" height="36"/>
+        <img src="ingredients/tunets.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/tunets.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/tvorog.svg" width="96" height="72"/>
+        <img src="ingredients/tvorog.svg" width="48" height="36"/>
+        <img src="ingredients/tvorog.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/tvorog.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/tykva.svg" width="96" height="72"/>
+        <img src="ingredients/tykva.svg" width="48" height="36"/>
+        <img src="ingredients/tykva.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/tykva.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/ukrop.svg" width="96" height="72"/>
+        <img src="ingredients/ukrop.svg" width="48" height="36"/>
+        <img src="ingredients/ukrop.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/ukrop.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/uksus.svg" width="96" height="72"/>
+        <img src="ingredients/uksus.svg" width="48" height="36"/>
+        <img src="ingredients/uksus.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/uksus.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/vanil.svg" width="96" height="72"/>
+        <img src="ingredients/vanil.svg" width="48" height="36"/>
+        <img src="ingredients/vanil.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/vanil.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/yabloko.svg" width="96" height="72"/>
+        <img src="ingredients/yabloko.svg" width="48" height="36"/>
+        <img src="ingredients/yabloko.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/yabloko.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/yaitsa.svg" width="96" height="72"/>
+        <img src="ingredients/yaitsa.svg" width="48" height="36"/>
+        <img src="ingredients/yaitsa.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/yaitsa.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/zelen.svg" width="96" height="72"/>
+        <img src="ingredients/zelen.svg" width="48" height="36"/>
+        <img src="ingredients/zelen.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/zelen.svg</div>
+    </div>
+    <div class="card">
+      <div class="sizes">
+        <img src="ingredients/zelenyi-goroshek.svg" width="96" height="72"/>
+        <img src="ingredients/zelenyi-goroshek.svg" width="48" height="36"/>
+        <img src="ingredients/zelenyi-goroshek.svg" width="24" height="18"/>
+      </div>
+      <div class="label">ingredients/zelenyi-goroshek.svg</div>
+    </div>
+  </div>
+  <h2>Dishes</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="sizes">
+        <img src="dishes/default.svg" width="96" height="72"/>
+        <img src="dishes/default.svg" width="48" height="36"/>
+        <img src="dishes/default.svg" width="24" height="18"/>
+      </div>
+      <div class="label">dishes/default.svg</div>
+    </div>
+  </div>
+  <h2>Root</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="sizes">
+        <img src="placeholder.svg" width="96" height="72"/>
+        <img src="placeholder.svg" width="48" height="36"/>
+        <img src="placeholder.svg" width="24" height="18"/>
+      </div>
+      <div class="label">placeholder.svg</div>
+    </div>
+  </div>
+</body>
+</html>

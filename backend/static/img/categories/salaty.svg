@@ -1,11 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640">
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240" fill="none">
   <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="rgb(99, 102, 241)" />
-      <stop offset="100%" stop-color="rgb(147, 51, 234)" />
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#DCFCE7"/>
+      <stop offset="100%" stop-color="#86EFAC"/>
     </linearGradient>
   </defs>
-  <rect width="960" height="640" fill="url(#grad)" />
-  <rect x="24" y="24" width="912" height="592" rx="28" fill="rgba(255,255,255,0.15)" />
-  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="600">Салаты</text>
+  <rect width="320" height="240" rx="24" fill="url(#bg)"/>
+  <g id="shadow" opacity="0.18">
+    <ellipse cx="160" cy="176" rx="78" ry="16" fill="#4C1D95"/>
+  </g>
+  <g id="main">
+    <path d="M100 150c0-30 26-56 60-56 34 0 60 26 60 56-32 10-88 10-120 0z" fill="#22C55E"/>
+    <circle cx="140" cy="122" r="10" fill="#F59E0B"/>
+    <circle cx="176" cy="114" r="10" fill="#86EFAC"/>
+    <circle cx="160" cy="140" r="8" fill="#BBF7D0"/>
+  </g>
 </svg>

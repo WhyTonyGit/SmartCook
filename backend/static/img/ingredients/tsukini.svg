@@ -1,11 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240" fill="none">
   <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="rgb(244, 63, 94)" />
-      <stop offset="100%" stop-color="rgb(245, 158, 11)" />
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FEF3C7"/>
+      <stop offset="100%" stop-color="#FCD34D"/>
     </linearGradient>
   </defs>
-  <rect width="600" height="600" fill="url(#grad)" />
-  <rect x="24" y="24" width="552" height="552" rx="28" fill="rgba(255,255,255,0.15)" />
-  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="600">цукини</text>
+  <rect width="320" height="240" rx="24" fill="url(#bg)"/>
+  <g id="shadow" opacity="0.18">
+    <ellipse cx="160" cy="176" rx="78" ry="16" fill="#4C1D95"/>
+  </g>
+  <g id="main">
+    <rect x="108" y="88" width="104" height="88" rx="44" fill="#16A34A"/>
+    <path d="M132 98c20 12 42 12 62 0" stroke="#BBF7D0" stroke-width="8" stroke-linecap="round"/>
+  </g>
 </svg>
