@@ -164,6 +164,52 @@ a {
     text-align: left;
 }
 
+.app-logo {
+    display: flex;
+    align-items: center;
+}
+
+.app-logo-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.app-logo__img {
+    height: 36px;
+    width: auto;
+    display: block;
+}
+
+.page-header .app-logo {
+    margin-bottom: var(--spacing-md);
+}
+
+.auth-header .app-logo {
+    justify-content: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.auth-header.auth-header--left .app-logo {
+    justify-content: flex-start;
+}
+
+.app-header {
+    padding: var(--spacing-lg) 0;
+}
+
+.app-header .app-logo {
+    justify-content: flex-start;
+}
+
+.app-logo--onboarding {
+    position: absolute;
+    top: var(--spacing-md);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 11;
+}
+
 .auth-title {
     font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-bold);
