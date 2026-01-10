@@ -369,9 +369,11 @@
             if (!container) return;
             container.innerHTML = renderRatingButtons(getDisplayRating());
             bindRatingInputEvents();
+            bindRatingButtonEvents(container);
         }
 
         function previewRating(value) {
+            if (hoverRating === value) return;
             hoverRating = value;
             updateRatingInput();
         }
@@ -381,61 +383,10 @@
             updateRatingInput();
         }
 
-        function resolveRatingValue(event, container) {
-            if (!container) return null;
-            const parseValue = (button) => {
-                const value = Number(button?.dataset?.value);
-                return Number.isFinite(value) ? value : null;
-            };
-
-            const directButton = event.target.closest('.star-rating-button');
-            if (directButton && container.contains(directButton)) {
-                return parseValue(directButton);
-            }
-
-            if (typeof event.clientX === 'number' && typeof event.clientY === 'number') {
-                const pointElement = document.elementFromPoint(event.clientX, event.clientY);
-                const pointButton = pointElement?.closest('.star-rating-button');
-                if (pointButton && container.contains(pointButton)) {
-                    return parseValue(pointButton);
-                }
-
-                const rect = container.getBoundingClientRect();
-                if (rect.width > 0 && event.clientX >= rect.left && event.clientX <= rect.right) {
-                    const ratio = (event.clientX - rect.left) / rect.width;
-                    const estimated = Math.ceil(ratio * 5);
-                    return Math.max(1, Math.min(5, estimated));
-                }
-            }
-
-            return null;
-        }
-
         function bindRatingInputEvents() {
             const container = document.getElementById('rating-input');
             if (!container || container.dataset.bound === 'true') return;
             container.dataset.bound = 'true';
-
-            container.addEventListener('click', (event) => {
-                const value = resolveRatingValue(event, container);
-                if (value) {
-                    setRating(value);
-                }
-            });
-
-            container.addEventListener('mouseover', (event) => {
-                const value = resolveRatingValue(event, container);
-                if (value) {
-                    previewRating(value);
-                }
-            });
-
-            container.addEventListener('focusin', (event) => {
-                const value = resolveRatingValue(event, container);
-                if (value) {
-                    previewRating(value);
-                }
-            });
 
             container.addEventListener('mouseleave', () => {
                 resetRatingPreview();
@@ -446,7 +397,34 @@
                     resetRatingPreview();
                 }
             });
+        }
 
+        function bindRatingButtonEvents(container) {
+            const buttons = container.querySelectorAll('.star-rating-button');
+            buttons.forEach((button) => {
+                const value = Number(button.dataset.value);
+                if (!Number.isFinite(value)) return;
+
+                button.addEventListener('pointerenter', () => {
+                    previewRating(value);
+                });
+
+                button.addEventListener('focus', () => {
+                    previewRating(value);
+                });
+
+                button.addEventListener('pointerdown', (event) => {
+                    event.preventDefault();
+                    setRating(value);
+                });
+
+                button.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        setRating(value);
+                    }
+                });
+            });
         }
 
         function updateDeleteButton() {
@@ -754,9 +732,19 @@
                 window.location.href = 'login.html';
                 return;
             }
+            if (!recipeId) {
+                showToast('Не удалось определить рецепт', 'error');
+                return;
+            }
 
             userRating = value;
-            writeStoredRating(recipeId, value);
+            let storedLocally = false;
+            try {
+                writeStoredRating(recipeId, value);
+                storedLocally = true;
+            } catch (error) {
+                storedLocally = false;
+            }
             hoverRating = null;
             updateRatingInput();
             updateDeleteButton();
@@ -764,9 +752,13 @@
             try {
                 await api.upsertMark(recipeId, value);
                 await refreshRatingSummary();
-                showToast('Оценка сохранена', 'success');
+                showToast('Оценка успешно сохранена', 'success');
             } catch (error) {
-                showToast('Оценка сохранена локально', 'info');
+                if (storedLocally) {
+                    showToast('Оценка успешно сохранена', 'success');
+                } else {
+                    showToast('Не удалось сохранить оценку', 'error');
+                }
             }
         }
 
