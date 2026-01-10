@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Каталог рецептов - SmartCook</title>
+    <link rel="icon" href="/static/brand/favicon.svg" type="image/svg+xml">
+
     <link rel="stylesheet" href="css/common.css">
     <style>
         .page-header {
@@ -146,8 +148,18 @@
         import { showLoading, showEmptyState, debounce, sortRecipes } from './js/utils.js';
 
         let currentCategoryId = null;
+        let currentCategoryName = '';
         let currentSort = 'popular';
         let favorites = new Set();
+        const ALL_CATEGORY_KEY = 'все блюда';
+
+        function normalizeCategoryKey(value = '') {
+            return value.trim().toLowerCase().replace(/ё/g, 'е');
+        }
+
+        function isAllCategory() {
+            return normalizeCategoryKey(currentCategoryName) === ALL_CATEGORY_KEY;
+        }
 
         // Загрузка категорий
         async function loadCategories() {
@@ -177,6 +189,7 @@
 
         function selectCategory(categoryId, categoryName) {
             currentCategoryId = categoryId;
+            currentCategoryName = categoryName;
             document.getElementById('categories-view').style.display = 'none';
             document.getElementById('recipes-view').style.display = 'block';
             document.querySelector('.page-title').textContent = categoryName;
@@ -191,7 +204,7 @@
                 const params = {
                     sort: currentSort
                 };
-                if (currentCategoryId) {
+                if (currentCategoryId && !isAllCategory()) {
                     params.categoryId = currentCategoryId;
                 }
 
@@ -217,7 +230,7 @@
         function displayRecipes(recipes) {
             const container = document.getElementById('recipes');
             if (!recipes || recipes.length === 0) {
-                showEmptyState(container, 'Рецепты не найдены', '');
+                showEmptyState(container, 'Рецепты не найдены', '', '📭', 'empty-state--recipes');
                 return;
             }
 
