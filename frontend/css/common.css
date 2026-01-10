@@ -301,40 +301,45 @@ a {
 }
 
 /* Header */
-header {
-    background: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 1rem 0;
-    margin-bottom: 2rem;
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--spacing-sm) 0;
 }
 
-nav {
+.app-header__inner {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: flex-start;
 }
 
-.logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #2c3e50;
+.app-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
     text-decoration: none;
 }
 
-.nav-links {
-    display: flex;
-    gap: 1.5rem;
-    list-style: none;
+.app-logo__icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
 }
 
-.nav-links a {
-    text-decoration: none;
-    color: #333;
-    transition: color 0.3s;
+.app-logo__text {
+    line-height: 1;
 }
 
-.nav-links a:hover {
-    color: #3498db;
+@media (max-width: 360px) {
+    .app-logo {
+        font-size: var(--font-size-md);
+    }
 }
 
 /* Buttons */
