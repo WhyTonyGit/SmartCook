@@ -70,13 +70,13 @@ git clone <repository-url>
 cd SmartCook
 ```
 
-2. Создайте файл `.env` в директории `backend/`:
+2. При необходимости настройте переменные окружения (для Docker можно создать `.env` в корне проекта):
 ```env
-FLASK_APP=run.py
-FLASK_ENV=development
-DATABASE_URL=postgresql://smartcook:smartcook_pass@db:5432/smartcook_db
 JWT_SECRET_KEY=your-secret-key-change-in-production
+# Опционально (для локальной разработки без Docker)
+DATABASE_URL=postgresql://smartcook:smartcook_pass@localhost:5432/smartcook_db
 CORS_ORIGINS=http://localhost:8080,http://127.0.0.1:8080
+SECRET_KEY=dev-secret-key
 ```
 
 3. Запустите приложение:
@@ -101,7 +101,7 @@ docker-compose exec backend python seed.py --reset
 **Примечание:** `seed.py` идемпотентен - его можно запускать многократно без ошибок. Он автоматически пропускает уже существующие данные и добавляет только новые. Используйте `--reset` только если нужно полностью пересоздать начальные данные.
 
 5. Откройте в браузере:
-- Backend API: http://localhost:5000
+- Backend API (Docker): http://localhost:5001
 - Frontend: откройте `frontend/index.html` в браузере или используйте простой HTTP сервер:
 ```bash
 cd frontend
@@ -157,6 +157,7 @@ python run.py
 - `JWT_SECRET_KEY` - Секретный ключ для JWT токенов
 - `CORS_ORIGINS` - Разрешённые источники для CORS (через запятую)
 - `FLASK_ENV` - Окружение Flask (development/production)
+- `SECRET_KEY` - Секретный ключ Flask (для подписи cookies)
 
 ## Проверка подключения к базе данных
 
@@ -185,6 +186,7 @@ docker-compose logs db
 - `POST /api/auth/login` - Вход
 - `GET /api/me` - Профиль пользователя
 - `PUT /api/me` - Обновление профиля
+- `POST /api/me/avatar` - Загрузка аватара (multipart/form-data)
 - `GET /api/me/forbidden-ingredients` - Запрещённые ингредиенты
 - `PUT /api/me/forbidden-ingredients` - Обновление запрещённых ингредиентов
 
@@ -214,6 +216,7 @@ docker-compose logs db
 
 ### Оценки
 - `POST /api/recipes/{id}/mark` - Поставить оценку (1-5)
+- `DELETE /api/recipes/{id}/mark` - Удалить свою оценку
 - `GET /api/me/marks` - Мои оценки
 
 ### Админ-панель (требует роль admin)
@@ -252,9 +255,9 @@ pytest
 
 После выполнения `seed.py` создаётся:
 - Администратор: `admin@example.com` / `Admin123!`
-- Базовые ингредиенты (29 уникальных, дубликаты автоматически удаляются)
-- Категории (10 штук)
-- Демо-рецепты (3 штуки)
+- Базовые ингредиенты (115 уникальных, дубликаты автоматически удаляются)
+- Категории (13 штук)
+- Демо-рецепты (33 штуки)
 
 **Идемпотентность:** `seed.py` можно запускать многократно - он автоматически:
 - Пропускает уже существующие ингредиенты, категории, роли
@@ -286,7 +289,7 @@ pytest
 
 ### A) Preflight запрос (OPTIONS) - проверка регистрации
 ```bash
-curl -i -X OPTIONS http://localhost:5000/api/auth/register \
+curl -i -X OPTIONS http://localhost:5001/api/auth/register \
   -H "Origin: http://localhost:8080" \
   -H "Access-Control-Request-Method: POST" \
   -H "Access-Control-Request-Headers: content-type"
@@ -305,7 +308,7 @@ curl -i -X OPTIONS http://localhost:5000/api/auth/register \
 
 ### B) POST запрос регистрации с CORS заголовками
 ```bash
-curl -i -X POST http://localhost:5000/api/auth/register \
+curl -i -X POST http://localhost:5001/api/auth/register \
   -H "Origin: http://localhost:8080" \
   -H "Content-Type: application/json" \
   -d '{"username":"testuser","email":"test@example.com","password":"password123"}'
@@ -340,26 +343,26 @@ curl -i -X POST http://localhost:5000/api/auth/register \
 
 ### Регистрация
 ```bash
-curl -X POST http://localhost:5000/api/auth/register \
+curl -X POST http://localhost:5001/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"username":"user","email":"user@example.com","password":"password123"}'
 ```
 
 ### Вход
 ```bash
-curl -X POST http://localhost:5000/api/auth/login \
+curl -X POST http://localhost:5001/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"emailOrPhone":"user@example.com","password":"password123"}'
 ```
 
 ### Поиск рецептов
 ```bash
-curl "http://localhost:5000/api/recipes?ingredients=курица,картофель&minMatch=0.3&sort=match"
+curl "http://localhost:5001/api/recipes?ingredients=курица,картофель&minMatch=0.3&sort=match"
 ```
 
 ### Создание комментария (требует токен)
 ```bash
-curl -X POST http://localhost:5000/api/recipes/1/comments \
+curl -X POST http://localhost:5001/api/recipes/1/comments \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"text":"Отличный рецепт!"}'
