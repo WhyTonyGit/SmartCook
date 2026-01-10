@@ -1,7 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240" fill="none">
   <rect width="320" height="240" rx="24" fill="#F3F4F6"/>
-  <rect x="24" y="24" width="272" height="192" rx="18" fill="#E5E7EB"/>
-  <path d="M88 168l44-44 32 32 40-40 28 28v24H88v-0z" fill="#D1D5DB"/>
-  <circle cx="118" cy="96" r="18" fill="#D1D5DB"/>
-  <text x="160" y="204" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#9CA3AF">Нет изображения</text>
+  <g id="shadow" opacity="0.18">
+    <ellipse cx="160" cy="176" rx="78" ry="16" fill="#4C1D95"/>
+  </g>
+  <g id="main">
+    <rect x="104" y="86" width="112" height="84" rx="12" fill="#E5E7EB"/>
+    <circle cx="132" cy="116" r="10" fill="#D1D5DB"/>
+    <path d="M112 160l30-30 24 24 28-28 22 22v12H112v-0z" fill="#D1D5DB"/>
+  </g>
 </svg>
