@@ -184,13 +184,13 @@ export function renderBottomNav(currentPage = '') {
     return `
         <nav class="bottom-nav">
             ${navItems.map(item => `
-                <a href="${item.href}" class="bottom-nav-item ${currentPage === item.id ? 'active' : ''}">
-                    <div class="bottom-nav-item-icon">
+                <a href="${item.href}" class="bottom-nav-item ${currentPage === item.id ? 'active' : ''}" ${currentPage === item.id ? 'aria-current="page"' : ''}>
+                    <span class="bottom-nav-item-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24">
                             <path d="${item.icon}"/>
                         </svg>
-                    </div>
-                    <span>${item.label}</span>
+                    </span>
+                    <span class="bottom-nav-item-label">${item.label}</span>
                 </a>
             `).join('')}
         </nav>

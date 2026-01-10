@@ -173,11 +173,10 @@
         import { isAuthenticated, requireAuth } from './js/auth.js';
         import { debounce, showToast, showEmptyState } from './js/utils.js';
         import { applyImageFallbacks, PLACEHOLDER_IMAGE } from './js/image.js';
+        import { loadPendingPreferences, savePendingPreferences } from './js/preferences-store.js';
 
         const params = new URLSearchParams(window.location.search);
         const isSettingsMode = params.get('mode') === 'settings';
-        const pendingRegistrationEmail = localStorage.getItem('pending_registration_email');
-        const localPrefsKey = pendingRegistrationEmail ? `prefs:${pendingRegistrationEmail}` : 'prefs:guest';
         let authAvailable = false;
         let selectedIngredients = [];
         let allIngredients = [];
@@ -208,8 +207,8 @@
 
         function loadLocalPreferences() {
             try {
-                const stored = JSON.parse(localStorage.getItem(localPrefsKey) || '[]');
-                selectedIngredients = Array.isArray(stored) ? stored : [];
+                const { items } = loadPendingPreferences();
+                selectedIngredients = Array.isArray(items) ? items : [];
                 renderSelected();
             } catch (e) {
                 console.error('Failed to load local preferences:', e);
@@ -320,8 +319,7 @@
                 if (authAvailable) {
                     await api.updateForbiddenIngredients(selectedIngredients);
                 } else {
-                    localStorage.setItem(localPrefsKey, JSON.stringify(selectedIngredients));
-                    localStorage.removeItem('pending_registration_email');
+                    savePendingPreferences(selectedIngredients);
                 }
                 showToast('Предпочтения сохранены!', 'success');
                 const redirectTarget = isSettingsMode
