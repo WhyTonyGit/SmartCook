@@ -62,6 +62,8 @@ SmartCook/
 - Docker и Docker Compose
 - Или Python 3.11+ и PostgreSQL (для локальной разработки)
 
+Все правила запуска вы найдёте в файле QUICKSTART.md
+
 ### Запуск с Docker
 
 1. Клонируйте репозиторий:
