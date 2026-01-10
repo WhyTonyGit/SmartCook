@@ -177,6 +177,19 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            position: relative;
+            z-index: 2;
+            pointer-events: auto;
+        }
+
+        .rating-input * {
+            pointer-events: auto;
+        }
+
+        .rating-input .star-rating-button {
+            position: relative;
+            z-index: 3;
+            cursor: pointer;
         }
 
         .rating-actions {
@@ -368,34 +381,57 @@
             updateRatingInput();
         }
 
+        function resolveRatingValue(event, container) {
+            if (!container) return null;
+            const parseValue = (button) => {
+                const value = Number(button?.dataset?.value);
+                return Number.isFinite(value) ? value : null;
+            };
+
+            const directButton = event.target.closest('.star-rating-button');
+            if (directButton && container.contains(directButton)) {
+                return parseValue(directButton);
+            }
+
+            if (typeof event.clientX === 'number' && typeof event.clientY === 'number') {
+                const pointElement = document.elementFromPoint(event.clientX, event.clientY);
+                const pointButton = pointElement?.closest('.star-rating-button');
+                if (pointButton && container.contains(pointButton)) {
+                    return parseValue(pointButton);
+                }
+
+                const rect = container.getBoundingClientRect();
+                if (rect.width > 0 && event.clientX >= rect.left && event.clientX <= rect.right) {
+                    const ratio = (event.clientX - rect.left) / rect.width;
+                    const estimated = Math.ceil(ratio * 5);
+                    return Math.max(1, Math.min(5, estimated));
+                }
+            }
+
+            return null;
+        }
+
         function bindRatingInputEvents() {
             const container = document.getElementById('rating-input');
             if (!container || container.dataset.bound === 'true') return;
             container.dataset.bound = 'true';
 
-            const getValueFromEvent = (event) => {
-                const button = event.target.closest('.star-rating-button');
-                if (!button || !container.contains(button)) return null;
-                const value = Number(button.dataset.value);
-                return Number.isFinite(value) ? value : null;
-            };
-
             container.addEventListener('click', (event) => {
-                const value = getValueFromEvent(event);
+                const value = resolveRatingValue(event, container);
                 if (value) {
                     setRating(value);
                 }
             });
 
             container.addEventListener('mouseover', (event) => {
-                const value = getValueFromEvent(event);
+                const value = resolveRatingValue(event, container);
                 if (value) {
                     previewRating(value);
                 }
             });
 
             container.addEventListener('focusin', (event) => {
-                const value = getValueFromEvent(event);
+                const value = resolveRatingValue(event, container);
                 if (value) {
                     previewRating(value);
                 }
@@ -410,6 +446,7 @@
                     resetRatingPreview();
                 }
             });
+
         }
 
         function updateDeleteButton() {
