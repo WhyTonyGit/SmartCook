@@ -370,7 +370,8 @@ nav {
 }
 
 .empty-state {
-    min-height: 60vh;
+    width: 100%;
+    min-height: 55vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -379,6 +380,14 @@ nav {
     padding: var(--spacing-2xl) var(--spacing-lg);
     color: var(--color-text-secondary);
     gap: var(--spacing-sm);
+}
+
+.empty-state--recipes {
+    min-height: 55vh;
+}
+
+.recipe-grid .empty-state {
+    grid-column: 1 / -1;
 }
 
 .empty-state-icon {
