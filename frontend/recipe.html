@@ -340,8 +340,7 @@
                 const fillPercent = value <= safeRating ? 100 : 0;
                 const gradientId = `${uid}-${index}`;
                 return `
-                    <button class="star-rating-button" type="button" data-value="${value}" aria-label="Оценка ${value}"
-                            onclick="setRating(${value})" onmouseenter="previewRating(${value})" onfocus="previewRating(${value})">
+                    <button class="star-rating-button" type="button" data-value="${value}" aria-label="Оценка ${value}">
                         ${renderStarSvg(fillPercent, 28, gradientId)}
                     </button>
                 `;
@@ -356,6 +355,7 @@
             const container = document.getElementById('rating-input');
             if (!container) return;
             container.innerHTML = renderRatingButtons(getDisplayRating());
+            bindRatingInputEvents();
         }
 
         function previewRating(value) {
@@ -366,6 +366,50 @@
         function resetRatingPreview() {
             hoverRating = null;
             updateRatingInput();
+        }
+
+        function bindRatingInputEvents() {
+            const container = document.getElementById('rating-input');
+            if (!container || container.dataset.bound === 'true') return;
+            container.dataset.bound = 'true';
+
+            const getValueFromEvent = (event) => {
+                const button = event.target.closest('.star-rating-button');
+                if (!button || !container.contains(button)) return null;
+                const value = Number(button.dataset.value);
+                return Number.isFinite(value) ? value : null;
+            };
+
+            container.addEventListener('click', (event) => {
+                const value = getValueFromEvent(event);
+                if (value) {
+                    setRating(value);
+                }
+            });
+
+            container.addEventListener('mouseover', (event) => {
+                const value = getValueFromEvent(event);
+                if (value) {
+                    previewRating(value);
+                }
+            });
+
+            container.addEventListener('focusin', (event) => {
+                const value = getValueFromEvent(event);
+                if (value) {
+                    previewRating(value);
+                }
+            });
+
+            container.addEventListener('mouseleave', () => {
+                resetRatingPreview();
+            });
+
+            container.addEventListener('focusout', (event) => {
+                if (!container.contains(event.relatedTarget)) {
+                    resetRatingPreview();
+                }
+            });
         }
 
         function updateDeleteButton() {
@@ -572,7 +616,7 @@
                 ${api.getToken() ? `
                     <div class="recipe-section">
                         <h3 class="recipe-section-title">Оцените рецепт</h3>
-                        <div class="rating-input" id="rating-input" onmouseleave="resetRatingPreview()" onfocusout="resetRatingPreview()">
+                        <div class="rating-input" id="rating-input">
                             ${renderRatingButtons(userRating)}
                         </div>
                         <div class="rating-actions">
