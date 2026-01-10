@@ -27,6 +27,8 @@ docker-compose exec backend python seed.py
    ```
    - Откройте http://localhost:8080 в браузере
 
+Backend доступен на http://localhost:5001
+
 ## Тестовый аккаунт
 
 После выполнения `seed.py`:
@@ -44,11 +46,11 @@ docker-compose exec backend python seed.py
 
 ## API
 
-Backend доступен на http://localhost:5000
+Backend доступен на http://localhost:5001
 
 Пример запроса:
 ```bash
-curl http://localhost:5000/api/recipes?ingredients=курица,картофель
+curl http://localhost:5001/api/recipes?ingredients=курица,картофель
 ```
 
 ## Тесты
@@ -57,4 +59,3 @@ curl http://localhost:5000/api/recipes?ingredients=курица,картофел
 cd backend
 pytest
 ```
-
