@@ -177,6 +177,19 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            position: relative;
+            z-index: 2;
+            pointer-events: auto;
+        }
+
+        .rating-input * {
+            pointer-events: auto;
+        }
+
+        .rating-input .star-rating-button {
+            position: relative;
+            z-index: 3;
+            cursor: pointer;
         }
 
         .rating-actions {
@@ -340,8 +353,7 @@
                 const fillPercent = value <= safeRating ? 100 : 0;
                 const gradientId = `${uid}-${index}`;
                 return `
-                    <button class="star-rating-button" type="button" data-value="${value}" aria-label="Оценка ${value}"
-                            onclick="setRating(${value})" onmouseenter="previewRating(${value})" onfocus="previewRating(${value})">
+                    <button class="star-rating-button" type="button" data-value="${value}" aria-label="Оценка ${value}">
                         ${renderStarSvg(fillPercent, 28, gradientId)}
                     </button>
                 `;
@@ -356,9 +368,12 @@
             const container = document.getElementById('rating-input');
             if (!container) return;
             container.innerHTML = renderRatingButtons(getDisplayRating());
+            bindRatingInputEvents();
+            bindRatingButtonEvents(container);
         }
 
         function previewRating(value) {
+            if (hoverRating === value) return;
             hoverRating = value;
             updateRatingInput();
         }
@@ -366,6 +381,50 @@
         function resetRatingPreview() {
             hoverRating = null;
             updateRatingInput();
+        }
+
+        function bindRatingInputEvents() {
+            const container = document.getElementById('rating-input');
+            if (!container || container.dataset.bound === 'true') return;
+            container.dataset.bound = 'true';
+
+            container.addEventListener('mouseleave', () => {
+                resetRatingPreview();
+            });
+
+            container.addEventListener('focusout', (event) => {
+                if (!container.contains(event.relatedTarget)) {
+                    resetRatingPreview();
+                }
+            });
+        }
+
+        function bindRatingButtonEvents(container) {
+            const buttons = container.querySelectorAll('.star-rating-button');
+            buttons.forEach((button) => {
+                const value = Number(button.dataset.value);
+                if (!Number.isFinite(value)) return;
+
+                button.addEventListener('pointerenter', () => {
+                    previewRating(value);
+                });
+
+                button.addEventListener('focus', () => {
+                    previewRating(value);
+                });
+
+                button.addEventListener('pointerdown', (event) => {
+                    event.preventDefault();
+                    setRating(value);
+                });
+
+                button.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        setRating(value);
+                    }
+                });
+            });
         }
 
         function updateDeleteButton() {
@@ -572,7 +631,7 @@
                 ${api.getToken() ? `
                     <div class="recipe-section">
                         <h3 class="recipe-section-title">Оцените рецепт</h3>
-                        <div class="rating-input" id="rating-input" onmouseleave="resetRatingPreview()" onfocusout="resetRatingPreview()">
+                        <div class="rating-input" id="rating-input">
                             ${renderRatingButtons(userRating)}
                         </div>
                         <div class="rating-actions">
@@ -673,9 +732,19 @@
                 window.location.href = 'login.html';
                 return;
             }
+            if (!recipeId) {
+                showToast('Не удалось определить рецепт', 'error');
+                return;
+            }
 
             userRating = value;
-            writeStoredRating(recipeId, value);
+            let storedLocally = false;
+            try {
+                writeStoredRating(recipeId, value);
+                storedLocally = true;
+            } catch (error) {
+                storedLocally = false;
+            }
             hoverRating = null;
             updateRatingInput();
             updateDeleteButton();
@@ -683,9 +752,13 @@
             try {
                 await api.upsertMark(recipeId, value);
                 await refreshRatingSummary();
-                showToast('Оценка сохранена', 'success');
+                showToast('Оценка успешно сохранена', 'success');
             } catch (error) {
-                showToast('Оценка сохранена локально', 'info');
+                if (storedLocally) {
+                    showToast('Оценка успешно сохранена', 'success');
+                } else {
+                    showToast('Не удалось сохранить оценку', 'error');
+                }
             }
         }
 
