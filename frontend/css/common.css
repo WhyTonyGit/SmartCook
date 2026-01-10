@@ -675,23 +675,43 @@ nav {
 .bottom-nav-item {
     flex: 1;
     text-decoration: none;
-    color: var(--color-text-secondary);
+    color: var(--color-primary);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     font-size: var(--font-size-xs);
     line-height: 1.2;
     min-width: 0;
+    position: relative;
+    padding: 10px 0 6px;
     transition: color var(--transition-base);
 }
 
+.bottom-nav-item::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    width: 64px;
+    height: 36px;
+    background: rgba(109, 40, 217, 0.14);
+    border-radius: var(--radius-full);
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity var(--transition-base), transform var(--transition-base);
+}
+
 .bottom-nav-item-icon {
-    width: 26px;
-    height: 26px;
+    width: 34px;
+    height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 50%;
+    color: var(--color-primary);
+    transition: background var(--transition-base), color var(--transition-base), transform var(--transition-base);
+    position: relative;
+    z-index: 1;
 }
 
 .bottom-nav-item-icon svg {
@@ -701,8 +721,32 @@ nav {
     transition: color var(--transition-base);
 }
 
-.bottom-nav-item.active {
+.bottom-nav-item-label {
     color: var(--color-primary);
+    font-weight: var(--font-weight-medium);
+    position: relative;
+    z-index: 1;
+}
+
+.bottom-nav-item.active::before {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.bottom-nav-item.active .bottom-nav-item-icon {
+    background: var(--color-primary);
+    color: #ffffff;
+    box-shadow: 0 8px 16px rgba(109, 40, 217, 0.3);
+}
+
+.bottom-nav-item:hover .bottom-nav-item-icon {
+    transform: translateY(-1px);
+}
+
+.bottom-nav-item:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+    border-radius: 12px;
 }
 
 @keyframes page-enter {

@@ -54,6 +54,7 @@
     <script type="module">
         import { api } from './js/api.js';
         import { showToast } from './js/utils.js';
+        import { migratePendingPreferences } from './js/preferences-store.js';
 
         function showAlert(message, type = 'error') {
             const alert = document.getElementById('alert');
@@ -76,6 +77,11 @@
 
             try {
                 const result = await api.login(emailOrPhone, password);
+                try {
+                    await migratePendingPreferences();
+                } catch (migrationError) {
+                    console.error('Failed to migrate pending preferences:', migrationError);
+                }
                 showToast('Успешный вход!', 'success');
                 setTimeout(() => {
                     window.location.href = 'index.html';
