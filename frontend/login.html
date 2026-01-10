@@ -4,174 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Добро пожаловать! - SmartCook</title>
-    <link rel="icon" href="/static/brand/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
 
     <link rel="stylesheet" href="css/common.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-            min-height: 100vh;
-            padding: 24px 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .app-shell.app-shell--auth {
-            background: transparent;
-            box-shadow: none;
-            width: 100%;
-        }
-
-        .app-shell.app-shell--auth .app-main {
-            min-height: auto;
-            padding: var(--spacing-xl) 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        .auth-container {
-            width: 100%;
-            max-width: 480px;
-            background: var(--color-bg);
-            padding: var(--spacing-2xl);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-lg);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .auth-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .auth-title {
-            font-size: var(--font-size-2xl);
-            font-weight: var(--font-weight-bold);
-            margin-bottom: var(--spacing-sm);
-            color: var(--color-text);
-        }
-
-        .auth-subtitle {
-            font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
-            line-height: 1.5;
-        }
-
-        .form-group {
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: var(--spacing-md);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            font-size: var(--font-size-base);
-            background: var(--color-bg);
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: var(--spacing-md);
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: var(--radius-md);
-            font-size: var(--font-size-base);
-            font-weight: var(--font-weight-medium);
-            cursor: pointer;
-            margin-top: var(--spacing-md);
-            min-height: 48px;
-        }
-
-        .btn-primary:hover {
-            background: var(--color-primary-dark);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .social-login {
-            margin-top: var(--spacing-xl);
-            text-align: center;
-        }
-
-        .social-login-title {
-            font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .social-buttons {
-            display: flex;
-            gap: var(--spacing-md);
-            justify-content: center;
-        }
-
-        .social-btn {
-            width: 56px;
-            height: 56px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--color-border);
-            background: var(--color-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all var(--transition-base);
-        }
-
-        .social-btn:hover {
-            border-color: var(--color-primary);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .social-btn img {
-            width: 24px;
-            height: 24px;
-        }
-
-        .auth-footer {
-            text-align: center;
-            margin-top: var(--spacing-xl);
-            font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
-        }
-
-        .auth-footer a {
-            color: var(--color-primary);
-            text-decoration: none;
-            font-weight: var(--font-weight-medium);
-        }
-
-        .auth-footer a:hover {
-            text-decoration: underline;
-        }
-
-        #alert {
-            margin-bottom: var(--spacing-md);
-        }
-
-        @media (max-height: 650px) {
-            body {
-                align-items: flex-start;
-                padding-top: 32px;
-            }
-        }
-    </style>
 </head>
-<body>
+<body class="auth-gradient-page">
     <div class="app-shell app-shell--auth">
         <main class="app-main app-main--full">
             <div class="auth-container">
@@ -182,7 +19,7 @@
 
                 <div id="alert"></div>
 
-                <form id="login-form" onsubmit="handleLogin(event)">
+                <form id="login-form" class="auth-form" onsubmit="handleLogin(event)">
                     <div class="form-group">
                         <input type="text" id="emailOrPhone" placeholder="Введите email или номер телефона" required>
                     </div>

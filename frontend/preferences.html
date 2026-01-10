@@ -4,27 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Укажите предпочтения - SmartCook</title>
-    <link rel="icon" href="/static/brand/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
 
     <link rel="stylesheet" href="css/common.css">
     <style>
-        .page-header {
-            padding: var(--spacing-lg) 0;
-            background: var(--color-bg);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .page-title {
-            font-size: var(--font-size-2xl);
-            font-weight: var(--font-weight-bold);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .page-subtitle {
-            font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
-        }
-
         .search-bar {
             display: flex;
             gap: var(--spacing-sm);
@@ -137,50 +120,48 @@
         }
 
         .btn-save {
-            position: fixed;
-            bottom: calc(80px + var(--spacing-md));
-            left: var(--spacing-md);
-            right: var(--spacing-md);
-            z-index: 10;
+            width: 100%;
+            margin-top: var(--spacing-xl);
         }
 
-        @media (min-width: 1024px) {
-            .btn-save {
-                position: static;
-                margin-top: var(--spacing-xl);
-            }
+        .selected-title {
+            margin-bottom: var(--spacing-md);
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
         }
     </style>
 </head>
-<body>
-    <div class="app-shell">
-        <main class="app-main">
-            <div class="page-content">
-                <div class="container">
-                    <div class="page-header">
-                        <h1 class="page-title">Укажите предпочтения</h1>
-                        <p class="page-subtitle">Выберите продукты, которые не можете или не хотите принимать в пищу</p>
-                    </div>
+<body class="auth-gradient-page">
+    <div class="app-shell app-shell--auth">
+        <main class="app-main app-main--full">
+            <div class="auth-container auth-container--wide">
+                <div class="auth-header auth-header--left">
+                    <h1 class="auth-title">Укажите предпочтения</h1>
+                    <p class="auth-subtitle">Выберите продукты, которые не можете или не хотите принимать в пищу</p>
+                </div>
 
-                    <div class="search-bar">
-                        <input type="text" id="ingredient-search" placeholder="Поиск..." autocomplete="off">
-                        <button class="btn btn-icon" onclick="searchIngredients()">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
-                                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                            </svg>
-                        </button>
-                    </div>
-
-                    <div class="ingredient-suggestions" id="suggestions"></div>
-
-                    <div id="selected-ingredients">
-                        <h3 style="margin-bottom: var(--spacing-md); font-size: var(--font-size-lg);">Выбранные ингредиенты</h3>
-                        <div id="selected-list"></div>
-                    </div>
-
-                    <button class="btn btn-primary btn-save" onclick="savePreferences()" id="save-btn">
-                        Зарегистрироваться
+                <div class="search-bar">
+                    <input type="text" id="ingredient-search" placeholder="Поиск..." autocomplete="off">
+                    <button class="btn btn-primary" onclick="searchIngredients()">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
                     </button>
+                </div>
+
+                <div class="ingredient-suggestions" id="suggestions"></div>
+
+                <div id="selected-ingredients">
+                    <h3 class="selected-title">Выбранные ингредиенты</h3>
+                    <div id="selected-list"></div>
+                </div>
+
+                <button class="btn btn-primary btn-save" onclick="savePreferences()" id="save-btn">
+                    Сохранить
+                </button>
+
+                <div class="auth-footer" id="preferences-footer">
+                    <p>Уже есть аккаунт? <a href="login.html">Войти</a></p>
                 </div>
             </div>
         </main>
@@ -189,24 +170,29 @@
 
     <script type="module">
         import { api } from './js/api.js';
-        import { requireAuth } from './js/auth.js';
+        import { isAuthenticated, requireAuth } from './js/auth.js';
         import { debounce, showToast, showEmptyState } from './js/utils.js';
         import { applyImageFallbacks, PLACEHOLDER_IMAGE } from './js/image.js';
 
         const params = new URLSearchParams(window.location.search);
         const isSettingsMode = params.get('mode') === 'settings';
+        const pendingRegistrationEmail = localStorage.getItem('pending_registration_email');
+        const localPrefsKey = pendingRegistrationEmail ? `prefs:${pendingRegistrationEmail}` : 'prefs:guest';
+        let authAvailable = false;
         let selectedIngredients = [];
         let allIngredients = [];
 
-        const pageTitle = document.querySelector('.page-title');
-        const pageSubtitle = document.querySelector('.page-subtitle');
+        const pageTitle = document.querySelector('.auth-title');
+        const pageSubtitle = document.querySelector('.auth-subtitle');
         const saveBtn = document.getElementById('save-btn');
+        const footer = document.getElementById('preferences-footer');
         if (isSettingsMode) {
             pageTitle.textContent = 'Настройки';
             pageSubtitle.textContent = 'Исключенные ингредиенты для вашего профиля';
             saveBtn.textContent = 'Сохранить';
+            footer.style.display = 'none';
         } else {
-            saveBtn.textContent = 'Продолжить';
+            saveBtn.textContent = 'Сохранить';
         }
 
         // Загрузка текущих исключенных ингредиентов
@@ -217,6 +203,16 @@
                 renderSelected();
             } catch (e) {
                 console.error('Failed to load forbidden ingredients:', e);
+            }
+        }
+
+        function loadLocalPreferences() {
+            try {
+                const stored = JSON.parse(localStorage.getItem(localPrefsKey) || '[]');
+                selectedIngredients = Array.isArray(stored) ? stored : [];
+                renderSelected();
+            } catch (e) {
+                console.error('Failed to load local preferences:', e);
             }
         }
 
@@ -276,13 +272,11 @@
             renderSelected();
             document.getElementById('ingredient-search').value = '';
             document.getElementById('suggestions').style.display = 'none';
-            syncForbiddenIngredients();
         }
 
         function removeIngredient(id) {
             selectedIngredients = selectedIngredients.filter(ingId => ingId !== id);
             renderSelected();
-            syncForbiddenIngredients();
         }
 
         async function renderSelected() {
@@ -323,15 +317,23 @@
             saveBtn.textContent = 'Сохранение...';
 
             try {
-                await api.updateForbiddenIngredients(selectedIngredients);
+                if (authAvailable) {
+                    await api.updateForbiddenIngredients(selectedIngredients);
+                } else {
+                    localStorage.setItem(localPrefsKey, JSON.stringify(selectedIngredients));
+                    localStorage.removeItem('pending_registration_email');
+                }
                 showToast('Предпочтения сохранены!', 'success');
+                const redirectTarget = isSettingsMode
+                    ? 'profile.html'
+                    : (authAvailable ? 'index.html' : 'login.html');
                 setTimeout(() => {
-                    window.location.href = isSettingsMode ? 'profile.html' : 'index.html';
+                    window.location.href = redirectTarget;
                 }, 1000);
             } catch (e) {
                 showToast('Ошибка сохранения', 'error');
                 saveBtn.disabled = false;
-                saveBtn.textContent = isSettingsMode ? 'Сохранить' : 'Продолжить';
+                saveBtn.textContent = 'Сохранить';
             }
         }
 
@@ -348,11 +350,17 @@
         window.searchIngredients = searchIngredients;
 
         async function init() {
-            if (!(await requireAuth())) {
+            authAvailable = await isAuthenticated();
+            if (isSettingsMode && !authAvailable) {
+                await requireAuth();
                 return;
             }
+            if (authAvailable) {
+                loadForbiddenIngredients();
+            } else {
+                loadLocalPreferences();
+            }
             loadAllIngredients();
-            loadForbiddenIngredients();
         }
 
         init();
@@ -361,10 +369,15 @@
     <script type="module">
         import { renderBottomNav } from './js/components.js';
         const navContainer = document.getElementById('bottom-nav');
-        if (navContainer) {
-            navContainer.innerHTML = renderBottomNav('profile');
-        } else {
-            document.body.insertAdjacentHTML('beforeend', renderBottomNav('profile'));
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('mode') === 'settings') {
+            if (navContainer) {
+                navContainer.innerHTML = renderBottomNav('profile');
+            } else {
+                document.body.insertAdjacentHTML('beforeend', renderBottomNav('profile'));
+            }
+        } else if (navContainer) {
+            navContainer.remove();
         }
     </script>
 </body>
