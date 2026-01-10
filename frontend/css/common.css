@@ -73,6 +73,23 @@ body {
     min-height: 100vh;
 }
 
+body.auth-gradient-page {
+    background: radial-gradient(circle at top right, rgba(255,255,255,0.25), transparent 45%),
+        linear-gradient(135deg, #6c2bd9 0%, #b9a3f5 50%, #efe8ff 100%);
+    min-height: 100vh;
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-height: 650px) {
+    body.auth-gradient-page {
+        align-items: flex-start;
+        padding-top: 32px;
+    }
+}
+
 img {
     max-width: 100%;
     display: block;
@@ -107,6 +124,180 @@ a {
 
 .app-main--full {
     padding: 0;
+}
+
+.app-shell--auth {
+    background: transparent;
+    box-shadow: none;
+    width: 100%;
+    max-width: none;
+}
+
+.app-shell--auth .app-main {
+    min-height: auto;
+    padding: var(--spacing-xl) 0;
+    display: flex;
+    justify-content: center;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 480px;
+    background: var(--color-bg);
+    padding: var(--spacing-2xl);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.auth-container--wide {
+    max-width: 640px;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.auth-header--left {
+    text-align: left;
+}
+
+.auth-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text);
+}
+
+.auth-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+.auth-form .form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.auth-form .form-group input {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    background: var(--color-bg);
+    min-height: 48px;
+}
+
+.auth-form .form-group input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    transition: background var(--transition-base);
+}
+
+.btn-primary:hover {
+    background: var(--color-primary-dark);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.auth-form .btn-primary {
+    width: 100%;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    margin-top: var(--spacing-md);
+    min-height: 48px;
+}
+
+.social-login {
+    margin-top: var(--spacing-xl);
+    text-align: center;
+}
+
+.social-login-title {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-md);
+}
+
+.social-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+}
+
+.social-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.social-btn:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.social-btn img {
+    width: 24px;
+    height: 24px;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: var(--spacing-xl);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.auth-footer a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+#alert {
+    margin-bottom: var(--spacing-md);
+}
+
+.password-match {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    margin-top: var(--spacing-xs);
+}
+
+.password-match.error {
+    color: var(--color-error);
+}
+
+.password-match.success {
+    color: var(--color-success);
 }
 
 /* Header */
