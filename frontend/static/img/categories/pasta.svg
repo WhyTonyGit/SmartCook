@@ -6,8 +6,13 @@
     </linearGradient>
   </defs>
   <rect width="320" height="240" rx="24" fill="url(#bg)"/>
-  <circle cx="118" cy="126" r="62" fill="#FFFBEB"/>
-  <path d="M82 128c20-18 48-18 72 0" stroke="#F59E0B" stroke-width="10" stroke-linecap="round"/>
-  <path d="M90 146c18-14 42-14 60 0" stroke="#F97316" stroke-width="8" stroke-linecap="round"/>
-  <text x="210" y="140" font-family="sans-serif" font-size="22" font-weight="700" fill="#92400E">Паста</text>
+  <g id="shadow" opacity="0.18">
+    <ellipse cx="160" cy="176" rx="78" ry="16" fill="#4C1D95"/>
+  </g>
+  <g id="main">
+    <circle cx="160" cy="128" r="60" fill="#F8FAFC"/>
+    <circle cx="160" cy="128" r="42" fill="#EEF2FF"/>
+    <path d="M130 122c14-10 46-10 60 0" stroke="#F59E0B" stroke-width="8" stroke-linecap="round"/>
+    <path d="M136 140c16 12 32 12 48 0" stroke="#FBBF24" stroke-width="8" stroke-linecap="round"/>
+  </g>
 </svg>

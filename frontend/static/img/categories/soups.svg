@@ -6,10 +6,12 @@
     </linearGradient>
   </defs>
   <rect width="320" height="240" rx="24" fill="url(#bg)"/>
-  <rect x="56" y="88" width="140" height="70" rx="28" fill="#FFF7ED"/>
-  <rect x="64" y="96" width="124" height="46" rx="22" fill="#F97316"/>
-  <circle cx="86" cy="120" r="6" fill="#FDBA74"/>
-  <circle cx="110" cy="116" r="5" fill="#FDBA74"/>
-  <circle cx="130" cy="128" r="5" fill="#FDBA74"/>
-  <text x="210" y="140" font-family="sans-serif" font-size="22" font-weight="700" fill="#7C2D12">Супы</text>
+  <g id="shadow" opacity="0.18">
+    <ellipse cx="160" cy="176" rx="78" ry="16" fill="#4C1D95"/>
+  </g>
+  <g id="main">
+    <path d="M100 150c0-28 26-52 60-52 34 0 60 24 60 52-32 10-88 10-120 0z" fill="#F97316"/>
+    <path d="M140 90c0-16 10-28 24-28 14 0 24 12 24 28" stroke="#FDBA74" stroke-width="8" stroke-linecap="round"/>
+    <path d="M122 84c0-14 10-24 22-24 12 0 22 10 22 24" stroke="#FED7AA" stroke-width="6" stroke-linecap="round"/>
+  </g>
 </svg>
